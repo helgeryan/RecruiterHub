@@ -42,15 +42,26 @@ class AddCaptionViewController: UIViewController {
         super.viewDidLoad()
         title = "Add Caption"
         
+        //tiffany: change back -> cancel button
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancel))
+    
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapDone))
         
         textView.delegate = self
         view.addSubview(textView)
     }
     
+ 
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         textView.frame = CGRect(x: 10, y: view.safeAreaInsets.top + 10, width: view.width - 20, height: view.height / 2)
+    }
+    //tiffany: cancel function
+    @objc private func didTapCancel(){
+        print("Cancel button tapped")
+        self.navigationController?.popToRootViewController(animated: true);
+        
     }
     
     @objc private func didTapDone() {
@@ -72,7 +83,8 @@ class AddCaptionViewController: UIViewController {
             switch result {
             case .success(let urlString):
                 DatabaseManager.shared.insertNewPost(with: email, url: urlString, caption: caption)
-                self?.navigationController?.popViewController(animated: true)
+                //tiffany: change it to popToRootView
+                self?.navigationController?.popToRootViewController(animated: true)
             case .failure(let error):
                 print(error)
             }

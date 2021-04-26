@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ZA1-Pn-ZAB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ZA1-Pn-ZAB">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18092"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,6 +11,7 @@
         <!--Profile-->
         <scene sceneID="tne-QT-ifu">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <viewController title="Profile" id="BYZ-38-t0r" customClass="ProfileViewController" customModule="RecruiterHub" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -21,7 +22,6 @@
                     <tabBarItem key="tabBarItem" title="Profile" image="person.crop.circle" catalog="system" id="m1f-Co-Doy"/>
                     <navigationItem key="navigationItem" id="WeP-05-7aF"/>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1128" y="1526"/>
         </scene>
@@ -54,7 +54,6 @@
                     </tabBar>
                     <connections>
                         <segue destination="q0b-Ly-Bds" kind="relationship" relationship="viewControllers" id="KTf-aN-zJq"/>
-                        <segue destination="bUu-og-6Ma" kind="relationship" relationship="viewControllers" id="uOe-ow-KNj"/>
                         <segue destination="rFB-5o-ccT" kind="relationship" relationship="viewControllers" id="pij-U0-sFd"/>
                         <segue destination="YxZ-gL-WJi" kind="relationship" relationship="viewControllers" id="L3n-Zh-iCG"/>
                         <segue destination="jbF-1u-QMm" kind="relationship" relationship="viewControllers" id="b8A-A1-oEE"/>
@@ -63,22 +62,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="03a-tv-zW5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="18.840579710144929" y="80.357142857142847"/>
-        </scene>
-        <!--New Post View Controller-->
-        <scene sceneID="lfQ-jA-o0A">
-            <objects>
-                <viewController id="bI3-uO-02t" customClass="NewPostViewController" customModule="RecruiterHub" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="zKS-dh-U2A">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="zLy-03-Q0o"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="DMj-7K-Z5p"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="9uP-e8-PW7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="19" y="1554"/>
         </scene>
         <!--Search User View Controller-->
         <scene sceneID="3Z0-c5-1gJ">
@@ -111,25 +94,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Hh-Io-qPD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2038" y="1554"/>
-        </scene>
-        <!--New Post-->
-        <scene sceneID="x7A-Tq-JYj">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bUu-og-6Ma" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="New Post" image="highlighter" catalog="system" id="8IQ-Ra-BwT"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="sKD-8d-I7Z">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="bI3-uO-02t" kind="relationship" relationship="rootViewController" id="PKd-7a-gRg"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="p3j-YA-5He" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="18.840579710144929" y="847.76785714285711"/>
         </scene>
         <!--Feed-->
         <scene sceneID="X3H-6u-eGK">
@@ -204,7 +168,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="highlighter" catalog="system" width="128" height="119"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="message" catalog="system" width="128" height="113"/>
         <image name="newspaper" catalog="system" width="128" height="108"/>

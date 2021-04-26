@@ -47,7 +47,22 @@ class ProfileViewController: UIViewController {
         collectionView.backgroundColor = .systemBackground
         
         view.addSubview(collectionView)
+        //tiffany------
+        addPostButton()
     }
+    
+    //tiffany------
+    private func addPostButton(){
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .done, target: self, action: #selector(didTapAddPostButton))
+        }
+
+        @objc private func didTapAddPostButton(){
+            print("it's pressed")
+            let vc = NewPostViewController()
+            navigationController?.pushViewController(vc, animated: true)
+
+        }
+    //end: tiffany------
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
