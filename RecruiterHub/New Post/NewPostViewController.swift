@@ -11,28 +11,31 @@ import AVKit
 
 class NewPostViewController: UIViewController {
 
-    private let newVideoButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("New Video", for: .normal)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 4.0
-        button.backgroundColor = .systemGreen
-        return button
-    }()
+//    private let newVideoButton: UIButton = {
+//        let button = UIButton()
+//        button.setTitle("New Video", for: .normal)
+//        button.layer.masksToBounds = true
+//        button.layer.cornerRadius = 4.0
+//        button.backgroundColor = .systemGreen
+//        return button
+//    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        newVideoButton.addTarget(self, action: #selector(didTapTest), for: .touchUpInside)
+//        newVideoButton.addTarget(self, action: #selector(didTapTest), for: .touchUpInside)
+//
+//        view.addSubview(newVideoButton)
         
-        view.addSubview(newVideoButton)
+        //tiffany: add didTapTest
+        didTapTest()
     }
     
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        newVideoButton.frame = CGRect(x: 20, y: view.safeAreaInsets.top + 10, width: view.width - 40, height: 52)
-    }
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//
+//        newVideoButton.frame = CGRect(x: 20, y: view.safeAreaInsets.top + 10, width: view.width - 40, height: 52)
+//    }
     
     @objc private func didTapTest() {
         
@@ -57,7 +60,9 @@ class NewPostViewController: UIViewController {
             self?.present(picker, animated: true)
         }))
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {  _ in
-            
+            print("cancel button tapped");
+            // return to previous controlloer
+            self.navigationController?.popViewController(animated: true)
         }))
         
         present(actionSheet, animated: true)
@@ -76,6 +81,8 @@ extension NewPostViewController: UIImagePickerControllerDelegate, UINavigationCo
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
+        //return to previous screen
+        self.navigationController?.popViewController(animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
