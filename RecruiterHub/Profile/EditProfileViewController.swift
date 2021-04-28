@@ -63,7 +63,7 @@ final class EditProfileViewController: UIViewController {
         models.append(model)
         model = EditProfileFormModel(label: "Phone", placeholder: "N/A", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "High School", placeholder: "\(user.highShcool)", value: nil)
+        model = EditProfileFormModel(label: "High School", placeholder: "\(user.highSchool)", value: nil)
         models.append(model)
         model = EditProfileFormModel(label: "State", placeholder: "\(user.state)", value: nil)
         models.append(model)
@@ -227,7 +227,7 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             user.phone = value
             break
         case "High School":
-            user.highShcool = value
+            user.highSchool = value
             break
         case "State":
             user.state = value

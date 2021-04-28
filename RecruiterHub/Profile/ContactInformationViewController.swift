@@ -55,7 +55,7 @@ class ContactInformationViewController: UIViewController {
         models.append(model)
         model = ContactInfoModel(label: "Phone", value: user.phone)
         models.append(model)
-        model = ContactInfoModel(label: "High School", value: "\(user.highShcool)")
+        model = ContactInfoModel(label: "High School", value: "\(user.highSchool)")
         models.append(model)
         model = ContactInfoModel(label: "State", value: "\(user.state)")
         models.append(model)
