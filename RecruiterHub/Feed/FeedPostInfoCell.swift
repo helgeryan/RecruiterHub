@@ -93,6 +93,6 @@ class FeedPostInfoCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        commentLabel.text = ""
+        commentLabel.attributedText = NSMutableAttributedString(string: "")
     }
 }
