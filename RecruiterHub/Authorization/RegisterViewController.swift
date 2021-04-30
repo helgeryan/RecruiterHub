@@ -261,6 +261,10 @@ class RegisterViewController: UIViewController {
         user.firstName = firstname
         user.lastName = lastname
         user.emailAddress = email
+        user.highSchool = "High School"
+        user.state = "State"
+        user.arm = "R"
+        user.bats = "R"
         
         AuthManager.shared.registerNewUser(username: username, email: email, password: password, user: user) { [weak self] registered in
             if registered {
