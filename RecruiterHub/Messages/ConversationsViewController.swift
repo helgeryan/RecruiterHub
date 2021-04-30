@@ -51,7 +51,7 @@ class ConversationsViewController: UIViewController {
         print("Starting conversations to fetch... ")
         
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
-        DatabaseManager.shared.getAllConversations(for: safeEmail, completion: { [weak self] result in
+        DatabaseManager.shared.getAllConversationsObserve(for: safeEmail, completion: { [weak self] result in
             print(result)
             switch result {
             case .success(let conversations):

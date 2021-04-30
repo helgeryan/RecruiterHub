@@ -62,7 +62,7 @@ class OtherUserViewController: UIViewController {
     }
     
     private func fetchPosts() {
-        DatabaseManager.shared.getAllUserPosts(with: self.user.emailAddress.safeDatabaseKey(), completion: { [weak self] fetchedPosts in
+        DatabaseManager.shared.checkAllUserPosts(with: self.user.emailAddress.safeDatabaseKey(), completion: { [weak self] fetchedPosts in
             self?.posts = fetchedPosts
             
             DispatchQueue.main.async {
@@ -179,7 +179,7 @@ extension OtherUserViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: view.width, height: 70)
         }
         
-        return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: true))
+        return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: false))
     }
 }
 

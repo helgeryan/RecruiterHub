@@ -95,7 +95,7 @@ class ViewPostViewController: UIViewController {
         
         // Fetch Comments
         fetchComments()
-        
+        print(post.url)
         // Add player and start playing
         playerLayer.player = player
         player?.play()

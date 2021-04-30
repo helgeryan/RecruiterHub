@@ -22,6 +22,7 @@ class NewPostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
 //        newVideoButton.addTarget(self, action: #selector(didTapTest), for: .touchUpInside)
 //
 //        view.addSubview(newVideoButton)

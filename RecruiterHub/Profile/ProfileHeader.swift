@@ -212,6 +212,6 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         if isYourProfile {
             return 300
         }
-        return 340.0
+        return 320.0
     }
 }

@@ -76,7 +76,7 @@ class ProfileViewController: UIViewController {
             fetchPosts()
         }
     
-        DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
+        DatabaseManager.shared.checkAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
             guard let posts = posts else {
                 return
             }

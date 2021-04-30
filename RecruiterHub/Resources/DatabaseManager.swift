@@ -273,6 +273,20 @@ public class DatabaseManager {
         completion(nil)
     }
     
+    public func checkAllUserPosts(with email: String, completion: @escaping (([[String:Any]]?) -> Void)) {
+        database.child("\(email)/Posts").observe( .value, with: { snapshot in
+
+            guard let posts = snapshot.value as? [[String:Any]] else {
+                print("Failed to get all user posts")
+                completion(nil)
+                return
+            }
+
+            completion(posts)
+        })
+        completion(nil)
+    }
+    
     public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
         database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
             
@@ -399,10 +413,9 @@ public class DatabaseManager {
                 let player = AVPlayer(playerItem: playerItem)
                 
                 
-                let temp = FeedPost(email: email, url: player, image: "")
+                let temp = FeedPost(email: email, player: player, image: "", url: urlString)
                 
                 array.append(temp)
-                
                 
             }
             
@@ -977,8 +990,46 @@ public class DatabaseManager {
     }
     
     // Fetches and returns all conversations for the user with passed in email
-    public func getAllConversations( for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void ) {
+    public func getAllConversationsSingleEvent( for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void ) {
+        
         database.child("\(email)/conversations").observeSingleEvent(of: .value, with: { snapshot in
+            
+            if snapshot.exists() == false {
+                completion(.failure(DatabaseError.conversationsEmpty))
+                return
+            }
+            
+            guard let value = snapshot.value as? [[String: Any]] else {
+                print("Failed to get convos")
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            
+            let conversations: [Conversation] = value.compactMap({ dictionary in
+                guard let conversationId = dictionary["id"] as? String,
+                    let name = dictionary["name"] as? String,
+                    let otherUserEmail = dictionary["other_user_email"] as? String,
+                    let latestMessage = dictionary["latest_message"] as? [String: Any],
+                    let date = latestMessage["date"] as? String,
+                    let message = latestMessage["message"] as? String,
+                    let isRead = latestMessage["is_read"] as? Bool else {
+                        return nil
+                }
+
+                let latestMessageObject = LatestMessage(date: date, text: message, isRead: isRead)
+                
+                return Conversation( id: conversationId, name: name, otherUserEmail: otherUserEmail, latestMessage: latestMessageObject)
+                
+            })
+            
+            completion(.success(conversations))
+        })
+    }
+    
+    // Fetches and returns all conversations for the user with passed in email
+    public func getAllConversationsObserve( for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void ) {
+        
+        database.child("\(email)/conversations").observe(.value, with: { snapshot in
             
             if snapshot.exists() == false {
                 completion(.failure(DatabaseError.conversationsEmpty))

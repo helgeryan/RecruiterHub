@@ -135,7 +135,7 @@ class FeedActionsCell: UITableViewCell {
             return
         }
         
-        DatabaseManager.shared.getAllConversations(for: currentEmail.safeDatabaseKey(), completion: { [weak self]
+        DatabaseManager.shared.getAllConversationsSingleEvent(for: currentEmail.safeDatabaseKey(), completion: { [weak self]
             conversations in
 
             switch conversations {

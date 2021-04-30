@@ -10,9 +10,7 @@ import AVFoundation
 
 class FeedViewController: UIViewController {
 
-    private var posts: [[String: String]] = []
-    
-    private var ultimatePosts: [FeedPost] = []
+    private var posts: [FeedPost] = []
     
     private let NUMBEROFCELLS = 4
     
@@ -52,20 +50,12 @@ class FeedViewController: UIViewController {
     
     private func fetchPosts() {
         
-        DatabaseManager.shared.getFeedPosts( completion: { [weak self] feedPosts in
-            guard let feedPosts = feedPosts else {
-                return
-            }
-            
-            self?.posts = feedPosts
-        })
-        
         DatabaseManager.shared.newGetFeedPosts( completion: { [weak self] feedPosts in
             guard let feedPosts = feedPosts else {
                 return
             }
             
-            self?.ultimatePosts = feedPosts
+            self?.posts = feedPosts
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
@@ -80,17 +70,8 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: false)
         let model = posts[posts.count - (indexPath.row/4) - 1]
         
-        guard let email = model["email"] else {
-            return
-        }
-        
-        guard let urlString = model["url"] else {
-            print("Failed to get url")
-            return
-        }
-        
         if indexPath.row % 4 == 0 {
-            DatabaseManager.shared.getDataForUser(user: email, completion: {
+            DatabaseManager.shared.getDataForUser(user: model.email, completion: {
                 [weak self] user in
                 guard let user = user else {
                     return
@@ -110,8 +91,8 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         
         else if indexPath.row % 4 == 3 {
             tableView.deselectRow(at: indexPath, animated: false)
-            let vc = CommentsViewController(email: email, url: urlString)
-            vc.configure(email: email, url: urlString)
+            let vc = CommentsViewController(email: model.email, url: model.url)
+            vc.configure(email: model.email, url: model.url)
             vc.title = "Comments"
             navigationController?.pushViewController(vc, animated: true)
         }
@@ -119,7 +100,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return ultimatePosts.count * 4
+        return posts.count * 4
 
     }
     
@@ -130,24 +111,17 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
     /// Comments
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = posts[posts.count - (indexPath.row / 4) - 1]
-        guard let urlString = model["url"] else {
-            print("Failed to get url")
-            return UITableViewCell()
-        }
-        
-        guard let email = model["email"] else {
-            return UITableViewCell()
-        }
+
         if indexPath.row % 4 == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: FeedActionsCell.identifier, for: indexPath) as! FeedActionsCell
-            cell.configure(with: urlString, email: email)
+            cell.configure(with: model.url, email: model.email)
             cell.delegate = self
             return cell
         }
         else if indexPath.row % 4 == 0 {
         
             let cell = tableView.dequeueReusableCell(withIdentifier: FeedHeaderCell.identifier, for: indexPath) as! FeedHeaderCell
-            let temp = ultimatePosts[ultimatePosts.count - (indexPath.row / 4) - 1]
+            let temp = posts[posts.count - (indexPath.row / 4) - 1]
             
             cell.configure( email: temp.email)
             cell.delegate = self
@@ -156,15 +130,15 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         }
         else if indexPath.row % 4 == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: FeedPostInfoCell.identifier, for: indexPath) as! FeedPostInfoCell
-            cell.configure(email: email, url: urlString)
+            cell.configure(email: model.email, url: model.url)
             return cell
         }
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: FeedTableViewCell.identifier, for: indexPath) as! FeedTableViewCell
             
             
-            let temp = ultimatePosts[ultimatePosts.count - (indexPath.row / 4) - 1]
-            cell.configure(url: temp.url)
+            let temp = posts[posts.count - (indexPath.row / 4) - 1]
+            cell.configure(url: temp.player)
             cell.delegate = self
             return cell
         }
@@ -234,6 +208,7 @@ extension FeedViewController: FeedActionsCellDelegate {
 
 public struct FeedPost {
     var email: String
-    let url: AVPlayer
+    let player: AVPlayer
     let image: String
+    let url: String
 }

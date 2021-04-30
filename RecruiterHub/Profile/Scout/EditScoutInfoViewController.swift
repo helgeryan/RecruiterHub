@@ -78,7 +78,7 @@ class EditScoutInfoViewController: UIViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-        
+        print(scoutInfo)
         DatabaseManager.shared.updateScoutInfoForUser(email: email, scoutInfo: scoutInfo)
         
         dismiss(animated: true, completion: nil)
@@ -135,6 +135,7 @@ extension EditScoutInfoViewController: FormTableViewCellDelegate {
             scoutInfo.outfield = Double(value) ?? 0
             break
         case "Exit Velo":
+            print("Exit Velo")
             scoutInfo.exitVelo = Double(value) ?? 0
             break
         default:
