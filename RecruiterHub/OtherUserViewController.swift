@@ -179,7 +179,7 @@ extension OtherUserViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: view.width, height: 70)
         }
         
-        return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: true))
+        return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: false))
     }
 }
 

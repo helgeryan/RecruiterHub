@@ -209,9 +209,10 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
     }
     
     public static func getHeight(isYourProfile: Bool) -> CGFloat {
+        let screenSize = UIScreen.main.bounds
         if isYourProfile {
-            return 300
+            return screenSize.width/3 + 160
         }
-        return 340.0
+        return screenSize.width/3 + 175
     }
 }

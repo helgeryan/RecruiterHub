@@ -98,7 +98,7 @@ class DatabaseTests: XCTestCase {
             XCTAssertEqual("R", user.arm)
             XCTAssertEqual(2014, user.gradYear)
             XCTAssertEqual("helgeryan", user.username)
-            XCTAssertEqual("Minnetonka", user.highShcool)
+            XCTAssertEqual("Minnetonka", user.highSchool)
             XCTAssertEqual("MN", user.state)
             XCTAssertEqual(240, user.weight)
             expect.fulfill()
@@ -133,7 +133,7 @@ class DatabaseTests: XCTestCase {
     func test_downloadURLValid() {
         let expect = expectation(description: "Data")
         
-        guard let expectedURL = URL(string: "https://firebasestorage.googleapis.com/v0/b/recruiterhub-cb0ef.appspot.com/o/images%2Fryanhelgeson14-gmail-com?alt=media&token=1c38561c-72ae-4aac-83fb-e59a936e7db3") else {
+        guard let expectedURL = URL(string: "https://firebasestorage.googleapis.com/v0/b/recruiterhub-cb0ef.appspot.com/o/images%2Fryanhelgeson14-gmail-com?alt=media&token=6d06f73d-364c-46b1-9e97-18b07c8f47f8") else {
             XCTAssert(false)
             return
         }
@@ -177,6 +177,5 @@ class DatabaseTests: XCTestCase {
         })
         waitForExpectations(timeout: 2, handler: nil)
     }
-    
 
 }

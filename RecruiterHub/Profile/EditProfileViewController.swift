@@ -77,7 +77,7 @@ final class EditProfileViewController: UIViewController {
         models.append(model)
         model = EditProfileFormModel(label: "Bats", placeholder: "\(user.bats)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "GPA", placeholder: "\(user.bats)", value: nil)
+        model = EditProfileFormModel(label: "GPA", placeholder: "\(user.gpa)", value: nil)
         models.append(model)
     }
     

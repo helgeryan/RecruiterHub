@@ -629,7 +629,7 @@ public class DatabaseManager {
             attribute = "endorsers"
             break
         }
-        database.child("\(email)/\(attribute)").observeSingleEvent(of: .value, with: {
+        database.child("\(email)/\(attribute)").observe( .value, with: {
             snapshot in
             
             guard let list = snapshot.value as? [[String: String]] else {
