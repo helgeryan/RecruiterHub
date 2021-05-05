@@ -22,20 +22,10 @@ class NewPostViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        newVideoButton.addTarget(self, action: #selector(didTapTest), for: .touchUpInside)
-//
-//        view.addSubview(newVideoButton)
-        
-        //tiffany: add didTapTest
+        view.backgroundColor = .systemBackground
         didTapTest()
     }
-    
 
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//
-//        newVideoButton.frame = CGRect(x: 20, y: view.safeAreaInsets.top + 10, width: view.width - 40, height: 52)
-//    }
     
     @objc private func didTapTest() {
         

@@ -41,7 +41,7 @@ class AddCaptionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Add Caption"
-        
+        view.backgroundColor = .systemBackground
         //tiffany: change back -> cancel button
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTapCancel))
         

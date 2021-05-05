@@ -260,7 +260,7 @@ public class DatabaseManager {
     }
     
     public func getAllUserPosts(with email: String, completion: @escaping (([[String:Any]]?) -> Void)) {
-        database.child("\(email)/Posts").observeSingleEvent(of: .value, with: { snapshot in
+        database.child("\(email)/Posts").observe( .value, with: { snapshot in
 
             guard let posts = snapshot.value as? [[String:Any]] else {
                 print("Failed to get all user posts")
