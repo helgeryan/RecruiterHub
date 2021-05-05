@@ -27,6 +27,7 @@ class NewPostViewController: UIViewController {
 //        view.addSubview(newVideoButton)
         
         //tiffany: add didTapTest
+        view.backgroundColor = .systemBackground
         didTapTest()
     }
     
