@@ -24,6 +24,13 @@ and take a look.
 
 All source files can be located in this repository. The RecruiterHubTests folder includes a database testing file that unit tests reads from the database.
 
+## Project Diagrams
+
+- [Sequence Diagram](https://raw.githubusercontent.com/helgeryan/RecruiterHub/main/Sequence%20Diagram.svg)
+- [Sequence Diagram (Txt)](https://github.com/helgeryan/RecruiterHub/blob/main/v_2_SequenceDiagram.txt)
+- [Class Diagram (Txt)](https://github.com/helgeryan/RecruiterHub/blob/main/v_2_ClassDiagram.txt)
+
+
 ## Program Operation 
 
 You will want to ensure that there is a stable internet connection so that you can retrieve/send data to the Firebase cloud storage. Contact Ryan Helgeson 
