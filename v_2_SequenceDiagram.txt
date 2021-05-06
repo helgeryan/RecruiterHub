@@ -1,0 +1,80 @@
+@startuml
+scale 2000 * 5000
+actor actor as Actor
+database database as DatabaseManager
+
+Actor -> LoginViewController : loginButtonTapped() 
+Actor -> LoginViewController: registerButtonTapped() 
+Actor -> FeedActionsCell : didTapSendButton() 
+Actor -> FeedActionsCell : didTapCommentButton()
+Actor -> OtherUserViewController : didTapEndorsementsButton()
+Actor -> OtherUserViewController : didTapFollowingButton()
+Actor -> OtherUserViewController : didTapInfoButtonTab()
+Actor -> OtherUserViewController : didTapScoutButtonTab()
+Actor -> ViewPostViewController : didTapComment()
+Actor -> ViewPostViewController : didTapLikesLabel()
+Actor -> ProfileViewController : addPostButton()
+Actor -> ScoutViewController : didTapEditButton()
+Actor -> ScoutViewController : didTapGameLog()
+Actor -> GameLogViewController : didTapAddButton()
+Actor -> AddGameLogViewController : didTapSave()
+Actor -> ConversationsViewController : didTapComposeButton()
+Actor -> ConversationsViewController : createNewConversation()
+
+
+
+OtherUserViewController -> ListsViewController: didTapEndrsementsButton()
+OtherUserViewController -> ListsViewController: didTapFollowingButton()
+OtherUserViewController -> ListsViewController: didTapFollowersButton()
+OtherUserViewController -> ContactInformationViewController: didTapInfoButtonTab()
+OtherUserViewController -> ContactInformationViewController: didTapScoutButtonTab()
+
+
+LoginViewController -> ProfileViewController  : handleNotAuthenticated() - checked
+LoginViewController -> RegisterViewController : registerButtonTapped()
+LoginViewController -> AuthManager : loginButtonTapped()
+DatabaseManager -> AuthManager : login()
+DatabaseManager -> AuthManager : logout()
+AuthManager -> DatabaseManager : registerNewUser()
+
+
+
+ViewPostViewController -> CommentsViewController : didTapComment()
+ViewPostViewController -> ListsViewController : didTapLikesLabel()
+ViewPostViewController -> DatabaseManager : fetchComments()
+
+
+ProfileViewController -> SettingsViewController : didTapEditButton()
+SettingsViewController -> EditProfileViewController : didTapEditProfile()
+
+
+ProfileViewController -> ListsViewController : didTapEndorsementsButton()
+ProfileViewController -> ListsViewController : didTapFollowingButton()
+ProfileViewController -> ListsViewController : didTapFollowersButton()
+
+
+ProfileViewController -> NewPostViewController : addPostButton()
+NewPostViewController -> AddCaptionViewController : didTapDone()
+AddCaptionViewController -> ProfileViewController : didTapCancel()
+
+AddCaptionViewController -> StorageManager : didTapDone()
+StorageManager -> DatabaseManager : uploadVideo()
+
+ProfileViewcontroller -> ContactInformationViewController : didTapInfoButtonTab()
+ProfileViewController -> ScoutViewController : didTapScoutButtonTab()
+FeedViewController -> ChatViewController : didTapSendButton()
+
+FeedViewController -> CommentsViewController : didTapCommentButton()
+
+
+ScoutViewController -> EditScoutInfoViewController : didTapEditButton()
+ScoutViewController -> GameLogViewController : didTapGameLog()
+GameLogViewController -> AddGameLogViewController : didTapAddButton()
+AddGameLogViewController --> GameLogViewController : didTapSave()
+
+
+ConversationsViewController -> NewConversationViewController : didTapComposeButton()
+ConversationsViewController -> ChatViewController : createNewConversation()
+NewConversationViewController -> DatabaseManager : searchUsers()
+DatabaseManager --> NewConversationViewController : getAllUsers()
+@enduml

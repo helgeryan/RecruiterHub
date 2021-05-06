@@ -1,0 +1,724 @@
+@startuml
+
+scale 2000 * 5000
+class OtherUserViewController {
+- collectionView: UICollectionView
+- user: RHUser
+- posts: [[String: Any]]?
++ init(user: RHUser)
+- fetchPosts( )
+}
+
+
+class NewCommentViewController  {
++ completion: ((SearchResult) -> (Void))?
+- spinner = JGProgressHUD
+- users = [String: String]
+- results = [SearchResult]()
+- hasFetched: Bool
+- searchBar: UISearchBar
+- tableView: UITableView
+- noResultsLabel: UILabel
+- dismissSelf( )
+- searchUsers(query: String)
+- filterUsers(with term: String)
+- updateUI( )
+}
+
+
+class ListsViewController  {
+- data: [String:String]
+- tableView: UITableView
++ init(data: [String:String])
+}
+
+
+
+class CommentsViewController {
+- comments: [[String: String]]?
+- tableView: UITableView
++ init(email: String, url: String)
++ configure(email: String, url: String)
+}
+
+
+
+class CommentsCell  {
++ identifier: String
+- commentLabel: UILabel
++ configure(email: String, comment: String)
++ getHeight( )
+}
+
+
+class ConversationsViewController  {
+- spinner = JGProgressHUD
+- conversations = [Conversation]
+- tableView: UITableView
+- noConversationsLabel: UILabel
+- loginObserver: NSObjectProtocol?
+- startListeningForConversations( )
+- didTapComposeButton( )
+- createNewConversation(result: SearchResult)
+- setupTableView( )
+}
+
+
+class ConversationsTableViewCell  {
++ identifier: String
+- userImageView: UIImageView
+- usernameLabel: UILabel
+- userMessageLabel: UILabel
++ configure( with model: Conversation)
+}
+
+
+
+class NewConversationViewController  {
+- completion: ((SearchResult) -> (Void))?
+- spinner = JGProgressHUD
+- users = [[String: String]]
+- results = [SearchResult]
+- hasFetched: Bool
+- searchBar: UISearchBar
+- tableView: UITableView
+- noResultsLabel: UILabel
+- searchUsers(query: String)
+- filterUsers(with term: String)
+- updateUI( )
+}
+
+
+
+class NewConversationTableViewCell  {
++ identifier: String
+-userImageView: UIImageView
+- usernameLabel: UILabel
+- init(style:reuseIdentifier: )
+- init(coder:)
+- layoutsubviews()
+- configure( model: SearchResult)
+}
+
+
+
+class ChatViewController  {
++ dateFormatter: DateFormatter
+- senderPhotoURL: URL?
+- otherUserPhotoURL: URL?
++ isNewConversation: Bool
++ otherUserEmail: String
+- conversationId: String?
+- messages = [Message]
+- selfSender: Sender?
+- listenForMessages(id: String, shouldScrollToBottom: Bool)
++ init(with email: String, id: String?)
+- setupInputButton( )
+- presentInputActionSheet( )
+- presentPhotoInputActionsheet( )
+- presentVideoInputActionsheet( )
+- func presentDocumentPicker( )
+- createMessageId( )
+}
+
+
+
+
+class NewPostViewController  {
+- newVideoButton
+- dateFormatter
+- didTapTest( )
+- createVideoId( )
+}
+
+
+class AddCaptionViewController  {
+- data: Data
+- email: String
+- filename: String
+- textView: UITextView
+- init(email: String, data: Data, filename: String)
+- init(coder:)
+- viewDidLoad()
+- viewDidLayoutSubviews()
+- didTapCancel()
+- didTapDone()
+- textViewDidBeginEditing(_:)
+- textViewDidEndEditing(_:)
+}
+
+
+class LoginViewController  {
+- emailField: UITextField
+- passwordField: UITextField
+- imageBackgroundView: UIImageView
+- loginButton:UIButton
+- registerButton:UIButton
+- keyboardWillShow( notification: NSNotification)
+- keyboardWillHide( notification: NSNotification)
+- didTap( )
+- loginButtonTapped( )
+- registerButtonTapped( )
+- loginButtonTapped( )
+- alertUserLoginError( )
+}
+
+
+class RegisterViewController  {
+- emailField: UITextField
+- passwordField: UITextField
+- usernameField: UITextField
+- firstnameField: UITextField
+- lastnameField: UITextField
+- imageBackgroundView: UIImageView
+- loginButton:UIButton
+- registerButton:UIButton
+- keyboardWillShow( notification: NSNotification)
+- keyboardWillHide( notification: NSNotification)
+- didTap( )
+- didTapRegisterButton( )
+- didTapChangeProfilePic( )
+- presentPhotoActionSheet( )
+- presentCamera( )
+- presentPhotoPicker( )
+- didTapBack( )
+}
+
+
+class SearchUsersViewController  {
++ completion: ((SearchResult) -> (Void))?
+- users = [[String: String]]
+- results = [SearchResult]
+- hasFetched: Bool
+- searchBar: UISearchBar
+- tableView: UITableView
+- noResultsLabel: UILabel
+- searchUsers(query: String)
+- filterUsers(with term: String)
+- updateUI( )
+}
+
+
+
+class SearchUsersTableViewCell  {
++ identifier: String
++ nameLabel: UILabel
++ usernameLabel: UILabel
+}
+
+
+
+class FeedPostInfoCell  {
++ identifier: String
+- commentLabel: UILabel
++ configure(email: String, url: String)
+}
+
+
+
+class FeedTableViewCell  {
++ identifier: String
++ delegate: FeedTableViewCellDelegate?
+- user: RHUser?
+- player: AVPlayer?
+- playerLayer = AVPlayerLayer
++ configure(post: Post)
++ configure(url: AVPlayer)
++ play( )
++ getUser( )
+}
+
+
+
+class FeedHeaderCell  {
++ identifier: String
++ delegate: FeedHeaderCellDelegate?
+- user: RHUser?
+- usernameLabel: UILabel
+- profilePicImageView: UIImageView
++ configure(email: String)  url = URL(string: user.profilePicUrl) {
+- didTapUsername( )
++ getUser( )
+}
+
+
+
+class FeedActionCell  {
++ delegate: FeedActionsCellDelegate?
++ identifier: String
+- url: String?
+- email: String?
+- commentButton: UIButton
+- likeButton: UIButton
+- sendButton: UIButton
+- didTapLikeButton( )
+- didTapCommentButton( )
+- didTapSendButton( )
+- createNewConversation(result: SearchResult)
++ configure( with urlString: String, email: String)
+- toggleLike( )
+- defaultButton( )
+}
+
+
+class FeedViewController  {
+- posts: [[String: String]]
+- ultimatePosts: [FeedPost]
+- NUMBEROFCELLS = 4
+- tableView: UITableView
+- fetchPosts( )
+}
+
+
+
+class AuthManager  {
++ shared: AuthManager
++ registerNewUser( username: String, email: String, password: String, user: RHUser, completion: {} )
++ login( username: String?, email: String?, password: String, completion: {} )
++ logout( completion: {} )
+}
+
+
+
+class DatabaseManager{
++ shared: DatabaseManager
+- database: FIRDatabaseReference
++ safeEmail(emailAddress: String)
++ createThumbnail(url: URL)
++ findPost( posts: [[String: Any]], url: String)
++ userExists(with email: String, completion: { })
++ canCreateNewUser(with email: String, username: String, completion: { })
++ insertNewUser(with email: String, user: RHUser, completion: { })
++ getAllUsers( completion:  { })
++ insertNewPost(with email: String, url: Upload, caption: String)
+- insertFeedPost(email: String, url: String)
++ getVideo(completion: { })
++ getAllUserPosts(with email: String, completion: { })
++ getDataForUser(user: String, completion:  { })
++ like(with email: String, likerInfo: PostLike, postNumber: Int, completion: { })
++ setProfilePic(with email: String, url: String)
++ newGetFeedPosts(completion: { })
++ getUserFollowers( email: String, completion: { })
++ getUserFollowing( email: String, completion:  { })
++ getUserEndorsements( email: String, completion:  { })
++ updateUserInfor( user: RHUser)
++ follow( email: String, followerEmail: String)
++ getComments(with email: String, index: Int, completion:  { })
++ getLikes(with email: String, index: Int, completion:  { })
++ newComment( email: String, commenterEmail: String, comment: String, index: Int)
++ getScoutInfoForUser(user: String, completion:  { })
++ updateScoutInfoForUser(email: String, scoutInfo: ScoutInfo)
++ getNumberOf( email: String, connection: Connections, completion:  { })
++ sendMessage( to conversation: String, otherUserEmail: String, name: String, newMessage: Message, completion: { })
++ createNewConversation( with otherUserEmail: String, name: String, firstMessage: Message, completion: { })
++ getAllConversations( for email: String, completion: { })
++ finishCreatingConversation( name: String, conversationID: String, firstMessage: Message, completion: { })
++ conversationExists(with targetRecipientEmail: String, completion: { })
++ deleteConversation(conversationId: String, completion: { })
++ getAllMessagesForConversations( for id: String, completion: { })
++ getPitcherGameLogsForUser(user: String, completion: { })
++ getBatterGameLogsForUser(user: String, completion: { })
++ addGameLogForUser( email: String, gameLog: PitcherGameLog)
++ addGameLogForUser( email: String, gameLog: PitcherGameLog)
+
+}
+
+
+class StorageManager {
++ shared: StorageManager
+- storage: FIRStorageReference
++ uploadProfilePic( data: Data,
+- filename: String, completion: {} )
++ uploadPhoto( data: Data,
+- filename: String, completion: {} )
++ downloadURL( path: String, completion: {} )
++ uploadProfilePic( data: Data, filename: String, completion: {} )
++ uploadMessageFile( fileUrl: URL, filename: String, completion: {} )
+}
+
+
+
+class ViewPostViewController{
+- post: Post
+- user: RHUser
+- comments: [[String:String]]?
+- likeButton: UIButton
+- commentButton: UIButton
+- likesLabel: UILabel
+- tableView: UITableView
+- player: AVPlayer?
+- playerLayer = AVPlayerLayer()
+- viewDidLoad()
+- viewDidLayoutSubviews()
+- init(post: Post, user:)
+- init(coder:)
+- fetchComments()
+- didTapLike()
+- toggleLike()
+- didTapComment()
+- zoom()
+- replay()
+- configureLikesLabel()
+- didTapLikesLabel()
+- tableView(_:numberOfRowsInSection:)
+- tableView(_:cellForRowAt:)
+- tableView(_:heightForRowAt:)
+
+}
+
+
+class FormTableViewCell {
++ dentifier: String
++ delegate: FormTableViewCellDelegate?
+- model:EditProfileFormModel?
+- formLabel:UILabel
+- field:UITextField
++ configure(with model: EditProfileFormModel)
+}
+
+class ContactInfoCell  {
++ identifier: String
+- model:ContactInfoModel?
+- valueLabel: UILabel
+- attributeLabel: UILabel
++ configure(with model: ContactInfoModel)
+}
+
+
+class EditProfileViewController {
+- models = [EditProfileFormModel]
+- user: RHUser
+- data: Data?
+- image = UIImage
+- tableView: UITableView
++ init(user: RHUser)
+- configureModels( )
+- presentCamera( )
+- presentPhotoPicker( )
+- didTapSave( )
+- didTapChangeProfilePicture( )
+- createTableHeaderView( )
+}
+
+
+class SettingsViewController{
+- user: RHUser
+- table:UITableView
+- data = [ [SettingCellModel] ]
++ init(user: RHUser)
+- configureModels( )
+- didTapEditProfile( )
+- didTapInviteFriends( )
+- didTapSaveOriginalPosts( )
+- openURL(type: SettingsURLType)
+- didTapLogOut( )
+}
+
+
+class ProfileViewController  {
+- collectionView: UICollectionView
+- user: RHUser
+- posts: [[String: Any]]?
+- fetchPosts( )
+- handleNotAuthenticated( )
+- didTapEditButton()
+}
+
+
+class ProfileHeader {
++ identifier: String
+- delegate: ProfileHeaderDelegate?
++ size: Int
+- user = RHUser
+- profilePhotoImageView: UIImageView
+- nameLabel: UILabel
+- positionLabel: UILabel
+- gradLabel: UILabel
+- bodyLabel: UILabel
+- handLabel: UILabel
+- followButton:UIButton
+- didTapFollowButton( )
+- addSubviews( )
++ configure(user: RHUser, hideFollowButton: Bool)
++ getHeight(isYourProfile: Bool)
+}
+
+
+class ContactInformationViewController {
+- user: RHUser
+- models: [ContactInfoModel]
+- tableView: UITableView
++ init(user: RHUser)
+- configureModels( )
+}
+
+
+class VideoCollectionViewCell {
++ identifier : String
+- url: URL?
+- postImageView: UIImageView
+- player: AVPlayer?
+- playerLayer = AVPlayerLayer
++ configure( url: URL)
+}
+
+class ProfileTabs {
++ identifier: String
++ delegate: ProfileTabsDelegate?
+- gridButton: UIButton
+- scoutButton: UIButton
+- didTapScoutButton( )
+- didTapInfoButton( )
+}
+
+class ProfileConnections {
++ identifier: String
++ delegate: ProfileConnectionsDelegate?
+- followersLabel: UILabel
+- followingLabel: UILabel
+- connectionsLabel: UILabel
+- didTapFollowing( )
+- didTapFollowers( )
+- didTapEndorsements( )
++ configure( email: String)
+}
+
+
+class ScoutViewController {
+- user: RHUser
+- scoutinfo: ScoutInfo
+- collectionView: UICollectionView
++ init(user: RHUser)
+- didTapEditButton( )
+}
+
+
+class ScoutCollectionviewCell{
++ identifier: String
+- valueLabel: UILabel
+- attributeLabel: UILabel
++ configure(email: String, attribute: ScoutAttributes)
+}
+
+
+class EditScoutInfoViewController  {
+- models: [EditProfileFormModel]
+- scoutInfo: ScoutInfo
+- data: Data?
+- configureModels( )
+- didTapSave( )
+}
+
+class ScoutInfoCollectionReusableView  {
++ identifier: String
++ delegate: ScoutInfoDelegate?
+- profilePhotoImageView
+- nameLabel
+- gameLogButton
+- didTapGameLog( )
+- addSubviews( )
++ configure(user: RHUser, hideFollowButton: Bool)
++ getHeight( )
+}
+
+
+class GameLogViewController  {
+- showPitcherGameLog: Bool
+- pitcherGameLogs: [PitcherGameLog]
+- batterGameLogs: [BatterGameLog]
+- opponentLabel: UILabel
+- dateLabel: UILabel
+- pitcherTableView:UITableView
+- batterTableView:UITableView
+- scrollView: UIScrollView
+- headerView: GameLogHeaderView
++ init(user: RHUser)
+- didTapAddButton( )
+}
+
+
+class PitcherGameLogTableViewCell  {
+- identifier: String
+- opponentLabel: UILabel
+- dateLabel: UILabel
+- inningsPitchedLabel: UILabel
+- hitsLabel: UILabel
+- runsLabel: UILabel
+- earnedRunsLabel: UILabel
+- strikeoutLabel: UILabel
+- walkLabel: UILabel
+- eraLabel: UILabel
++ configure( game: PitcherGameLog)
+}
+
+
+
+class AddGameLogViewController  {
+ + identifier: String
+- opponentLabel: UILabel
+- dateLabel: UILabel
+- hitsLabel: UILabel
+- runsLabel: UILabel
+- atBatsLabel: UILabel
+- strikeoutLabel: UILabel
+- walkLabel: UILabel
+- rbisLabel: UILabel
+- doublesLabel: UILabel
+- triplesLabel: UILabel
+- homeRunsLabel: UILabel
+- stolenBasesLabel: UILabel
+- averageLabel: UILabel
++ configure( game: BatterGameLog)
++ init( type: GameLog)
+- configureModels( )
+- didTapSave( )
+}
+
+
+
+
+class BatterGameLogTableViewCell  {
+ + identifier: String
+- opponentLabel: UILabel
+- dateLabel: UILabel
+- hitsLabel: UILabel
+- runsLabel: UILabel
+- atBatsLabel: UILabel
+- strikeoutLabel: UILabel
+- walkLabel: UILabel
+- rbisLabel: UILabel
+- doublesLabel: UILabel
+- triplesLabel: UILabel
+- homeRunsLabel: UILabel
+- stolenBasesLabel: UILabel
+- averageLabel: UILabel
++ configure( game: BatterGameLog)
+}
+
+
+
+class GameLogHeaderView {
++ delegate: GameLogHeaderViewDelegate
+- isBatting: Bool
+- battingLabel: UILabel
+- pitchingLabel: UILabel
+- button: UIButton
+- didTapSwitch( )
+}
+
+
+class UIViewController<<General>>
+
+UIViewController ^-- ProfileViewController
+UIViewController ^-- FeedViewController
+UIViewController ^-- SearchUsersViewController
+UIViewController ^-- ConversationsViewController
+
+
+SearchUsersViewController *-- SearchUsersTableViewCell 
+
+FeedViewController *-- FeedPostInfoCell 
+FeedViewController *-- FeedTableViewCell 
+FeedViewController *-- FeedHeaderCell 
+FeedViewController *-- FeedActionCell 
+
+FeedViewController --> ChatViewController 
+
+FeedViewController --> CommentsViewController
+CommentsViewController *-- CommentsCell
+CommentsViewController --> NewCommentViewController
+
+OtherUserViewController --> ListsViewController
+ListsViewController *-- SearchUsersTableViewCell
+
+ProfileViewController --> LoginViewController
+LoginViewController --> RegisterViewController
+LoginViewController ..> AuthManager
+AuthManager ..> DatabaseManager
+
+
+
+ProfileViewController *-- VideoCollectionViewCell 
+ViewPostViewController --> CommentsViewController
+ViewPostViewController --> ListsViewController
+ViewPostViewController ..> DatabaseManager
+
+ProfileViewController *-- ProfileHeader
+ProfileViewController *-- ProfileTabs
+ProfileViewController *-- ProfileConnections
+
+ProfileViewController --> SettingsViewController
+SettingsViewController --> EditProfileViewController
+EditProfileViewController *-- FormTableViewCell
+
+ProfileViewController --> NewPostViewController
+NewPostViewController --> AddCaptionViewController
+AddCaptionViewController ..> StorageManager 
+StorageManager ..> DatabaseManager
+
+ProfileViewController --> ContactInformationViewController
+ContactInformationViewController *-- ContactInfoCell
+
+ProfileViewController --> ScoutViewController
+ScoutViewController *-- ScoutInfoCollectionReusableView
+ScoutViewController *-- ScoutCollectionViewCell
+ScoutViewController --> EditScoutInfoViewController
+EditScoutInfoViewController *-- FormTableViewCell
+
+ScoutViewController --> GameLogViewController
+GameLogViewController *-- PitcherGameLogTableViewCell
+GameLogViewController *-- BatterGameLogTableViewCell
+GameLogViewController *-- GameLogHeaderView
+
+GameLogViewController --> AddGameLogViewController
+AddGameLogViewController *-- FormTableViewCell
+
+ConversationsViewController *-- ConversationsTableViewCell
+ConversationsViewController --> NewConversationViewController
+NewConversationTableViewCell *-- NewConversationTableViewCell
+ConversationsViewController --> ChatViewController 
+NewConversationViewController --> ChatViewController 
+
+
+
+FormTableViewCell ..> DatabaseManager
+ContactInfoCell ..> DatabaseManager
+EditProfileViewController ..> DatabaseManager
+SettingsViewController ..> DatabaseManager
+ProfileViewController ..> DatabaseManager
+ProfileHeader ..> DatabaseManager
+ContactInformationViewController ..> DatabaseManager
+VideoConllectionViewCell ..> DatabaseManager
+ProfileTabs ..> DatabaseManager
+ProfileConnections ..> DatabaseManager
+ScoutViewController ..> DatabaseManager
+ScoutCollectionviewCell ..> DatabaseManager
+EditScoutInfoViewController ..> DatabaseManager
+ScoutInfoCollectionReusableView ..> DatabaseManager
+FeedPostInfoCell ..> DatabaseManager
+FeedTableViewCell ..> DatabaseManager
+FeedHeaderView ..> DatabaseManager
+FeedHeaderCell ..> DatabaseManager
+FeedActionsCell ..> DatabaseManager
+FeedViewController ..> DatabaseManager
+SearchUsersViewController ..> DatabaseManager
+SearchUsersTableViewCell ..> DatabaseManager
+NewPostViewController ..> DatabaseManager
+StorageManager ..> DatabaseManager
+ConversationsViewController ..> DatabaseManager
+ConversationsTableViewCell ..> DatabaseManager
+NewConversationViewController ..> DatabaseManager
+NewConversationTableViewCell ..> DatabaseManager
+ChatViewController ..> DatabaseManager
+ListsViewController ..> DatabaseManager
+NewCommentViewController ..> DatabaseManager
+OtherUserViewController ..> DatabaseManager
+CommentsViewController ..> DatabaseManager
+GameLogViewController ..> DatabaseManager
+PitcherGameLogTableView ..> DatabaseManager
+GameLog ..> DatabaseManager
+AddGameLogViewController ..> DatabaseManager
+BatterGameLogTableViewCell ..> DatabaseManager
+GameLogHeaderView ..> DatabaseManager
+
+@enduml
