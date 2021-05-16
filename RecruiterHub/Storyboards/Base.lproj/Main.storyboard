@@ -40,7 +40,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qmd-Lj-NTG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1128" y="848"/>
+            <point key="canvasLocation" x="-2007" y="848"/>
         </scene>
         <!--Tab View Controller-->
         <scene sceneID="wCR-2R-wiM">
@@ -57,6 +57,7 @@
                         <segue destination="rFB-5o-ccT" kind="relationship" relationship="viewControllers" id="pij-U0-sFd"/>
                         <segue destination="YxZ-gL-WJi" kind="relationship" relationship="viewControllers" id="L3n-Zh-iCG"/>
                         <segue destination="jbF-1u-QMm" kind="relationship" relationship="viewControllers" id="b8A-A1-oEE"/>
+                        <segue destination="wzF-3E-ty7" kind="relationship" relationship="viewControllers" id="hft-eS-ykG"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="03a-tv-zW5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -77,7 +78,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="02B-zj-zje" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1009" y="1554"/>
+            <point key="canvasLocation" x="-1019" y="1554"/>
         </scene>
         <!--Feed View Controller-->
         <scene sceneID="klv-aK-VWZ">
@@ -93,7 +94,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Hh-Io-qPD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2038" y="1554"/>
+            <point key="canvasLocation" x="10" y="1554"/>
         </scene>
         <!--Feed-->
         <scene sceneID="X3H-6u-eGK">
@@ -110,7 +111,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hQ6-Jk-scz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2038" y="848"/>
+            <point key="canvasLocation" x="10" y="848"/>
         </scene>
         <!--Conversations View Controller-->
         <scene sceneID="RZP-k5-ehj">
@@ -126,7 +127,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2lT-ZC-Zlc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2952" y="1554"/>
+            <point key="canvasLocation" x="923" y="1554"/>
         </scene>
         <!--Search-->
         <scene sceneID="geY-e5-Wto">
@@ -145,7 +146,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QPx-MH-XtI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1010" y="848"/>
+            <point key="canvasLocation" x="-1019" y="848"/>
         </scene>
         <!--Chats-->
         <scene sceneID="e6s-TJ-MlT">
@@ -164,10 +165,46 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b7U-iC-gwE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2951" y="848"/>
+            <point key="canvasLocation" x="923" y="848"/>
+        </scene>
+        <!--Notification View Controller-->
+        <scene sceneID="JaR-HL-3wt">
+            <objects>
+                <viewController id="l8z-6h-q0g" customClass="NotificationViewController" customModule="RecruiterHub" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JPF-Xh-L01">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="N2K-Tf-DKO"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="6bF-hS-EQl"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y1E-dg-NQo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1868" y="1554"/>
+        </scene>
+        <!--Notifications-->
+        <scene sceneID="kCr-xL-yff">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="wzF-3E-ty7" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Notifications" image="bell" catalog="system" id="rME-Ur-8bz"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fGF-eE-ZJ5">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="l8z-6h-q0g" kind="relationship" relationship="rootViewController" id="K6t-3C-JxX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9D7-O2-hY0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1868" y="848"/>
         </scene>
     </scenes>
     <resources>
+        <image name="bell" catalog="system" width="128" height="124"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="message" catalog="system" width="128" height="113"/>
         <image name="newspaper" catalog="system" width="128" height="108"/>

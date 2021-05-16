@@ -33,6 +33,12 @@
 		E66C7AC4260FDB77007420D9 /* AddGameLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7AC3260FDB77007420D9 /* AddGameLogViewController.swift */; };
 		E66C7B9A26113592007420D9 /* BatterGameLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */; };
 		E67AED5425F5615100BE5114 /* EditScoutInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */; };
+		E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852152651A27700C177C9 /* NotificationViewController.swift */; };
+		E688521A2651A38B00C177C9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852192651A38B00C177C9 /* Models.swift */; };
+		E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */; };
+		E68852202651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */; };
+		E68852242651A4CF00C177C9 /* NoNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852232651A4CF00C177C9 /* NoNotificationsView.swift */; };
+		E68852282651A4FA00C177C9 /* UserFollowTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852272651A4FA00C177C9 /* UserFollowTableViewCell.swift */; };
 		E68B73E425B11CB600D15230 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B73E325B11CB600D15230 /* AppDelegate.swift */; };
 		E68B73E625B11CB600D15230 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B73E525B11CB600D15230 /* SceneDelegate.swift */; };
 		E68B73EB25B11CB600D15230 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E68B73E925B11CB600D15230 /* Main.storyboard */; };
@@ -108,6 +114,12 @@
 		E66C7AC3260FDB77007420D9 /* AddGameLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGameLogViewController.swift; sourceTree = "<group>"; };
 		E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatterGameLogTableViewCell.swift; sourceTree = "<group>"; };
 		E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScoutInfoViewController.swift; sourceTree = "<group>"; };
+		E68852152651A27700C177C9 /* NotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		E68852192651A38B00C177C9 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationLikeEventTableViewCell.swift; sourceTree = "<group>"; };
+		E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationFollowEventTableViewCell.swift; sourceTree = "<group>"; };
+		E68852232651A4CF00C177C9 /* NoNotificationsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoNotificationsView.swift; sourceTree = "<group>"; };
+		E68852272651A4FA00C177C9 /* UserFollowTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserFollowTableViewCell.swift; sourceTree = "<group>"; };
 		E68B73E025B11CB600D15230 /* RecruiterHub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecruiterHub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E68B73E325B11CB600D15230 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E68B73E525B11CB600D15230 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -193,8 +205,14 @@
 		E62C958125CB9FC60050A6DA /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				E68852272651A4FA00C177C9 /* UserFollowTableViewCell.swift */,
+				E68852232651A4CF00C177C9 /* NoNotificationsView.swift */,
+				E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */,
+				E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */,
+				E68852192651A38B00C177C9 /* Models.swift */,
 				E68B73EE25B11CBA00D15230 /* LaunchScreen.storyboard */,
 				E68B73E925B11CB600D15230 /* Main.storyboard */,
+				E68852152651A27700C177C9 /* NotificationViewController.swift */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -552,13 +570,16 @@
 				E69AF4E225F6DC7E00D366A8 /* ChatViewController.swift in Sources */,
 				E68B742D25B2502500D15230 /* DatabaseManager.swift in Sources */,
 				E68B743025B2527C00D15230 /* RegisterViewController.swift in Sources */,
+				E68852282651A4FA00C177C9 /* UserFollowTableViewCell.swift in Sources */,
 				E68B73E425B11CB600D15230 /* AppDelegate.swift in Sources */,
 				E6BED0D625F1F85E00A03720 /* ScoutViewController.swift in Sources */,
 				E69AF4DF25F6DBFF00D366A8 /* NewConversationTableViewCell.swift in Sources */,
+				E68852242651A4CF00C177C9 /* NoNotificationsView.swift in Sources */,
 				E665688125DB537300F04EFA /* ContactInfoCell.swift in Sources */,
 				E63660DD25C61CD9007A4EFD /* FeedTableViewCell.swift in Sources */,
 				E68B743D25BA4D3400D15230 /* VideoCollectionViewCell.swift in Sources */,
 				E61273BE25F17707008F24AB /* Keyboard.swift in Sources */,
+				E68852202651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift in Sources */,
 				E68B743625B2615B00D15230 /* RHUser.swift in Sources */,
 				E68B73FD25B11D2A00D15230 /* ProfileViewController.swift in Sources */,
 				E65802E8261BF47100903F4B /* GameLogHeaderView.swift in Sources */,
@@ -591,12 +612,15 @@
 				E63660E525C73C62007A4EFD /* ProfileTabs.swift in Sources */,
 				E68B742A25B24FE900D15230 /* AuthManager.swift in Sources */,
 				E62C957D25CB97670050A6DA /* FeedPostInfoCell.swift in Sources */,
+				E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */,
 				E69AF4DC25F6DA8B00D366A8 /* NewConversationViewController.swift in Sources */,
+				E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */,
 				E66C7B9A26113592007420D9 /* BatterGameLogTableViewCell.swift in Sources */,
 				E63660DA25C619A9007A4EFD /* FeedViewController.swift in Sources */,
 				E68B743325B25F7700D15230 /* StorageManager.swift in Sources */,
 				E68B743A25B7E1D400D15230 /* NewPostViewController.swift in Sources */,
 				E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */,
+				E688521A2651A38B00C177C9 /* Models.swift in Sources */,
 				E69AF4D925F6D8A400D366A8 /* ConversationsTableViewCell.swift in Sources */,
 				E69AF4BA25F5DBD200D366A8 /* AddCaptionViewController.swift in Sources */,
 			);
