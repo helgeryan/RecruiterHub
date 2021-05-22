@@ -75,15 +75,41 @@ class AddCaptionViewController: UIViewController {
                 return
             }
             
+            
             if caption == "Video Caption..." {
                 caption = ""
             }
 
             switch result {
             case .success(let urlString):
-                DatabaseManager.shared.insertNewPost(with: email, url: urlString, caption: caption)
-                //tiffany: change it to popToRootView
-                self?.navigationController?.popToRootViewController(animated: true)
+                guard let thumbnailUrl = URL(string: urlString.thumbnailUrl),
+                      let videoUrl = URL(string: urlString.videoUrl) else {
+                    return
+                }
+                
+                DatabaseManager.shared.getDataForUser(user: email, completion: { [weak self] user in
+                    
+                    guard let user = user else {
+                        return
+                    }
+                    
+                    let post = UserPost(postType: .video,
+                                        thumbnailImage: thumbnailUrl,
+                                        postURL: videoUrl,
+                                        caption: caption,
+                                        likeCount: [],
+                                        comments: [],
+                                        createdDate: Date(),
+                                        taggedUsers: [],
+                                        owner: user)
+                    
+                   
+                    
+                    DatabaseManager.shared.newPost(post: post)
+                    //tiffany: change it to popToRootView
+                    self?.navigationController?.popToRootViewController(animated: true)
+                })
+               break
             case .failure(let error):
                 print(error)
             }

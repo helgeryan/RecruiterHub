@@ -36,7 +36,6 @@ public enum UserPostType: String {
 
 /// Represents a user post
 public struct UserPost {
-    let identifier: String
     let postType: UserPostType
     let thumbnailImage: URL
     let postURL: URL // Either video url or full resolution photo

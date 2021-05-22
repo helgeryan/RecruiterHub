@@ -69,6 +69,7 @@ class ProfileViewController: UIViewController {
         handleNotAuthenticated()
         
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+            print("Email not set")
             return
         }
         
@@ -80,10 +81,14 @@ class ProfileViewController: UIViewController {
             guard let posts = posts else {
                 return
             }
-            
+
             if posts.count != self?.posts?.count {
                 self?.fetchPosts()
             }
+        })
+
+        DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: { [weak self] posts in
+
         })
     }
     
@@ -115,7 +120,7 @@ class ProfileViewController: UIViewController {
             return
         }
         email = DatabaseManager.safeEmail(emailAddress: email)
-        
+        print("Fetching Posts")
         DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self] fetchedPosts in
             self?.posts = fetchedPosts
             

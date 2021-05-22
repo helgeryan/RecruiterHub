@@ -235,19 +235,13 @@ public class DatabaseManager {
                 break
             }
             
-//            var comments: [[String:String]] = []
-//            comments.append([
-//                "email": email,
-//                "comment": comment
-//            ])
-            
             let newElement: [String : Any] = [
                 "url": post.postURL.absoluteString,
                 "thumbnail": post.thumbnailImage.absoluteString,
                 "likes": "",
                 "caption": caption,
                 "comments": "",
-                "date": post.createdDate,
+                "date": ChatViewController.dateFormatter.string(from: post.createdDate),
                 "type": type,
                 "taggedUsers": ""
             ]
@@ -331,6 +325,58 @@ public class DatabaseManager {
             }
 
             completion(posts)
+        })
+        completion(nil)
+    }
+    
+    public func getAllUserPostsNew( with email: String, completion: @escaping (([UserPost]?) -> Void)) {
+        database.child("\(email)/Posts").observe( .value, with: { snapshot in
+           
+            var userPosts: [UserPost] = []
+            guard let posts = snapshot.value as? [[String:Any]] else {
+                print("Failed to get all user posts")
+                completion(nil)
+                return
+            }
+            
+            let group = DispatchGroup()
+            group.enter()
+            for (index, post) in posts.enumerated() {
+                
+                var caption: String
+                if let postCaption = post["caption"] as? String {
+                    caption = postCaption
+                }
+                else {
+                    caption = ""
+                }
+                
+                guard let thumbnailString = post["thumbnail"] as? String,
+                    let thumbnail = URL(string: thumbnailString),
+                    let videoUrlString = post["url"] as? String,
+                        let videoUrl = URL(string: thumbnailString) else {
+                    return
+                }
+                
+                self.getDataForUser(user: email, completion: { user in
+                    guard let user = user else {
+                        print("Failed to get User")
+                        return
+                    }
+                    
+                    let temp = UserPost( postType: .video, thumbnailImage: thumbnail, postURL: videoUrl, caption: caption, likeCount: [], comments: [], createdDate: Date(), taggedUsers: [], owner: user)
+                    userPosts.append(temp)
+                    
+                    // If the array is complete leave the function
+                    if index == (posts.count - 1) {
+                        group.leave()
+                    }
+                })
+            }
+            // Wait until the Array is assembled
+            group.notify(queue: DispatchQueue.main, execute: {
+                completion(userPosts)
+            })
         })
         completion(nil)
     }
@@ -1482,8 +1528,7 @@ public class DatabaseManager {
                     var RHuser = RHUser()
                     RHuser.emailAddress = "ryanhelgeson14@gmail.com"
                     
-                    notificationType = UserNotificationType.like(post: UserPost(identifier: "ID",
-                                                                                postType: .video,
+                    notificationType = UserNotificationType.like(post: UserPost(postType: .video,
                                                                                 thumbnailImage: URL(string: url)!,
                                                                                 postURL: URL(string: url)!,
                                                                                 caption: "Caption",
@@ -1493,8 +1538,7 @@ public class DatabaseManager {
                                                                                 taggedUsers: [], owner: RHuser))
                 }
                 else {
-                    notificationType = UserNotificationType.like(post: UserPost(identifier: "ID",
-                                                                                postType: UserPostType(rawValue: "video")!,
+                    notificationType = UserNotificationType.like(post: UserPost(postType: UserPostType(rawValue: "video")!,
                                                                                 thumbnailImage: URL(string: "")!,
                                                                                 postURL: URL(string: "")!,
                                                                                 caption: "Caption",
