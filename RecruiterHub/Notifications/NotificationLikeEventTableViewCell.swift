@@ -9,6 +9,7 @@ import UIKit
 
 protocol NotificationLikeEventTableViewCellDelegate: AnyObject {
     func didTapRelatedPostButton(model: UserNotification)
+    func didTapProfilePic(model: UserNotification)
 }
 
 class NotificationLikeEventTableViewCell: UITableViewCell {
@@ -23,6 +24,7 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         imageView.backgroundColor = .tertiarySystemBackground
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -34,9 +36,9 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let postButton: UIButton = {
-        let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "TestImage"), for: .normal)
+    private let postButton: UIImageView = {
+        let button = UIImageView()
+        button.isUserInteractionEnabled = true
         return button
     }()
     
@@ -46,7 +48,12 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         contentView.addSubview(profileImageView)
         contentView.addSubview(label)
         contentView.addSubview(postButton)
-        postButton.addTarget(self, action: #selector(didTapPostButton), for: .touchUpInside)
+        
+        var gesture = UITapGestureRecognizer(target: self, action: #selector(didTapPostButton))
+        postButton.addGestureRecognizer(gesture)
+        
+        gesture = UITapGestureRecognizer(target: self, action: #selector(didTapProfilePic))
+        profileImageView.addGestureRecognizer(gesture)
     }
     
     @objc private func didTapPostButton() {
@@ -54,6 +61,13 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
             return
         }
         delegate?.didTapRelatedPostButton(model: model)
+    }
+    
+    @objc private func didTapProfilePic() {
+        guard let model = model else {
+            return
+        }
+        delegate?.didTapProfilePic(model: model)
     }
     
     required init?(coder: NSCoder) {
@@ -64,14 +78,31 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         self.model = model
         switch model.type {
         case .like(post: let post):
-            let thumbnail = post.thumbnailImage
-            guard !thumbnail.absoluteString.contains("google.com") else {
-                return
-            }
-            postButton.sd_setBackgroundImage(with: thumbnail, for: .normal, completed: nil)
+            print("made it here")
+            DatabaseManager.shared.getAllUserPosts(with: post.owner.safeEmail, completion: { [weak self] posts in
+                
+                guard let posts = posts else {
+                    return
+                }
+                let index = DatabaseManager.findPost(posts: posts, url: post.postURL.absoluteString)
+                
+                let post = posts[index]
+                
+                guard let thumbnail = post["thumbnail"] as? String,
+                      let url = URL(string: thumbnail) else {
+                    print("Failed")
+                    return
+                }
+                print("Set image")
+                DispatchQueue.main.async {
+                    self?.postButton.sd_setImage(with: url, completed: nil)
+                }
+            })
+            break
             
         case .follow:
             break
+
         }
         
         label.text = model.text
@@ -85,7 +116,7 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        postButton.setBackgroundImage(nil, for: .normal)
+        postButton.sd_setImage(with: nil, completed: nil)
         label.text = nil
         profileImageView.image = nil
     }

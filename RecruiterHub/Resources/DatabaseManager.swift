@@ -215,6 +215,68 @@ public class DatabaseManager {
         })
     }
     
+    public func newPost(post: UserPost) {
+        database.child("\(post.owner.safeEmail)/Posts").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            var caption: String
+            
+            if post.caption != nil {
+                caption = post.caption ?? ""
+            }
+            else {
+                caption = ""
+            }
+            var type: String
+            switch post.postType {
+            case .photo:
+                type = "photo"
+                break
+            case .video:
+                type = "video"
+                break
+            }
+            
+//            var comments: [[String:String]] = []
+//            comments.append([
+//                "email": email,
+//                "comment": comment
+//            ])
+            
+            let newElement: [String : Any] = [
+                "url": post.postURL.absoluteString,
+                "thumbnail": post.thumbnailImage.absoluteString,
+                "likes": "",
+                "caption": caption,
+                "comments": "",
+                "date": post.createdDate,
+                "type": type,
+                "taggedUsers": ""
+            ]
+            
+            if var usersCollection = snapshot.value as? [[String: Any]] {
+                print("Collection Exists")
+                usersCollection.append(newElement)
+                
+                self?.database.child("\(post.owner.safeEmail)/Posts").setValue(usersCollection, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+            else {
+                print("New Collection")
+                let newCollection: [[String: Any]] = [newElement]
+                
+                self?.database.child("\(post.owner.safeEmail)/Posts").setValue(newCollection, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+//            self?.insertFeedPost(email: email, url: url.videoUrl)
+            
+        })
+    }
+    
     private func insertFeedPost(email: String, url: String) {
         database.child("FeedPosts").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             if var feedCollection = snapshot.value as? [[String: String]] {
@@ -261,7 +323,7 @@ public class DatabaseManager {
     
     public func getAllUserPosts(with email: String, completion: @escaping (([[String:Any]]?) -> Void)) {
         database.child("\(email)/Posts").observe( .value, with: { snapshot in
-
+           
             guard let posts = snapshot.value as? [[String:Any]] else {
                 print("Failed to get all user posts")
                 completion(nil)
@@ -1380,6 +1442,91 @@ public class DatabaseManager {
                 })
             }
        })
+    }
+    
+    public func getUserNotifications( user: String, completion: @escaping (([UserNotification]?) -> Void))  {
+        database.child("\(user)/Notifications").observe( .value, with: { snapshot in
+            guard let notifications = snapshot.value as? [[String:String]] else {
+                print("Notifications don't exist")
+                completion(nil)
+                return
+            }
+            var array = [UserNotification]()
+            
+            let group = DispatchGroup()
+            group.enter()
+            
+            for (index, notification) in notifications.enumerated() {
+                
+                guard let email = notification["email"] else {
+                    print("Email Failed")
+                    return
+                }
+                
+                guard let text = notification["text"] else {
+                    print("Url Failed")
+                    return
+                }
+                
+                guard let type = notification["type"] else {
+                    print("Type failed")
+                    return
+                }
+                
+                guard let url = notification["postID"] else {
+                    print("Type failed")
+                    return
+                }
+                var notificationType: UserNotificationType
+                if type == "like" {
+                    var RHuser = RHUser()
+                    RHuser.emailAddress = "ryanhelgeson14@gmail.com"
+                    
+                    notificationType = UserNotificationType.like(post: UserPost(identifier: "ID",
+                                                                                postType: .video,
+                                                                                thumbnailImage: URL(string: url)!,
+                                                                                postURL: URL(string: url)!,
+                                                                                caption: "Caption",
+                                                                                likeCount: [],
+                                                                                comments: [],
+                                                                                createdDate: Date(),
+                                                                                taggedUsers: [], owner: RHuser))
+                }
+                else {
+                    notificationType = UserNotificationType.like(post: UserPost(identifier: "ID",
+                                                                                postType: UserPostType(rawValue: "video")!,
+                                                                                thumbnailImage: URL(string: "")!,
+                                                                                postURL: URL(string: "")!,
+                                                                                caption: "Caption",
+                                                                                likeCount: [],
+                                                                                comments: [],
+                                                                                createdDate: Date(),
+                                                                                taggedUsers: [], owner: RHUser()))
+                }
+                
+                self.getDataForUser(user: email, completion: { user in
+                    guard let user = user else {
+                        print("Failed to get User")
+                        return
+                    }
+                    
+                    let temp = UserNotification(type: notificationType, text: text, user: user)
+                    array.append(temp)
+                    
+                    // If the array is complete leave the function
+                    if index == (notifications.count - 1) {
+                        group.leave()
+                    }
+                })
+                
+                
+            }
+            
+            // Wait until the Array is assembled
+            group.notify(queue: DispatchQueue.main, execute: {
+                completion(array)
+            })
+        })
     }
 }
 

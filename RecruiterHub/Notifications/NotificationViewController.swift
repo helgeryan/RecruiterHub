@@ -12,7 +12,7 @@ enum UserNotificationType {
     case follow(state: FollowState)
 }
 
-struct UserNotification {
+public struct UserNotification {
     let type: UserNotificationType
     let text: String
     let user: RHUser
@@ -62,23 +62,41 @@ final class NotificationViewController: UIViewController {
     
     private func fetchNotifications() {
         
-        for x in 0...100 {
-            let user =  RHUser()
-            let post = UserPost(identifier: "",
-                                postType: .photo,
-                                thumbnailImage: URL(string: "http://www.google.com/")!,
-                                postURL: URL(string: "http://www.google.com/")!,
-                                caption: nil,
-                                likeCount: [],
-                                comments: [],
-                                createdDate: Date(),
-                                taggedUsers: [],
-                                owner: user)
-            let model = UserNotification(type:  x % 2 == 0 ? .like(post: post) : .follow(state:         .not_following),
-                                         text: "hello world",
-                                         user: user)
-            models.append(model)
+        guard let user = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
         }
+        
+        DatabaseManager.shared.getUserNotifications(user: user, completion: { [weak self] notifications in
+            
+            guard let notifications = notifications else {
+                print("Failed to get Notifications")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self?.models = notifications
+                self?.tableView.reloadData()
+            }
+            
+        })
+        
+//        for x in 0...100 {
+//            let user =  RHUser()
+//            let post = UserPost(identifier: "",
+//                                postType: .photo,
+//                                thumbnailImage: URL(string: "http://www.google.com/")!,
+//                                postURL: URL(string: "http://www.google.com/")!,
+//                                caption: nil,
+//                                likeCount: [],
+//                                comments: [],
+//                                createdDate: Date(),
+//                                taggedUsers: [],
+//                                owner: user)
+//            let model = UserNotification(type:  x % 2 == 0 ? .like(post: post) : .follow(state:         .not_following),
+//                                         text: "hello world",
+//                                         user: user)
+//            models.append(model)
+//        }
     }
     
     private func addNoNotificationsView() {
@@ -105,7 +123,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             return cell
         case .follow:
             let cell = tableView.dequeueReusableCell(withIdentifier: NotificationFollowEventTableViewCell.identifier, for: indexPath) as! NotificationFollowEventTableViewCell
-//            cell.configure(with: model)
+            cell.configure(with: model)
             cell.delegate = self
             return cell
         }
@@ -120,6 +138,19 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
     func didTapRelatedPostButton(model: UserNotification) {
         switch model.type {
         case .like(let post):
+            let vc = ViewPostViewController(post: Post(likes: [], title: "Ryan", url: post.postURL, number: 0), user: RHUser())
+            navigationController?.pushViewController(vc, animated: false)
+            break
+        case .follow(_):
+            fatalError("Dev Issue: Should never get called")
+        }
+    }
+    
+    func didTapProfilePic(model: UserNotification) {
+        switch model.type {
+        case .like(let post):
+            let vc = OtherUserViewController(user: model.user)
+            navigationController?.pushViewController(vc, animated: false)
             break
         case .follow(_):
             fatalError("Dev Issue: Should never get called")

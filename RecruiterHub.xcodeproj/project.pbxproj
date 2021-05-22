@@ -206,13 +206,9 @@
 			isa = PBXGroup;
 			children = (
 				E68852272651A4FA00C177C9 /* UserFollowTableViewCell.swift */,
-				E68852232651A4CF00C177C9 /* NoNotificationsView.swift */,
-				E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */,
-				E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */,
 				E68852192651A38B00C177C9 /* Models.swift */,
 				E68B73EE25B11CBA00D15230 /* LaunchScreen.storyboard */,
 				E68B73E925B11CB600D15230 /* Main.storyboard */,
-				E68852152651A27700C177C9 /* NotificationViewController.swift */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -239,6 +235,17 @@
 			path = "Game Logs";
 			sourceTree = "<group>";
 		};
+		E688522B26521FB200C177C9 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */,
+				E68852152651A27700C177C9 /* NotificationViewController.swift */,
+				E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */,
+				E68852232651A4CF00C177C9 /* NoNotificationsView.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
 		E68B73D725B11CB600D15230 = {
 			isa = PBXGroup;
 			children = (
@@ -262,6 +269,7 @@
 		E68B73E225B11CB600D15230 /* RecruiterHub */ = {
 			isa = PBXGroup;
 			children = (
+				E688522B26521FB200C177C9 /* Notifications */,
 				E68B73EC25B11CBA00D15230 /* Assets.xcassets */,
 				E68B741225B24CD500D15230 /* GoogleService-Info.plist */,
 				E68B73F125B11CBA00D15230 /* Info.plist */,

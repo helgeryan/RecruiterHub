@@ -53,8 +53,6 @@ struct CommentLike {
     let commentIdentifier: String
 }
 
-
-
 struct PostComment {
     let identifier: String
     let username: String
