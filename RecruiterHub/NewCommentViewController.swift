@@ -125,7 +125,7 @@ class NewCommentViewController: UIViewController {
             return
         }
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self]
+        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { [weak self]
             posts in
             guard let posts = posts else {
                 return
@@ -135,7 +135,7 @@ class NewCommentViewController: UIViewController {
                 return
             }
             
-            let index = DatabaseManager.findPost(posts: posts, url: postUrl)
+            let index = DatabaseManager.findPostNew(posts: posts, url: postUrl)
             if index >= posts.count {
                 return
             }
@@ -177,7 +177,7 @@ class NewCommentViewController: UIViewController {
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     @objc private func didTapDone() {
         textView.resignFirstResponder()
-        
+        print("Tapped Done")
         guard let newComment = textView.text else {
             return
         }
@@ -200,17 +200,17 @@ class NewCommentViewController: UIViewController {
         textView.text = "New Comment..."
         textView.textColor = .lightGray
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { posts in
+        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { posts in
             guard let posts = posts else {
                 return
             }
             
-            let index = DatabaseManager.findPost(posts: posts, url: url)
+            let index = DatabaseManager.findPostNew(posts: posts, url: url)
             if index >= posts.count {
                 return
             }
             
-            DatabaseManager.shared.newComment(email: email, commenterEmail: currentEmail, comment: newComment, index: index )
+            DatabaseManager.shared.newComment(email: email, postComment: newElement, index: index )
         })
     }
 }

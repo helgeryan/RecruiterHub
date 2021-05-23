@@ -703,8 +703,37 @@ public class DatabaseManager {
         })
     }
     
-    public func getComments(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
+    public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
         database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { snapshot in
+            
+            var postComments: [PostComment] = []
+            guard let comments = snapshot.value as? [[String:String]] else {
+                print("Failed to get comments")
+                completion(nil)
+                return
+            }
+            
+            for (index, comment) in comments.enumerated() {
+                
+                guard let email = comment["email"],
+                      let text = comment["comment"]
+                    else {
+                    completion(nil)
+                    return
+                }
+                
+                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                
+                postComments.append(newElement)
+            }
+
+            completion(postComments)
+        })
+        completion(nil)
+    }
+    
+    public func getComments(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
+        database.child("\(email)/Posts/\(index)/comments").observe(.value, with: { snapshot in
             
             var postComments: [PostComment] = []
             guard let comments = snapshot.value as? [[String:String]] else {
@@ -746,22 +775,27 @@ public class DatabaseManager {
         completion(nil)
     }
     
-    public func newComment( email: String, commenterEmail: String, comment: String, index: Int) {
+    public func newComment( email: String, postComment: PostComment, index: Int) {
         database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
-            guard var comments = snapshot.value as? [[String:String]] else {
-                print("Failed to get comments")
-                return
-            }
-            
             let newElement = [
-                "email": commenterEmail,
-                "comment": comment
+                "email": postComment.email,
+                "comment": postComment.text,
+                "date": ChatViewController.dateFormatter.string(from: Date())
             ]
             
-            comments.append(newElement)
-            
-            self?.database.child("\(email)/Posts/\(index)/comments").setValue(comments)
+            // Comments exist append the comment
+            if var comments = snapshot.value as? [[String:String]] {
+                
+                comments.append(newElement)
+                
+                self?.database.child("\(email)/Posts/\(index)/comments").setValue(comments)
+            }
+            else {
+                let newCommentsCollection = [newElement]
+                
+                self?.database.child("\(email)/Posts/\(index)/comments").setValue(newCommentsCollection)
+            }
         })
     }
     
