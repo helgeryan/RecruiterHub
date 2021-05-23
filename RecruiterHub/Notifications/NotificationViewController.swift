@@ -138,7 +138,7 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
     func didTapRelatedPostButton(model: UserNotification) {
         switch model.type {
         case .like(let post):
-            let vc = ViewPostViewController(post: Post(likes: [], title: "Ryan", url: post.postURL, number: 0), user: RHUser())
+            let vc = ViewPostViewController(post: post, user: RHUser(), postNumber: 0)
             navigationController?.pushViewController(vc, animated: false)
             break
         case .follow(_):

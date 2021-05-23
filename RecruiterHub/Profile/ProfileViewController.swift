@@ -18,7 +18,7 @@ class ProfileViewController: UIViewController {
     
     private var user: RHUser = RHUser()
     
-    private var posts: [[String:Any]]?
+    private var posts: [UserPost]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,20 +76,17 @@ class ProfileViewController: UIViewController {
         if currentEmail != user.safeEmail {
             fetchPosts()
         }
-    
-        DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
-            guard let posts = posts else {
-                return
-            }
+        else {
+            DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: { [weak self] posts in
+                guard let posts = posts else {
+                    return
+                }
 
-            if posts.count != self?.posts?.count {
-                self?.fetchPosts()
-            }
-        })
-
-        DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: { [weak self] posts in
-
-        })
+                if posts.count != self?.posts?.count {
+                    self?.fetchPosts()
+                }
+            })
+        }
     }
     
     func handleNotAuthenticated() {
@@ -121,7 +118,7 @@ class ProfileViewController: UIViewController {
         }
         email = DatabaseManager.safeEmail(emailAddress: email)
         print("Fetching Posts")
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self] fetchedPosts in
+        DatabaseManager.shared.getAllUserPostsNew(with: email, completion: { [weak self] fetchedPosts in
             self?.posts = fetchedPosts
             
             DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
@@ -149,23 +146,18 @@ extension ProfileViewController: UICollectionViewDelegate {
         guard let posts = posts else {
             return
         }
-        guard let url = URL(string: posts[posts.count - indexPath.row - 1]["url"]! as! String) as URL? else {
-            return
-        }
+        
+        let model = posts[posts.count - indexPath.row - 1]
+        
         var postLikes :[PostLike] = []
-        if let likes = posts[posts.count - indexPath.row - 1]["likes"] as? [[String:String]] {
-            for like in likes {
-                let postLike = PostLike(username: like["username"]!, email: like["email"]!, name: like["name"]!)
-                postLikes.append(postLike)
-            }
-        }
-        else {
-            postLikes = []
-        }
         
-        let post = Post(likes: postLikes, title: "Post", url: url, number: (posts.count - indexPath.row - 1))
+        for like in model.likeCount {
+            let postLike = PostLike(username: like.username, email: like.email, name: like.name)
+            postLikes.append(postLike)
+        }
+        print(model.postURL)
         
-        let vc = ViewPostViewController(post: post, user: user)
+        let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
         
         vc.title = "Post"
         vc.navigationItem.largeTitleDisplayMode = .never
@@ -190,7 +182,7 @@ extension ProfileViewController: UICollectionViewDataSource {
         guard let posts = posts else {
             return UICollectionViewCell()
         }
-        let urlString = posts[posts.count - indexPath.row - 1]["thumbnail"]!
+        let urlString = posts[posts.count - indexPath.row - 1].thumbnailImage.absoluteString
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
         cell.configure(with: URL(string: urlString as! String)!)
         return cell

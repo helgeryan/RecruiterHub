@@ -11,8 +11,9 @@ import AVFoundation
 
 class ViewPostViewController: UIViewController {
 
-    private var post: Post
+    private var post: UserPost
     private let user: RHUser
+    private let postNumber: Int
     
     private var comments: [[String:String]]?
     
@@ -69,8 +70,8 @@ class ViewPostViewController: UIViewController {
         // Add like button function call
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
         commentButton.addTarget(self, action: #selector(didTapComment), for: .touchUpInside)
-
-        let asset = AVAsset(url: post.url)
+        
+        let asset = AVAsset(url: post.postURL)
         let playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
         
@@ -124,9 +125,10 @@ class ViewPostViewController: UIViewController {
     }
     
     /// ViewPostViewController initializer, sets the post, user, and postnumber
-    init(post: Post, user: RHUser) {
+    init(post: UserPost, user: RHUser, postNumber: Int) {
         self.post = post
         self.user = user
+        self.postNumber = postNumber
         super.init(nibName: nil, bundle: nil)
         self.title = title
         
@@ -143,17 +145,17 @@ class ViewPostViewController: UIViewController {
             return
         }
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self]
+        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { [weak self]
             posts in
             guard let posts = posts else {
                 return
             }
 
-            guard let url = self?.post.url.absoluteString else {
+            guard let url = self?.post.postURL.absoluteString else {
                 return
             }
             
-            let index = DatabaseManager.findPost(posts: posts, url: url)
+            let index = DatabaseManager.findPostNew(posts: posts, url: url)
             
             DatabaseManager.shared.getComments(with: email, index: index, completion: { [weak self] comments in
                 guard let comments = comments else {
@@ -185,62 +187,14 @@ class ViewPostViewController: UIViewController {
         let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
         
         // Update the like status
-        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, postNumber: post.number, completion: { [weak self] in
+        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, postNumber: postNumber, completion: { [weak self] in
             
-            guard let postEmail = self?.user.safeEmail else {
-                print("Failed to get User Defaults")
-                return
-            }
-            
-            DatabaseManager.shared.getAllUserPosts(with: postEmail, completion: {
-                [weak self] posts in
-                guard let posts = posts else {
-                    return
-                }
-                
-                guard let url = self?.post.url.absoluteString else {
-                    return
-                }
-                
-                let index = DatabaseManager.findPost(posts: posts, url: url)
-                
-                if posts.count <= index {
-                    print("Post doesnt exist")
-                    return
-                }
-                
-                DatabaseManager.shared.getLikes(with: postEmail, index: index, completion: {
-                    [weak self] likes in
-                    if let likes = likes {
-                        DispatchQueue.main.async {
-                            self?.likesLabel.text = "\(likes.count) likes"
-                        }
-                    }
-                })
-            })
         })
-        
-        toggleLike()
-    }
-    
-    private func toggleLike() {
-        if likeButton.tintColor.accessibilityName == UIColor.label.accessibilityName {
-            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-            let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-            self.likeButton.setImage(image, for: .normal)
-            self.likeButton.tintColor = .red
-        }
-        else {
-            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-            let image = UIImage(systemName: "heart", withConfiguration: config)
-            self.likeButton.setImage(image, for: .normal)
-            self.likeButton.tintColor = .label
-        }
     }
     
     // Function that is called when the like button is tapped
     @objc private func didTapComment() {
-        let newCommentVC = NewCommentViewController(email: user.safeEmail, url: post.url.absoluteString)
+        let newCommentVC = NewCommentViewController(email: user.safeEmail, url: post.postURL.absoluteString)
         newCommentVC.title = "Add Comment"
         navigationController?.pushViewController(newCommentVC, animated: true)
     }
@@ -262,21 +216,21 @@ class ViewPostViewController: UIViewController {
     
     // Configure the like button
     private func configureLikesLabel() {
-        let numberOfLikes = post.likes.count
+        let numberOfLikes = post.likeCount.count
         likesLabel.text = "\(numberOfLikes) likes"
 
         
-        DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: {
+        DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: {
             [weak self] posts in
             guard let posts = posts else {
                 return
             }
             
-            guard let url = self?.post.url.absoluteString else {
+            guard let url = self?.post.postURL.absoluteString else {
                 return
             }
             
-            let index = DatabaseManager.findPost(posts: posts, url: url)
+            let index = DatabaseManager.findPostNew(posts: posts, url: url)
             
             if posts.count <= index {
                 print("Post doesnt exist")
@@ -297,12 +251,28 @@ class ViewPostViewController: UIViewController {
             DatabaseManager.shared.getLikes(with: postEmail, index: index, completion: {
                 [weak self] likes in
                 guard let likes = likes else {
+                    DispatchQueue.main.async {
+                        self?.likesLabel.text = "0 likes"
+                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                        let image = UIImage(systemName: "heart", withConfiguration: config)
+                        self?.likeButton.setImage(image, for: .normal)
+                        self?.likeButton.tintColor = .label
+                    }
                     return
                 }
                 
+                DispatchQueue.main.async {
+                    self?.likesLabel.text = "\(likes.count) likes"
+                }
+
                 for like in likes {
                     if like["email"] == currentEmail {
-                        self?.toggleLike()
+                        DispatchQueue.main.async {
+                            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                            let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                            self?.likeButton.setImage(image, for: .normal)
+                            self?.likeButton.tintColor = .red
+                        }
                     }
                 }
             })
@@ -312,8 +282,8 @@ class ViewPostViewController: UIViewController {
     // Callback for like label interaction
     @objc private func didTapLikesLabel() {
         var likes: [[String:String]] = []
-        for like in post.likes {
-            let newElement = ["email":like.email]
+        for like in post.likeCount {
+            let newElement = ["email": like.email]
             likes.append(newElement)
         }
         let vc = ListsViewController(data: likes)

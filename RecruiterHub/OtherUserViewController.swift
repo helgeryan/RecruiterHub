@@ -100,9 +100,9 @@ extension OtherUserViewController: UICollectionViewDelegate {
         
         let post = Post(likes: postLikes, title: "Post", url: url, number: (posts.count - indexPath.row - 1))
         
-        let vc = ViewPostViewController(post: post, user: user)
-        vc.title = "Post"
-        navigationController?.pushViewController(vc, animated: false)
+//        let vc = ViewPostViewController(post: , user: user)
+//        vc.title = "Post"
+//        navigationController?.pushViewController(vc, animated: false)
     }
 }
 

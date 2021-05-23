@@ -54,6 +54,23 @@ public class DatabaseManager {
         return index
     }
     
+    static func findPostNew( posts: [UserPost], url: String) -> Int {
+        
+        var index = 0
+        for post in posts {
+            
+            if post.postURL.absoluteString == url {
+                print("Found url")
+                break
+            }
+            else {
+                index += 1
+            }
+        }
+        
+        return index
+    }
+    
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
@@ -330,6 +347,7 @@ public class DatabaseManager {
     }
     
     public func getAllUserPostsNew( with email: String, completion: @escaping (([UserPost]?) -> Void)) {
+        
         database.child("\(email)/Posts").observe( .value, with: { snapshot in
            
             var userPosts: [UserPost] = []
@@ -354,7 +372,60 @@ public class DatabaseManager {
                 guard let thumbnailString = post["thumbnail"] as? String,
                     let thumbnail = URL(string: thumbnailString),
                     let videoUrlString = post["url"] as? String,
-                        let videoUrl = URL(string: thumbnailString) else {
+                        let videoUrl = URL(string: videoUrlString) else {
+                    return
+                }
+                
+                self.getDataForUser(user: email, completion: { user in
+                    guard let user = user else {
+                        print("Failed to get User")
+                        return
+                    }
+                    
+                    let temp = UserPost( postType: .video, thumbnailImage: thumbnail, postURL: videoUrl, caption: caption, likeCount: [], comments: [], createdDate: Date(), taggedUsers: [], owner: user)
+                    userPosts.append(temp)
+                    
+                    // If the array is complete leave the function
+                    if index == (posts.count - 1) {
+                        group.leave()
+                    }
+                })
+            }
+            // Wait until the Array is assembled
+            group.notify(queue: DispatchQueue.main, execute: {
+                completion(userPosts)
+            })
+        })
+        completion(nil)
+    }
+    
+    public func getAllUserPostsSingleEvent( with email: String, completion: @escaping (([UserPost]?) -> Void)) {
+        
+        database.child("\(email)/Posts").observeSingleEvent( of: .value, with: { snapshot in
+           
+            var userPosts: [UserPost] = []
+            guard let posts = snapshot.value as? [[String:Any]] else {
+                print("Failed to get all user posts")
+                completion(nil)
+                return
+            }
+            
+            let group = DispatchGroup()
+            group.enter()
+            for (index, post) in posts.enumerated() {
+                
+                var caption: String
+                if let postCaption = post["caption"] as? String {
+                    caption = postCaption
+                }
+                else {
+                    caption = ""
+                }
+                
+                guard let thumbnailString = post["thumbnail"] as? String,
+                    let thumbnail = URL(string: thumbnailString),
+                    let videoUrlString = post["url"] as? String,
+                        let videoUrl = URL(string: videoUrlString) else {
                     return
                 }
                 
@@ -647,7 +718,7 @@ public class DatabaseManager {
     }
     
     public func getLikes(with email: String, index: Int, completion: @escaping (([[String:String]]?) -> Void)) {
-        database.child("\(email)/Posts/\(index)/likes").observeSingleEvent(of: .value, with: { snapshot in
+        database.child("\(email)/Posts/\(index)/likes").observe( .value, with: { snapshot in
             
             guard let likes = snapshot.value as? [[String:String]] else {
                 print("Failed to get likes")

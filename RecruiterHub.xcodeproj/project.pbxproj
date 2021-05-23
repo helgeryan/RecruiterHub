@@ -206,7 +206,6 @@
 			isa = PBXGroup;
 			children = (
 				E68852272651A4FA00C177C9 /* UserFollowTableViewCell.swift */,
-				E68852192651A38B00C177C9 /* Models.swift */,
 				E68B73EE25B11CBA00D15230 /* LaunchScreen.storyboard */,
 				E68B73E925B11CB600D15230 /* Main.storyboard */,
 			);
@@ -312,6 +311,7 @@
 		E68B740325B123C800D15230 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E68852192651A38B00C177C9 /* Models.swift */,
 				E68B73FF25B120C100D15230 /* ViewExtension.swift */,
 				E68B73E525B11CB600D15230 /* SceneDelegate.swift */,
 				E68B73E325B11CB600D15230 /* AppDelegate.swift */,
