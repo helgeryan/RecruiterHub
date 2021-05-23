@@ -15,7 +15,7 @@ class NewCommentViewController: UIViewController {
     
     private let url: String
     
-    private var comments: [[String:String]]?
+    private var comments: [PostComment]?
     
     private let textView: UITextView = {
         let textView = UITextView()
@@ -191,10 +191,7 @@ class NewCommentViewController: UIViewController {
             return
         }
         
-        let newElement = [
-            "email": currentEmail,
-            "comment": newComment
-        ]
+        let newElement = PostComment(identifier: 0, email: currentEmail, text: newComment, createdDate: Date(), likes: [])
         
         comments?.append(newElement)
         
@@ -235,21 +232,19 @@ extension NewCommentViewController: UITableViewDelegate, UITableViewDataSource {
         let model = comments[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
         
-        guard let email = model["email"] else {
-            return UITableViewCell()
-        }
-        
-        guard let comment = model["comment"] else {
-            return UITableViewCell()
-        }
-        
-        cell.configure(email: email, comment: comment)
+        cell.configure(email: model.email, comment: model.text)
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        guard let comments = comments else {
+            return 20
+        }
+        
+        let model = comments[indexPath.row]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
-        label.text = comments![indexPath.row]["comment"]!
+        label.text = model.text
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false
         label.lineBreakMode = .byWordWrapping

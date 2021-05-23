@@ -9,7 +9,7 @@ import UIKit
 
 class CommentsViewController: UIViewController {
 
-    private var comments: [[String: String]]?
+    private var comments: [PostComment]?
     
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -87,17 +87,15 @@ extension CommentsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
 
         guard let comments = comments else {
             return UITableViewCell()
         }
+        let model = comments[indexPath.row]
         
-        guard let email = comments[indexPath.row]["email"] else {
-            return UITableViewCell()
-        }
-        
-        cell.configure(email: email, comment: comments[indexPath.row]["comment"]!)
+        cell.configure(email: model.email, comment: model.text)
         return cell
     }
     
@@ -107,8 +105,12 @@ extension CommentsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let comments = comments else {
+            return 20
+        }
+        let model = comments[indexPath.row]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
-        label.text = comments![indexPath.row]["comment"]!
+        label.text = model.text
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false
         label.lineBreakMode = .byWordWrapping

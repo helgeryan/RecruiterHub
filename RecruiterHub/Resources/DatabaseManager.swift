@@ -703,16 +703,31 @@ public class DatabaseManager {
         })
     }
     
-    public func getComments(with email: String, index: Int, completion: @escaping (([[String:String]]?) -> Void)) {
+    public func getComments(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
         database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { snapshot in
             
+            var postComments: [PostComment] = []
             guard let comments = snapshot.value as? [[String:String]] else {
                 print("Failed to get comments")
                 completion(nil)
                 return
             }
+            
+            for (index, comment) in comments.enumerated() {
+                
+                guard let email = comment["email"],
+                      let text = comment["comment"]
+                    else {
+                    completion(nil)
+                    return
+                }
+                
+                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                
+                postComments.append(newElement)
+            }
 
-            completion(comments)
+            completion(postComments)
         })
         completion(nil)
     }

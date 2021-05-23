@@ -52,9 +52,9 @@ struct CommentLike {
     let commentIdentifier: String
 }
 
-struct PostComment {
-    let identifier: String
-    let username: String
+public struct PostComment {
+    let identifier: Int
+    let email: String
     let text: String
     let createdDate: Date
     let likes: [CommentLike]

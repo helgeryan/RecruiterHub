@@ -54,7 +54,8 @@ class FeedPostInfoCell: UITableViewCell {
             }
             
             DatabaseManager.shared.getComments(with: email, index: index, completion: { comments in
-                if comments != nil {
+                if let comments = comments {
+                    
                     DatabaseManager.shared.getDataForUser(user: email, completion: {
                         user in
                         
@@ -66,16 +67,13 @@ class FeedPostInfoCell: UITableViewCell {
                             return
                         }
                         
-                        guard let normalText = comments?[0]["comment"] else {
-                            return
-                        }
                         boldText = boldText + " "
                         let fontSize = 14.0
                         let attrs = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: CGFloat(fontSize)), NSAttributedString.Key.foregroundColor : UIColor.systemBlue]
                         let attributedString = NSMutableAttributedString(string:boldText, attributes:attrs)
                         
                         let attrsnormal = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: CGFloat(fontSize))]
-                        let normalString = NSMutableAttributedString(string:normalText, attributes: attrsnormal)
+                        let normalString = NSMutableAttributedString(string:comments[0].text, attributes: attrsnormal)
                         
                         attributedString.append(normalString)
                         self?.commentLabel.attributedText = attributedString

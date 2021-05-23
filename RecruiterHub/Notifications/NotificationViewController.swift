@@ -148,7 +148,7 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
     
     func didTapProfilePic(model: UserNotification) {
         switch model.type {
-        case .like(let post):
+        case .like(_):
             let vc = OtherUserViewController(user: model.user)
             navigationController?.pushViewController(vc, animated: false)
             break
