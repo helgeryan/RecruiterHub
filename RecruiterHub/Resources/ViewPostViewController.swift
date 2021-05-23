@@ -144,30 +144,17 @@ class ViewPostViewController: UIViewController {
         guard let email = user.safeEmail as String? else {
             return
         }
-        
-        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { [weak self]
-            posts in
-            guard let posts = posts else {
-                return
-            }
-
-            guard let url = self?.post.postURL.absoluteString else {
+ 
+        DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
+            
+            guard let comments = comments else {
                 return
             }
             
-            let index = DatabaseManager.findPostNew(posts: posts, url: url)
-            
-            DatabaseManager.shared.getComments(with: email, index: index, completion: { [weak self] comments in
-                
-                guard let comments = comments else {
-                    return
-                }
-                
-                self?.comments = comments
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            })
+            self?.comments = comments
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
         })
     }
     
@@ -188,9 +175,7 @@ class ViewPostViewController: UIViewController {
         let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
         
         // Update the like status
-        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, postNumber: postNumber, completion: { [weak self] in
-            
-        })
+        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, postNumber: postNumber, completion: { })
     }
     
     // Function that is called when the like button is tapped
@@ -219,64 +204,46 @@ class ViewPostViewController: UIViewController {
     private func configureLikesLabel() {
         let numberOfLikes = post.likeCount.count
         likesLabel.text = "\(numberOfLikes) likes"
-
         
-        DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: {
-            [weak self] posts in
-            guard let posts = posts else {
-                return
-            }
-            
-            guard let url = self?.post.postURL.absoluteString else {
-                return
-            }
-            
-            let index = DatabaseManager.findPostNew(posts: posts, url: url)
-            
-            if posts.count <= index {
-                print("Post doesnt exist")
-                return
-            }
-            
-            guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
-            else {
-                print("Failed to get User Defaults")
-                return
-            }
-            
-            guard let postEmail = self?.user.safeEmail else {
-                print("Failed to get User Defaults")
-                return
-            }
-            
-            DatabaseManager.shared.getLikes(with: postEmail, index: index, completion: {
-                [weak self] likes in
-                guard let likes = likes else {
-                    DispatchQueue.main.async {
-                        self?.likesLabel.text = "0 likes"
-                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-                        let image = UIImage(systemName: "heart", withConfiguration: config)
-                        self?.likeButton.setImage(image, for: .normal)
-                        self?.likeButton.tintColor = .label
-                    }
-                    return
-                }
-                
+        guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
+        else {
+            print("Failed to get User Defaults")
+            return
+        }
+        
+        DatabaseManager.shared.getLikes(with: post.owner.safeEmail, index: post.identifier, completion: {
+            [weak self] likes in
+            guard let likes = likes else {
                 DispatchQueue.main.async {
-                    self?.likesLabel.text = "\(likes.count) likes"
+                    self?.likesLabel.text = "0 likes"
+                    let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                    let image = UIImage(systemName: "heart", withConfiguration: config)
+                    self?.likeButton.setImage(image, for: .normal)
+                    self?.likeButton.tintColor = .label
                 }
-
-                for like in likes {
-                    if like["email"] == currentEmail {
-                        DispatchQueue.main.async {
-                            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-                            let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-                            self?.likeButton.setImage(image, for: .normal)
-                            self?.likeButton.tintColor = .red
-                        }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self?.likesLabel.text = "\(likes.count) likes"
+            }
+            
+            for like in likes {
+                if like["email"] == currentEmail {
+                    DispatchQueue.main.async {
+                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                        let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                        self?.likeButton.setImage(image, for: .normal)
+                        self?.likeButton.tintColor = .red
+                        return
                     }
-                }
-            })
+                } // end if
+            } // end for
+            
+            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+            let image = UIImage(systemName: "heart", withConfiguration: config)
+            self?.likeButton.setImage(image, for: .normal)
+            self?.likeButton.tintColor = .label
         })
     }
     

@@ -77,7 +77,7 @@ class ProfileViewController: UIViewController {
             fetchPosts()
         }
         else {
-            DatabaseManager.shared.getAllUserPostsNew(with: user.safeEmail, completion: { [weak self] posts in
+            DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
                 guard let posts = posts else {
                     return
                 }
@@ -118,7 +118,7 @@ class ProfileViewController: UIViewController {
         }
         email = DatabaseManager.safeEmail(emailAddress: email)
         print("Fetching Posts")
-        DatabaseManager.shared.getAllUserPostsNew(with: email, completion: { [weak self] fetchedPosts in
+        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self] fetchedPosts in
             self?.posts = fetchedPosts
             
             DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {

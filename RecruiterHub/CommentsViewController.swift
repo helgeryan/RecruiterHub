@@ -44,19 +44,13 @@ class CommentsViewController: UIViewController {
     }
     
     public func configure(email: String, url: String) {
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self]
-            posts in
-            guard let posts = posts else {
+        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
+            post in
+            guard let post = post else {
                 return
             }
-            
-            let index = DatabaseManager.findPost(posts: posts, url: url)
 
-            if index >= posts.count {
-                return
-            }
-            
-            DatabaseManager.shared.getComments(with: email, index: index, completion: {
+            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: {
                 [weak self] comments in
                 guard let comments = comments else {
                     return

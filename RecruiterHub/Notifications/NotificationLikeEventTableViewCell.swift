@@ -78,24 +78,15 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         self.model = model
         switch model.type {
         case .like(post: let post):
-            print("made it here")
-            DatabaseManager.shared.getAllUserPosts(with: post.owner.safeEmail, completion: { [weak self] posts in
-                
-                guard let posts = posts else {
+    
+            DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
+                guard let post = post else {
                     return
                 }
-                let index = DatabaseManager.findPost(posts: posts, url: post.postURL.absoluteString)
                 
-                let post = posts[index]
-                
-                guard let thumbnail = post["thumbnail"] as? String,
-                      let url = URL(string: thumbnail) else {
-                    print("Failed")
-                    return
-                }
                 print("Set image")
                 DispatchQueue.main.async {
-                    self?.postButton.sd_setImage(with: url, completed: nil)
+                    self?.postButton.sd_setImage(with: post.thumbnailImage, completed: nil)
                 }
             })
             break

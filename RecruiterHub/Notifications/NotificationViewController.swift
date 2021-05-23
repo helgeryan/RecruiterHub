@@ -138,8 +138,13 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
     func didTapRelatedPostButton(model: UserNotification) {
         switch model.type {
         case .like(let post):
-            let vc = ViewPostViewController(post: post, user: RHUser(), postNumber: 0)
-            navigationController?.pushViewController(vc, animated: false)
+            DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
+                guard let post = post else {
+                    return
+                }
+                let vc = ViewPostViewController(post: post, user: post.owner, postNumber: post.identifier)
+                self?.navigationController?.pushViewController(vc, animated: false)
+            })
             break
         case .follow(_):
             fatalError("Dev Issue: Should never get called")

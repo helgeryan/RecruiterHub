@@ -21,6 +21,8 @@ class FeedActionsCell: UITableViewCell {
     
     private var url: String?
     
+    private var post: UserPost?
+    
     private var email: String?
     
     private let commentButton: UIButton = {
@@ -67,46 +69,28 @@ class FeedActionsCell: UITableViewCell {
     }
     
     @objc private func didTapLikeButton() {
-        guard let email = email else {
+        guard let email = email,
+              let url = url else {
             return
         }
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: {
-            [weak self] posts in
-            guard let posts = posts else {
-                return
-            }
-            var index = 0
-            for post in posts {
-                if post["url"] as? String == self?.url {
-                    break
-                }
-                index += 1
-            }
-            
-            if posts.count <= index {
-                print("Post doesnt exist")
-                return
-            }
-            
-            guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String,
-                  let currentUsername = UserDefaults.standard.value(forKey: "username") as? String,
-                  let currentName = UserDefaults.standard.value(forKey: "name") as? String
-            else {
-                print("Failed to get User Defaults")
-                return
-            }
-            
-            // Create Post Like
-            let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
-            
-            DatabaseManager.shared.like(with: email, likerInfo: postLike, postNumber: index, completion: {
-                
-            })
-            
-            self?.toggleLike()
+        guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String,
+              let currentUsername = UserDefaults.standard.value(forKey: "username") as? String,
+              let currentName = UserDefaults.standard.value(forKey: "name") as? String,
+              let post = post
+        else {
+            print("Failed to get User Defaults")
+            return
+        }
+        
+        // Create Post Like
+        let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
+        
+        DatabaseManager.shared.like(with: email, likerInfo: postLike, postNumber: post.identifier, completion: {
         })
-    
+        
+        
+        
         delegate?.didTapLikeButton()
     }
     
@@ -213,37 +197,37 @@ class FeedActionsCell: UITableViewCell {
         url = urlString
         self.email = email
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: {
-            [weak self] posts in
-            guard let posts = posts else {
+        DatabaseManager.shared.getUserPost(with: email, url: urlString, completion: {
+            [weak self] post in
+            guard let post = post else {
                 return
             }
-            
-            let index = DatabaseManager.findPost(posts: posts, url: urlString)
-            
-            if posts.count <= index {
-                print("Post doesnt exist")
-                return
-            }
-            
+            self?.post = post
+
             guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
             else {
                 print("Failed to get User Defaults")
                 return
             }
             
-            DatabaseManager.shared.getLikes(with: email, index: index, completion: {
+            DatabaseManager.shared.getLikes(with: email, index: post.identifier, completion: {
                 [weak self] likes in
                 guard let likes = likes else {
+                    self?.defaultButton()
                     return
                 }
                 for like in likes {
                     if like["email"] == currentEmail {
-                        self?.toggleLike()
+                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                        let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                        self?.likeButton.setImage(image, for: .normal)
+                        self?.likeButton.tintColor = .red
+                        return
                     }
                 }
+                
+                self?.defaultButton()
             })
-            
         })
     }
 
@@ -263,19 +247,7 @@ class FeedActionsCell: UITableViewCell {
                                   height: buttonSize)
         }
     }
-    
-    private func toggleLike() {
-        if likeButton.tintColor.accessibilityName == UIColor.label.accessibilityName {
-            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-            let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-            self.likeButton.setImage(image, for: .normal)
-            self.likeButton.tintColor = .red
-        }
-        else {
-          defaultButton()
-        }
-    }
-    
+
     private func defaultButton() {
         let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
         let image = UIImage(systemName: "heart", withConfiguration: config)

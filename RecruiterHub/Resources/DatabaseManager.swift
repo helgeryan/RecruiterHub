@@ -33,44 +33,7 @@ public class DatabaseManager {
             return UIImage(systemName: "person.circle")!
         }
     }
-    
-    static func findPost( posts: [[String: Any]], url: String) -> Int {
-        
-        var index = 0
-        for post in posts {
-            guard let postUrl = post["url"] as? String else {
-                return posts.count
-            }
-            
-            if postUrl == url {
-                print("Found url")
-                break
-            }
-            else {
-                index += 1
-            }
-        }
-        
-        return index
-    }
-    
-    static func findPostNew( posts: [UserPost], url: String) -> Int {
-        
-        var index = 0
-        for post in posts {
-            
-            if post.postURL.absoluteString == url {
-                print("Found url")
-                break
-            }
-            else {
-                index += 1
-            }
-        }
-        
-        return index
-    }
-    
+
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
@@ -332,21 +295,7 @@ public class DatabaseManager {
         })
     }
     
-    public func getAllUserPosts(with email: String, completion: @escaping (([[String:Any]]?) -> Void)) {
-        database.child("\(email)/Posts").observe( .value, with: { snapshot in
-           
-            guard let posts = snapshot.value as? [[String:Any]] else {
-                print("Failed to get all user posts")
-                completion(nil)
-                return
-            }
-
-            completion(posts)
-        })
-        completion(nil)
-    }
-    
-    public func getAllUserPostsNew( with email: String, completion: @escaping (([UserPost]?) -> Void)) {
+    public func getAllUserPosts( with email: String, completion: @escaping (([UserPost]?) -> Void)) {
         
         database.child("\(email)/Posts").observe( .value, with: { snapshot in
            
@@ -382,7 +331,16 @@ public class DatabaseManager {
                         return
                     }
                     
-                    let temp = UserPost( postType: .video, thumbnailImage: thumbnail, postURL: videoUrl, caption: caption, likeCount: [], comments: [], createdDate: Date(), taggedUsers: [], owner: user)
+                    let temp = UserPost( identifier: index,
+                                         postType: .video,
+                                         thumbnailImage: thumbnail,
+                                         postURL: videoUrl,
+                                         caption: caption,
+                                         likeCount: [],
+                                         comments: [],
+                                         createdDate: Date(),
+                                         taggedUsers: [],
+                                         owner: user)
                     userPosts.append(temp)
                     
                     // If the array is complete leave the function
@@ -435,7 +393,16 @@ public class DatabaseManager {
                         return
                     }
                     
-                    let temp = UserPost( postType: .video, thumbnailImage: thumbnail, postURL: videoUrl, caption: caption, likeCount: [], comments: [], createdDate: Date(), taggedUsers: [], owner: user)
+                    let temp = UserPost( identifier: index,
+                                         postType: .video,
+                                         thumbnailImage: thumbnail,
+                                         postURL: videoUrl,
+                                         caption: caption,
+                                         likeCount: [],
+                                         comments: [],
+                                         createdDate: Date(),
+                                         taggedUsers: [],
+                                         owner: user)
                     userPosts.append(temp)
                     
                     // If the array is complete leave the function
@@ -450,6 +417,62 @@ public class DatabaseManager {
             })
         })
         completion(nil)
+    }
+    
+    public func getUserPost( with email: String, url: String, completion: @escaping ((UserPost?) -> Void)) {
+        
+        database.child("\(email)/Posts").observeSingleEvent( of: .value, with: { [weak self] snapshot in
+           
+            guard let posts = snapshot.value as? [[String:Any]] else {
+                print("Failed to get all user posts")
+                completion(nil)
+                return
+            }
+            
+            for (index, post) in posts.enumerated() {
+                if url == post["url"] as? String {
+                    guard let thumbnailString = post["thumbnail"] as? String,
+                          let thumbnail = URL(string: thumbnailString),
+                          let videoUrlString = post["url"] as? String,
+                          let videoUrl = URL(string: videoUrlString) else {
+                        return
+                    }
+                    
+                    if videoUrlString != url {
+                        continue
+                    }
+                    
+                    var caption: String
+                    if let postCaption = post["caption"] as? String {
+                        caption = postCaption
+                    }
+                    else {
+                        caption = ""
+                    }
+                    
+                    self?.getDataForUser(user: email, completion: { user in
+                        guard let user = user else {
+                            print("Failed to get User")
+                            return
+                        }
+                        
+                        let userPost = UserPost( identifier: index,
+                                                 postType: .video,
+                                                 thumbnailImage: thumbnail,
+                                                 postURL: videoUrl,
+                                                 caption: caption,
+                                                 likeCount: [],
+                                                 comments: [],
+                                                 createdDate: Date(),
+                                                 taggedUsers: [],
+                                                 owner: user)
+                        
+                        completion(userPost)
+                        return
+                    })
+                }
+            }
+        })
     }
     
     public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
@@ -1648,7 +1671,8 @@ public class DatabaseManager {
                     var RHuser = RHUser()
                     RHuser.emailAddress = "ryanhelgeson14@gmail.com"
                     
-                    notificationType = UserNotificationType.like(post: UserPost(postType: .video,
+                    notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
+                                                                                 postType: .video,
                                                                                 thumbnailImage: URL(string: url)!,
                                                                                 postURL: URL(string: url)!,
                                                                                 caption: "Caption",
@@ -1658,9 +1682,10 @@ public class DatabaseManager {
                                                                                 taggedUsers: [], owner: RHuser))
                 }
                 else {
-                    notificationType = UserNotificationType.like(post: UserPost(postType: UserPostType(rawValue: "video")!,
-                                                                                thumbnailImage: URL(string: "")!,
-                                                                                postURL: URL(string: "")!,
+                    notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
+                                                                                 postType: .video,
+                                                                                thumbnailImage: URL(string: url)!,
+                                                                                postURL: URL(string: url)!,
                                                                                 caption: "Caption",
                                                                                 likeCount: [],
                                                                                 comments: [],

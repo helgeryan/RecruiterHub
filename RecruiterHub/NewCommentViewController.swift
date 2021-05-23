@@ -14,6 +14,7 @@ class NewCommentViewController: UIViewController {
     private let email: String
     
     private let url: String
+    private var post: UserPost?
     
     private var comments: [PostComment]?
     
@@ -43,7 +44,6 @@ class NewCommentViewController: UIViewController {
     init(email: String, url: String) {
         self.email = email
         self.url = url
-        
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -125,22 +125,14 @@ class NewCommentViewController: UIViewController {
             return
         }
         
-        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { [weak self]
-            posts in
-            guard let posts = posts else {
+        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
+            post in
+            guard let post = post else {
                 return
             }
+            self?.post = post
             
-            guard let postUrl = self?.url as String? else {
-                return
-            }
-            
-            let index = DatabaseManager.findPostNew(posts: posts, url: postUrl)
-            if index >= posts.count {
-                return
-            }
-            
-            DatabaseManager.shared.getComments(with: email, index: index, completion: { [weak self] comments in
+            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
                 guard let comments = comments else {
                     return
                 }
@@ -183,7 +175,7 @@ class NewCommentViewController: UIViewController {
         }
         
         guard let email = email as String?,
-              let url = url as String? else {
+              let post = post else {
             return
         }
         
@@ -192,26 +184,11 @@ class NewCommentViewController: UIViewController {
         }
         
         let newElement = PostComment(identifier: 0, email: currentEmail, text: newComment, createdDate: Date(), likes: [])
-        
-        comments?.append(newElement)
-        
-        tableView.reloadData()
-        
+
         textView.text = "New Comment..."
         textView.textColor = .lightGray
         
-        DatabaseManager.shared.getAllUserPostsSingleEvent(with: email, completion: { posts in
-            guard let posts = posts else {
-                return
-            }
-            
-            let index = DatabaseManager.findPostNew(posts: posts, url: url)
-            if index >= posts.count {
-                return
-            }
-            
-            DatabaseManager.shared.newComment(email: email, postComment: newElement, index: index )
-        })
+        DatabaseManager.shared.newComment(email: email, postComment: newElement, index: post.identifier)
     }
 }
 

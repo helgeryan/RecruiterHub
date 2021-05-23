@@ -32,28 +32,13 @@ class FeedPostInfoCell: UITableViewCell {
     public func configure(email: String, url: String) {
         // Configure the cell
         
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self]
-            posts in
-            guard let posts = posts else {
+        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
+            post in
+            guard let post = post else {
                 return
             }
             
-            var index = 0
-            for post in posts {
-                guard let postUrl = post["url"] as? String else {
-                    return
-                }
-                
-                if postUrl == url {
-                    print("Found url")
-                    break
-                }
-                else {
-                    index += 1
-                }
-            }
-            
-            DatabaseManager.shared.getComments(with: email, index: index, completion: { comments in
+            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { comments in
                 if let comments = comments {
                     
                     DatabaseManager.shared.getDataForUser(user: email, completion: {
@@ -81,6 +66,29 @@ class FeedPostInfoCell: UITableViewCell {
                 }
             })
         })
+//
+//        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self]
+//            posts in
+//            guard let posts = posts else {
+//                return
+//            }
+//
+//            var index = 0
+//            for post in posts {
+//                guard let postUrl = post["url"] as? String else {
+//                    return
+//                }
+//
+//                if postUrl == url {
+//                    print("Found url")
+//                    break
+//                }
+//                else {
+//                    index += 1
+//                }
+//            }
+//
+//        })
     }
 
     override func layoutSubviews() {

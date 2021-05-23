@@ -93,7 +93,8 @@ class AddCaptionViewController: UIViewController {
                         return
                     }
                     
-                    let post = UserPost(postType: .video,
+                    let post = UserPost(identifier: 0, // Dummy Value
+                                        postType: .video,
                                         thumbnailImage: thumbnailUrl,
                                         postURL: videoUrl,
                                         caption: caption,

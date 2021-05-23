@@ -19,7 +19,7 @@ class OtherUserViewController: UIViewController {
     
     private var user: RHUser
     
-    private var posts: [[String: Any]]?
+    private var posts: [UserPost]?
 
     init(user: RHUser) {
         self.user = user
@@ -79,30 +79,26 @@ extension OtherUserViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        print("Selected Item")
         guard let posts = posts else {
-            print("Failed to get posts")
-            return
-        }
-        guard let url = URL(string: posts[posts.count - indexPath.row - 1]["url"]! as! String) as URL? else {
             return
         }
         
-        var postLikes: [PostLike] = []
-        if let likes = posts[posts.count - indexPath.row - 1]["likes"] as? [[String:String]] {
-            for like in likes {
-                let postLike = PostLike(username: like["username"]!, email: like["email"]!, name: like["name"]!)
-                postLikes.append(postLike)
-            }
-        }
-        else {
-            postLikes = []
-        }
+        let model = posts[posts.count - indexPath.row - 1]
         
-        let post = Post(likes: postLikes, title: "Post", url: url, number: (posts.count - indexPath.row - 1))
+        var postLikes :[PostLike] = []
         
-//        let vc = ViewPostViewController(post: , user: user)
-//        vc.title = "Post"
-//        navigationController?.pushViewController(vc, animated: false)
+        for like in model.likeCount {
+            let postLike = PostLike(username: like.username, email: like.email, name: like.name)
+            postLikes.append(postLike)
+        }
+        print(model.postURL)
+        
+        let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
+        
+        vc.title = "Post"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: false)
     }
 }
 
@@ -123,9 +119,9 @@ extension OtherUserViewController: UICollectionViewDataSource {
         guard let posts = posts else {
             return UICollectionViewCell()
         }
-        let urlString = posts[posts.count - indexPath.row - 1]["thumbnail"]!
+        let model = posts[posts.count - indexPath.row - 1]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
-        cell.configure(with: URL(string: urlString as! String)!)
+        cell.configure(with: model.thumbnailImage)
         return cell
     }
     
