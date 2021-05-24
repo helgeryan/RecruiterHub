@@ -180,17 +180,7 @@ extension OtherUserViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension OtherUserViewController: ProfileHeaderDelegate {
-    func didTapFollowButton(_ header: ProfileHeader) {
-        guard let email =  UserDefaults.standard.value(forKey: "email") as? String else {
-            return
-        }
-        
-        DatabaseManager.shared.follow(email: user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {})
-    }
-    
-    func didTapReload(_ header: ProfileHeader) {
-        fetchPosts()
-    }
+
 }
 
 extension OtherUserViewController: ProfileTabsDelegate {

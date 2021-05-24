@@ -667,7 +667,6 @@ public class DatabaseManager {
     }
     
     public func follow( email: String, followerEmail: String, completion: (() -> ())?) {
-        print("Follow")
         
         let refFollower = database.child("\(email.safeDatabaseKey())/followers")
         
@@ -696,6 +695,7 @@ public class DatabaseManager {
             let newElement = element
             likes.append(newElement)
             refFollower.setValue(likes)
+            
         })
         
         let refCurrentUser = database.child("\(followerEmail.safeDatabaseKey())/following")
@@ -726,6 +726,8 @@ public class DatabaseManager {
             likes.append(newElement)
             refCurrentUser.setValue(likes)
         })
+        
+        self.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
     }
     
     public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
@@ -1636,6 +1638,46 @@ public class DatabaseManager {
     }
     
     // MARK: - Notification
+    
+    public func newFollowNotification( followerEmail: String, notifiedEmail: String, completion: @escaping (() -> Void)) {
+        print("New Follow Notification")
+        let ref = database.child("\(notifiedEmail)/Notifications")
+        ref.observeSingleEvent( of: .value, with: { snapshot in
+            
+            self.getDataForUser(user: followerEmail, completion: {
+                user in
+                guard let user = user else {
+                    return
+                    
+                }
+                let element = [
+                    "email": followerEmail,
+                    "type": "follow",
+                    "text": "\(user.username) followed you"
+                ]
+                
+                guard var notifications = snapshot.value as? [[String:String]] else {
+                    print("Notifications don't exist")
+                    ref.setValue([element])
+                    completion()
+                    return
+                }
+                
+                // Person already liked, delete their like
+                if notifications.contains(element) {
+                    
+                    completion()
+                    return
+                }
+                
+                // Add new notifications
+                let newElement = element
+                notifications.append(newElement)
+                ref.setValue(notifications)
+                completion()
+            })
+        })
+    }
     
     public func newLikeNotification( likerEmail: String, notifiedEmail: String, post: UserPost, completion: @escaping (() -> Void)) {
         let ref = database.child("\(notifiedEmail)/Notifications")

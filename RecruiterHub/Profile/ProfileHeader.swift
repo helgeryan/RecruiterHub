@@ -9,7 +9,7 @@
 import UIKit
 
 protocol ProfileHeaderDelegate: AnyObject {
-    func didTapFollowButton(_ header: ProfileHeader)
+    
 }
 
 final class ProfileHeader: UICollectionReusableView, UINavigationControllerDelegate {
@@ -19,7 +19,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
     
     public var size = 0
     
-    private let user = RHUser()
+    private var user = RHUser()
     
     private let profilePhotoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -89,15 +89,11 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
     }
     
     @objc private func didTapFollowButton() {
-        if followButton.titleLabel?.text == "Unfollow" {
-            followButton.setTitle("Follow", for: .normal)
-            followButton.backgroundColor = .link
+        guard let email =  UserDefaults.standard.value(forKey: "email") as? String else {
+            return
         }
-        else {
-            followButton.setTitle("Unfollow", for: .normal)
-            followButton.backgroundColor = .lightGray
-        }
-        delegate?.didTapFollowButton(self)
+
+        DatabaseManager.shared.follow(email: user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {})
     }
     
     private func addSubviews() {
@@ -111,7 +107,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
     }
     
     public func configure(user: RHUser, hideFollowButton: Bool) {
-        
+        self.user = user
         if !hideFollowButton {
             followButton.isHidden = false
         }
@@ -155,11 +151,17 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         DatabaseManager.shared.getUserFollowing(email: email.safeDatabaseKey(), completion: { [weak self]
             result in
             guard let result = result else {
+                self?.followButton.setTitle("Follow", for: .normal)
+                self?.followButton.backgroundColor = .link
                 return
             }
             if result.contains(["email": user.emailAddress.safeDatabaseKey()]) {
                 self?.followButton.setTitle("Unfollow", for: .normal)
                 self?.followButton.backgroundColor = .lightGray
+            }
+            else {
+                self?.followButton.setTitle("Follow", for: .normal)
+                self?.followButton.backgroundColor = .link
             }
         })
     }

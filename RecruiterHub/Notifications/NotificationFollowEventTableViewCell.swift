@@ -100,6 +100,10 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
             DatabaseManager.shared.getUserFollowing(email: email, completion: { [weak self] following in
                 
                 guard let following = following else {
+                    self?.followButton.setTitle("Follow", for: .normal)
+                    self?.followButton.setTitleColor(.white, for: .normal)
+                    self?.followButton.layer.borderWidth = 0
+                    self?.followButton.backgroundColor = .link
                     return
                 }
                 if following.contains(["email": model.user.safeEmail]) {

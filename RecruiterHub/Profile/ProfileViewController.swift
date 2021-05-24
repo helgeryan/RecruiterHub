@@ -243,14 +243,7 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension ProfileViewController: ProfileHeaderDelegate {
-    func didTapFollowButton(_ header: ProfileHeader) {
-        print("Tapped Follow")
-    }
-    
-    func didTapReload(_ header: ProfileHeader) {
-        print("Reload Tapped")
-        fetchPosts()
-    }
+
 }
 
 extension ProfileViewController: ProfileTabsDelegate {
