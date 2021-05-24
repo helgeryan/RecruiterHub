@@ -185,7 +185,7 @@ extension OtherUserViewController: ProfileHeaderDelegate {
             return
         }
         
-        DatabaseManager.shared.follow(email: user.safeEmail, followerEmail: email.safeDatabaseKey())
+        DatabaseManager.shared.follow(email: user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {})
     }
     
     func didTapReload(_ header: ProfileHeader) {

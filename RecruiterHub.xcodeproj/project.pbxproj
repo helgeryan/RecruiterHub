@@ -238,9 +238,9 @@
 			isa = PBXGroup;
 			children = (
 				E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */,
-				E68852152651A27700C177C9 /* NotificationViewController.swift */,
 				E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */,
 				E68852232651A4CF00C177C9 /* NoNotificationsView.swift */,
+				E68852152651A27700C177C9 /* NotificationViewController.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";

@@ -9,6 +9,7 @@ import UIKit
 
 protocol NotificationFollowEventTableViewCellDelegate: AnyObject {
     func didTapFollowUnfollowButton(model: UserNotification)
+    func didTapProfilePic(model: UserNotification)
 }
 
 class NotificationFollowEventTableViewCell: UITableViewCell {
@@ -21,6 +22,7 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
         imageView.backgroundColor = .tertiarySystemBackground
         imageView.contentMode = .scaleAspectFill
         return imageView
@@ -47,11 +49,14 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
         contentView.addSubview(profileImageView)
         contentView.addSubview(label)
         contentView.addSubview(followButton)
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapProfilePic))
+        profileImageView.addGestureRecognizer(gesture)
+        
         followButton.addTarget(self,
                                action: #selector(didTapFollowButton),
                                for: .touchUpInside)
         selectionStyle = .none
-        configureForFollow()
     }
     
     required init?(coder: NSCoder) {
@@ -63,7 +68,22 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
             return
         }
         
-        delegate?.didTapFollowUnfollowButton(model: model)
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        
+        DatabaseManager.shared.follow(email: model.user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {
+            
+        })
+   
+
+    }
+    
+    @objc private func didTapProfilePic() {
+        guard let model = model else {
+            return
+        }
+        delegate?.didTapProfilePic(model: model)
     }
     
     public func configure(with model: UserNotification) {
@@ -71,19 +91,27 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
         switch model.type {
         case .like(_):
             break
-        case .follow(let state):
-            switch state {
-            case .following:
-                // Show unfollow button
-                configureForFollow()
-            case.not_following:
-                // Show follow button
-                followButton.setTitle("Follow", for: .normal)
-                followButton.setTitleColor(.white, for: .normal)
-                followButton.layer.borderWidth = 0
-                followButton.backgroundColor = .link
+        case .follow(_):
+            
+            guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+                return
             }
-            break
+            
+            DatabaseManager.shared.getUserFollowing(email: email, completion: { [weak self] following in
+                
+                guard let following = following else {
+                    return
+                }
+                if following.contains(["email": model.user.safeEmail]) {
+                    self?.configureForUnfollow()
+                }
+                else {
+                    self?.followButton.setTitle("Follow", for: .normal)
+                    self?.followButton.setTitleColor(.white, for: .normal)
+                    self?.followButton.layer.borderWidth = 0
+                    self?.followButton.backgroundColor = .link
+                }
+            })
         }
         
         label.text = model.text
@@ -95,11 +123,12 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
         profileImageView.sd_setImage(with: url, completed: nil)
     }
     
-    private func configureForFollow() {
+    private func configureForUnfollow() {
         followButton.setTitle("Unfollow", for: .normal)
         followButton.setTitleColor(.label, for: .normal)
         followButton.layer.borderWidth = 1
         followButton.layer.borderColor = UIColor.secondaryLabel.cgColor
+        followButton.backgroundColor = .lightGray
     }
     
     override func prepareForReuse() {

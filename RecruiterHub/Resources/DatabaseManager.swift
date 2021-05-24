@@ -626,7 +626,7 @@ public class DatabaseManager {
     }
     
     public func getUserFollowing( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
-        database.child("\(email)/following").observeSingleEvent(of: .value, with: { snapshot in
+        database.child("\(email)/following").observe( .value, with: { snapshot in
             guard let feedPosts = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
@@ -666,7 +666,7 @@ public class DatabaseManager {
         database.child(email).child("gradYear").setValue(user.gradYear)
     }
     
-    public func follow( email: String, followerEmail: String) {
+    public func follow( email: String, followerEmail: String, completion: (() -> ())?) {
         print("Follow")
         
         let refFollower = database.child("\(email.safeDatabaseKey())/followers")
@@ -1693,18 +1693,20 @@ public class DatabaseManager {
                 
                 guard let email = notification["email"],
                       let text = notification["text"],
-                      let type = notification["type"],
-                      let url = notification["postID"] else {
+                      let type = notification["type"] else {
                     print("Failed to get notification")
                     group.leave()
                     return
                 }
 
-                var notificationType: UserNotificationType
+                var notificationType: UserNotificationType = UserNotificationType.follow(state: .following)
                 if type == "like" {
                     var RHuser = RHUser()
                     RHuser.emailAddress = user
-                    
+                    guard let url = notification["postID"] else {
+                        group.leave()
+                        return
+                    }
                     notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
                                                                                  postType: .video,
                                                                                 thumbnailImage: URL(string: url)!,
@@ -1714,35 +1716,55 @@ public class DatabaseManager {
                                                                                 comments: [],
                                                                                 createdDate: Date(),
                                                                                 taggedUsers: [], owner: RHuser))
+                    
+                    self?.getDataForUser(user: email, completion: { user in
+                        guard let user = user else {
+                            group.leave()
+                            print("Failed to get User")
+                            return
+                        }
+                        
+                        let temp = UserNotification(type: notificationType, text: text, user: user)
+                        array.append(temp)
+                        // If the array is complete leave the function
+                        if array.count == notifications.count {
+                            group.leave()
+                        }
+                    })
                 }
                 else {
-                    notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
-                                                                                 postType: .video,
-                                                                                thumbnailImage: URL(string: url)!,
-                                                                                postURL: URL(string: url)!,
-                                                                                caption: "Caption",
-                                                                                likeCount: [],
-                                                                                comments: [],
-                                                                                createdDate: Date(),
-                                                                                taggedUsers: [], owner: RHUser()))
+                    self?.getUserFollowing(email: user, completion: { following in
+                        guard let following = following else {
+                            return
+                        }
+                        
+                        for follow in following {
+                            
+                            if follow["email"] == email {
+                                notificationType = UserNotificationType.follow(state: .following )
+                                break
+                            }
+                            else {
+                                notificationType = UserNotificationType.follow(state: .not_following )
+                            }
+                        }
+                        
+                        self?.getDataForUser(user: email, completion: { user in
+                            guard let user = user else {
+                                group.leave()
+                                print("Failed to get User")
+                                return
+                            }
+                            
+                            let temp = UserNotification(type: notificationType, text: text, user: user)
+                            array.append(temp)
+                            // If the array is complete leave the function
+                            if array.count == notifications.count {
+                                group.leave()
+                            }
+                        })
+                    })
                 }
-                
-                self?.getDataForUser(user: email, completion: { user in
-                    guard let user = user else {
-                        group.leave()
-                        print("Failed to get User")
-                        return
-                    }
-                    
-                    let temp = UserNotification(type: notificationType, text: text, user: user)
-                    array.append(temp)
-                    // If the array is complete leave the function
-                    if array.count == notifications.count {
-                        group.leave()
-                    }
-                })
-                
-                
             }
             
             // Wait until the Array is assembled

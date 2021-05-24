@@ -141,14 +141,20 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
             navigationController?.pushViewController(vc, animated: false)
             break
         case .follow(_):
-            fatalError("Dev Issue: Should never get called")
+            let vc = OtherUserViewController(user: model.user)
+            navigationController?.pushViewController(vc, animated: false)
+            break
         }
     }
 }
 
 extension NotificationViewController: NotificationFollowEventTableViewCellDelegate {
     func didTapFollowUnfollowButton(model: UserNotification) {
-        print("tapped button")
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        
+        DatabaseManager.shared.follow(email: model.user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {})
     }
     
    

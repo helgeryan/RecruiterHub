@@ -245,10 +245,6 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
 extension ProfileViewController: ProfileHeaderDelegate {
     func didTapFollowButton(_ header: ProfileHeader) {
         print("Tapped Follow")
-        guard let email =  UserDefaults.standard.value(forKey: "email") as? String else {
-            return
-        }
-        DatabaseManager.shared.follow(email: user.emailAddress.safeDatabaseKey(), followerEmail: email.safeDatabaseKey())
     }
     
     func didTapReload(_ header: ProfileHeader) {

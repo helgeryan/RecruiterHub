@@ -65,7 +65,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         return label
     }()
 
-    private let followButton:UIButton = {
+    private let followButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .link
         button.isHidden = true
