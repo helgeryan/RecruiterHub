@@ -38,6 +38,7 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
     
     private let postButton: UIImageView = {
         let button = UIImageView()
+        button.backgroundColor = .secondarySystemBackground
         button.isUserInteractionEnabled = true
         return button
     }()
@@ -84,7 +85,6 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
                     return
                 }
                 
-                print("Set image")
                 DispatchQueue.main.async {
                     self?.postButton.sd_setImage(with: post.thumbnailImage, completed: nil)
                 }

@@ -86,7 +86,7 @@ class FeedActionsCell: UITableViewCell {
         // Create Post Like
         let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
         
-        DatabaseManager.shared.like(with: email, likerInfo: postLike, postNumber: post.identifier, completion: {
+        DatabaseManager.shared.like(with: email, likerInfo: postLike, post: post, completion: {
         })
         
         

@@ -46,8 +46,6 @@ final class NotificationViewController: UIViewController {
         fetchNotifications()
         navigationItem.title = "Notifications"
         view.backgroundColor = .systemBackground
-//        view.addSubview(spinner)
-//        spinner.startAnimating()
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
@@ -79,24 +77,6 @@ final class NotificationViewController: UIViewController {
             }
             
         })
-        
-//        for x in 0...100 {
-//            let user =  RHUser()
-//            let post = UserPost(identifier: "",
-//                                postType: .photo,
-//                                thumbnailImage: URL(string: "http://www.google.com/")!,
-//                                postURL: URL(string: "http://www.google.com/")!,
-//                                caption: nil,
-//                                likeCount: [],
-//                                comments: [],
-//                                createdDate: Date(),
-//                                taggedUsers: [],
-//                                owner: user)
-//            let model = UserNotification(type:  x % 2 == 0 ? .like(post: post) : .follow(state:         .not_following),
-//                                         text: "hello world",
-//                                         user: user)
-//            models.append(model)
-//        }
     }
     
     private func addNoNotificationsView() {
@@ -109,7 +89,7 @@ final class NotificationViewController: UIViewController {
 }
 
 extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {3
         return models.count
     }
     
@@ -136,10 +116,13 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
 
 extension NotificationViewController: NotificationLikeEventTableViewCellDelegate {
     func didTapRelatedPostButton(model: UserNotification) {
+        print("Tapped Related Post. Type: \(model.type)")
         switch model.type {
         case .like(let post):
             DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
+                
                 guard let post = post else {
+                    print("Post is bad")
                     return
                 }
                 let vc = ViewPostViewController(post: post, user: post.owner, postNumber: post.identifier)

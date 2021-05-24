@@ -175,7 +175,7 @@ class ViewPostViewController: UIViewController {
         let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
         
         // Update the like status
-        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, postNumber: postNumber, completion: { })
+        DatabaseManager.shared.like(with: user.emailAddress.safeDatabaseKey(), likerInfo: postLike, post: post, completion: { })
     }
     
     // Function that is called when the like button is tapped

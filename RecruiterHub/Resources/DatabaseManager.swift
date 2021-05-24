@@ -435,6 +435,7 @@ public class DatabaseManager {
                           let thumbnail = URL(string: thumbnailString),
                           let videoUrlString = post["url"] as? String,
                           let videoUrl = URL(string: videoUrlString) else {
+                        print("Couldn't get post URLs")
                         return
                     }
                     
@@ -523,10 +524,10 @@ public class DatabaseManager {
         })
     }
     
-    public func like(with email: String, likerInfo: PostLike, postNumber: Int, completion: @escaping () -> Void ) {
+    public func like(with email: String, likerInfo: PostLike, post: UserPost, completion: @escaping () -> Void ) {
         print("Like")
         
-        let ref = database.child("\(email.safeDatabaseKey())/Posts/\(postNumber)/likes")
+        let ref = database.child("\(email.safeDatabaseKey())/Posts/\(post.identifier)/likes")
         
         ref.observeSingleEvent(of: .value, with: {snapshot in
         
@@ -537,7 +538,6 @@ public class DatabaseManager {
             ]
             // No likes
             guard var likes = snapshot.value as? [[String:String]] else {
-                print("Not type of postlike")
                 ref.setValue([element])
                 completion()
                 return
@@ -558,6 +558,8 @@ public class DatabaseManager {
             let newElement = element
             likes.append(newElement)
             ref.setValue(likes)
+            
+            self.newLikeNotification(likerEmail: likerInfo.email, notifiedEmail: email, post: post, completion: {})
             completion()
         })
     }
@@ -1633,8 +1635,50 @@ public class DatabaseManager {
        })
     }
     
+    // MARK: - Notification
+    
+    public func newLikeNotification( likerEmail: String, notifiedEmail: String, post: UserPost, completion: @escaping (() -> Void)) {
+        let ref = database.child("\(notifiedEmail)/Notifications")
+        ref.observeSingleEvent( of: .value, with: { snapshot in
+            
+            self.getDataForUser(user: likerEmail, completion: {
+                user in
+                guard let user = user else {
+                    return
+                    
+                }
+                let element = [
+                    "email": likerEmail,
+                    "type": "like",
+                    "text": "\(user.username) liked your post",
+                    "postID": post.postURL.absoluteString
+                ]
+                
+                guard var notifications = snapshot.value as? [[String:String]] else {
+                    print("Notifications don't exist")
+                    ref.setValue([element])
+                    completion()
+                    return
+                }
+                
+                // Person already liked, delete their like
+                if notifications.contains(element) {
+                    
+                    completion()
+                    return
+                }
+                
+                // Add new notifications
+                let newElement = element
+                notifications.append(newElement)
+                ref.setValue(notifications)
+                completion()
+            })
+        })
+    }
+    
     public func getUserNotifications( user: String, completion: @escaping (([UserNotification]?) -> Void))  {
-        database.child("\(user)/Notifications").observe( .value, with: { snapshot in
+        database.child("\(user)/Notifications").observe( .value, with: { [weak self] snapshot in
             guard let notifications = snapshot.value as? [[String:String]] else {
                 print("Notifications don't exist")
                 completion(nil)
@@ -1647,29 +1691,19 @@ public class DatabaseManager {
             
             for (index, notification) in notifications.enumerated() {
                 
-                guard let email = notification["email"] else {
-                    print("Email Failed")
+                guard let email = notification["email"],
+                      let text = notification["text"],
+                      let type = notification["type"],
+                      let url = notification["postID"] else {
+                    print("Failed to get notification")
+                    group.leave()
                     return
                 }
-                
-                guard let text = notification["text"] else {
-                    print("Url Failed")
-                    return
-                }
-                
-                guard let type = notification["type"] else {
-                    print("Type failed")
-                    return
-                }
-                
-                guard let url = notification["postID"] else {
-                    print("Type failed")
-                    return
-                }
+
                 var notificationType: UserNotificationType
                 if type == "like" {
                     var RHuser = RHUser()
-                    RHuser.emailAddress = "ryanhelgeson14@gmail.com"
+                    RHuser.emailAddress = user
                     
                     notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
                                                                                  postType: .video,
@@ -1693,17 +1727,17 @@ public class DatabaseManager {
                                                                                 taggedUsers: [], owner: RHUser()))
                 }
                 
-                self.getDataForUser(user: email, completion: { user in
+                self?.getDataForUser(user: email, completion: { user in
                     guard let user = user else {
+                        group.leave()
                         print("Failed to get User")
                         return
                     }
                     
                     let temp = UserNotification(type: notificationType, text: text, user: user)
                     array.append(temp)
-                    
                     // If the array is complete leave the function
-                    if index == (notifications.count - 1) {
+                    if array.count == notifications.count {
                         group.leave()
                     }
                 })
