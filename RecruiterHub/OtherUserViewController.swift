@@ -213,7 +213,7 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowing(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
                     data = followers

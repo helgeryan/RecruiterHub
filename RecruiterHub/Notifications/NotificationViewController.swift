@@ -16,12 +16,14 @@ public struct UserNotification {
     let type: UserNotificationType
     let text: String
     let user: RHUser
+    let date: Date
 }
 
 final class NotificationViewController: UIViewController {
  
     private let tableView: UITableView = {
         let tableView = UITableView()
+        tableView.allowsSelection = false
         tableView.isHidden = false
         tableView.register(NotificationLikeEventTableViewCell.self, forCellReuseIdentifier: NotificationLikeEventTableViewCell.identifier)
         tableView.register(NotificationFollowEventTableViewCell.self, forCellReuseIdentifier: NotificationFollowEventTableViewCell.identifier)

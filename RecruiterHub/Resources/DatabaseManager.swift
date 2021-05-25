@@ -477,6 +477,7 @@ public class DatabaseManager {
     }
     
     public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
+        
         database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
             
             guard let info = snapshot.value as? [String: Any] else {
@@ -624,15 +625,25 @@ public class DatabaseManager {
             completion(feedPosts)
         })
     }
-    
     public func getUserFollowing( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
         database.child("\(email)/following").observe( .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
+            guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
-        
-            completion(feedPosts)
+            
+            completion(following)
+        })
+    }
+    
+    public func getUserFollowingSingleEvent( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+        database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
+            guard let following = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
+            }
+            
+            completion(following)
         })
     }
     
@@ -670,7 +681,7 @@ public class DatabaseManager {
         
         let refFollower = database.child("\(email.safeDatabaseKey())/followers")
         
-        refFollower.observeSingleEvent(of: .value, with: { snapshot in
+        refFollower.observeSingleEvent(of: .value, with: { [weak self] snapshot in
         
             let element = [
                 "email": followerEmail
@@ -681,7 +692,7 @@ public class DatabaseManager {
                 return
             }
             
-            // Person already liked, delete their like
+            // Person already followed, delete their follow
             if likes.contains(element) {
                 print("Already followed")
                 if let index = likes.firstIndex(of: element) {
@@ -691,11 +702,12 @@ public class DatabaseManager {
                 return
             }
             
-            // Add new like
+            // Add new follower
             let newElement = element
             likes.append(newElement)
             refFollower.setValue(likes)
             
+            self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
         })
         
         let refCurrentUser = database.child("\(followerEmail.safeDatabaseKey())/following")
@@ -711,7 +723,7 @@ public class DatabaseManager {
                 return
             }
             
-            // Person already liked, delete their like
+            // Person already following, delete their follow
             if likes.contains(element) {
                 print("Already followed")
                 if let index = likes.firstIndex(of: element) {
@@ -721,13 +733,12 @@ public class DatabaseManager {
                 return
             }
             
-            // Add new like
+            // Add new following
             let newElement = element
             likes.append(newElement)
             refCurrentUser.setValue(likes)
         })
         
-        self.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
     }
     
     public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
@@ -1653,7 +1664,8 @@ public class DatabaseManager {
                 let element = [
                     "email": followerEmail,
                     "type": "follow",
-                    "text": "\(user.username) followed you"
+                    "text": "\(user.username) followed you",
+                    "date": ChatViewController.dateFormatter.string(from: Date())
                 ]
                 
                 guard var notifications = snapshot.value as? [[String:String]] else {
@@ -1664,7 +1676,7 @@ public class DatabaseManager {
                 }
                 
                 // Person already liked, delete their like
-                if notifications.contains(element) {
+                if notifications.contains(where: { ($0["email"] == followerEmail) && ($0["type"] == "follow") && ($0["text"] == "\(user.username) followed you")} ) {
                     
                     completion()
                     return
@@ -1693,7 +1705,8 @@ public class DatabaseManager {
                     "email": likerEmail,
                     "type": "like",
                     "text": "\(user.username) liked your post",
-                    "postID": post.postURL.absoluteString
+                    "postID": post.postURL.absoluteString,
+                    "date": ChatViewController.dateFormatter.string(from: Date())
                 ]
                 
                 guard var notifications = snapshot.value as? [[String:String]] else {
@@ -1704,7 +1717,7 @@ public class DatabaseManager {
                 }
                 
                 // Person already liked, delete their like
-                if notifications.contains(element) {
+                if notifications.contains(where: { ($0["email"] == likerEmail) && ($0["type"] == "like") && ($0["text"] == "\(user.username) liked your post") && ( $0["postID"] == post.postURL.absoluteString) } ) {
                     
                     completion()
                     return
@@ -1735,7 +1748,9 @@ public class DatabaseManager {
                 
                 guard let email = notification["email"],
                       let text = notification["text"],
-                      let type = notification["type"] else {
+                      let type = notification["type"],
+                      let dateString =  notification["date"],
+                      let date = ChatViewController.dateFormatter.date(from: dateString) else {
                     print("Failed to get notification")
                     group.leave()
                     return
@@ -1766,7 +1781,7 @@ public class DatabaseManager {
                             return
                         }
                         
-                        let temp = UserNotification(type: notificationType, text: text, user: user)
+                        let temp = UserNotification(type: notificationType, text: text, user: user, date: date)
                         array.append(temp)
                         // If the array is complete leave the function
                         if array.count == notifications.count {
@@ -1798,7 +1813,7 @@ public class DatabaseManager {
                                 return
                             }
                             
-                            let temp = UserNotification(type: notificationType, text: text, user: user)
+                            let temp = UserNotification(type: notificationType, text: text, user: user, date: date)
                             array.append(temp)
                             // If the array is complete leave the function
                             if array.count == notifications.count {
@@ -1811,7 +1826,10 @@ public class DatabaseManager {
             
             // Wait until the Array is assembled
             group.notify(queue: DispatchQueue.main, execute: {
-                completion(array)
+                
+                let sortedNotifications = array.sorted(by: {  $0.date.compare($1.date) == .orderedDescending })
+
+                completion(sortedNotifications)
             })
         })
     }
