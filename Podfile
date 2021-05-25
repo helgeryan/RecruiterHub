@@ -17,6 +17,7 @@ pod 'Firebase/Crashlytics'
 pod 'SDWebImage'
 pod 'MessageKit'
 pod 'JGProgressHUD'
+pod 'NotificationBannerSwift'
 
 end
 
@@ -36,5 +37,6 @@ pod 'Firebase/Crashlytics'
 pod 'SDWebImage'
 pod 'MessageKit'
 pod 'JGProgressHUD'
+pod 'NotificationBannerSwift'
 
 end

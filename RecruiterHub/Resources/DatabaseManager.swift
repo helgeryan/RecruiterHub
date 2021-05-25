@@ -686,27 +686,29 @@ public class DatabaseManager {
             let element = [
                 "email": followerEmail
             ]
+            
             // No followers
-            guard var likes = snapshot.value as? [[String:String]] else {
+            guard var followers = snapshot.value as? [[String:String]] else {
                 refFollower.setValue([element])
+                self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
                 return
             }
             
             // Person already followed, delete their follow
-            if likes.contains(element) {
+            if followers.contains(element) {
                 print("Already followed")
-                if let index = likes.firstIndex(of: element) {
-                    likes.remove(at: index)
-                    refFollower.setValue(likes)
+                if let index = followers.firstIndex(of: element) {
+                    followers.remove(at: index)
+                    refFollower.setValue(followers)
                 }
                 return
             }
             
             // Add new follower
             let newElement = element
-            likes.append(newElement)
-            refFollower.setValue(likes)
-            
+            followers.append(newElement)
+            refFollower.setValue(followers)
+            print("Follow Notification")
             self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
         })
         
@@ -718,25 +720,25 @@ public class DatabaseManager {
                 "email": email
             ]
             // No followers
-            guard var likes = snapshot.value as? [[String:String]] else {
+            guard var following = snapshot.value as? [[String:String]] else {
                 refCurrentUser.setValue([element])
                 return
             }
             
             // Person already following, delete their follow
-            if likes.contains(element) {
+            if following.contains(element) {
                 print("Already followed")
-                if let index = likes.firstIndex(of: element) {
-                    likes.remove(at: index)
-                    refCurrentUser.setValue(likes)
+                if let index = following.firstIndex(of: element) {
+                    following.remove(at: index)
+                    refCurrentUser.setValue(following)
                 }
                 return
             }
             
             // Add new following
             let newElement = element
-            likes.append(newElement)
-            refCurrentUser.setValue(likes)
+            following.append(newElement)
+            refCurrentUser.setValue(following)
         })
         
     }

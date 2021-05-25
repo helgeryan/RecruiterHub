@@ -93,6 +93,7 @@ PODS:
   - InputBarAccessoryView/Core (5.3.0)
   - JGProgressHUD (2.2)
   - leveldb-library (1.22.1)
+  - MarqueeLabel (4.0.5)
   - MessageKit (3.5.1):
     - InputBarAccessoryView (~> 5.3.0)
   - nanopb (2.30907.0):
@@ -100,10 +101,14 @@ PODS:
     - nanopb/encode (= 2.30907.0)
   - nanopb/decode (2.30907.0)
   - nanopb/encode (2.30907.0)
+  - NotificationBannerSwift (3.0.6):
+    - MarqueeLabel (~> 4.0.5)
+    - SnapKit (~> 5.0.1)
   - PromisesObjC (1.2.12)
   - SDWebImage (5.10.4):
     - SDWebImage/Core (= 5.10.4)
   - SDWebImage/Core (5.10.4)
+  - SnapKit (5.0.1)
 
 DEPENDENCIES:
   - Firebase/Analytics
@@ -114,6 +119,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - JGProgressHUD
   - MessageKit
+  - NotificationBannerSwift
   - SDWebImage
 
 SPEC REPOS:
@@ -134,10 +140,13 @@ SPEC REPOS:
     - InputBarAccessoryView
     - JGProgressHUD
     - leveldb-library
+    - MarqueeLabel
     - MessageKit
     - nanopb
+    - NotificationBannerSwift
     - PromisesObjC
     - SDWebImage
+    - SnapKit
 
 SPEC CHECKSUMS:
   Firebase: d8bd6bd34b4c7ed57bfdd056c66ff5adcdde53ab
@@ -156,11 +165,14 @@ SPEC CHECKSUMS:
   InputBarAccessoryView: 1638fc3336698eaead9cd83ff2da6c6218fcb6bc
   JGProgressHUD: d83d7a981b85d11205e19ff8ad5bb9c40571c847
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
+  MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
   MessageKit: 6a15a240a9a4767279de542a8fae861e83d8aedc
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
+  NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
 
-PODFILE CHECKSUM: 1f4457ccb170147c5ef994c70b08ba450908df2d
+PODFILE CHECKSUM: ce6834160d26378e51eb33fe9917307ca4628970
 
 COCOAPODS: 1.10.0

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 enum UserNotificationType {
     case like(post: UserPost)
@@ -71,6 +72,13 @@ final class NotificationViewController: UIViewController {
             guard let notifications = notifications else {
                 print("Failed to get Notifications")
                 return
+            }
+            let model = notifications[0]
+            if model.date >= Date().addingTimeInterval(TimeInterval(-10)) {
+                let banner = NotificationBanner(title: "\(model.text)", subtitle: nil, leftView: nil, rightView: nil, style: .info, colors: nil)
+                
+                banner.dismissOnTap = true
+                banner.show()
             }
             
             DispatchQueue.main.async {
