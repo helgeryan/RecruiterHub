@@ -9,6 +9,7 @@ import UIKit
 
 protocol FormTableViewCellDelegate: AnyObject {
     func  formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel)
+    func  formTableViewCell(_ cell: FormTableViewCell)
 }
 
 class FormTableViewCell: UITableViewCell {
@@ -74,7 +75,13 @@ class FormTableViewCell: UITableViewCell {
 
 // MARK: - Field
 extension FormTableViewCell: UITextFieldDelegate {
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        delegate?.formTableViewCell(self)
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
         print("Ended Editing")
         
         model?.value = textField.text

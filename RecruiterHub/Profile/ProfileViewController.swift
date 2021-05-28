@@ -53,15 +53,15 @@ class ProfileViewController: UIViewController {
     
     //tiffany------
     private func addPostButton(){
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .done, target: self, action: #selector(didTapAddPostButton))
-        }
-
-        @objc private func didTapAddPostButton(){
-            print("it's pressed")
-            let vc = NewPostViewController()
-            navigationController?.pushViewController(vc, animated: true)
-
-        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .done, target: self, action: #selector(didTapAddPostButton))
+    }
+    
+    @objc private func didTapAddPostButton(){
+        print("it's pressed")
+        let vc = NewPostViewController()
+        navigationController?.pushViewController(vc, animated: true)
+        
+    }
     //end: tiffany------
     
     override func viewWillAppear(_ animated: Bool) {
@@ -155,7 +155,6 @@ extension ProfileViewController: UICollectionViewDelegate {
             let postLike = PostLike(username: like.username, email: like.email, name: like.name)
             postLikes.append(postLike)
         }
-        print(model.postURL)
         
         let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
         
@@ -182,9 +181,9 @@ extension ProfileViewController: UICollectionViewDataSource {
         guard let posts = posts else {
             return UICollectionViewCell()
         }
-        let urlString = posts[posts.count - indexPath.row - 1].thumbnailImage.absoluteString
+        let thumbnailUrl = posts[posts.count - indexPath.row - 1].thumbnailImage
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
-        cell.configure(with: URL(string: urlString as! String)!)
+        cell.configure(with: thumbnailUrl)
         return cell
     }
     
@@ -294,7 +293,6 @@ extension ProfileViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
-        print(user)
         DatabaseManager.shared.getUserFollowers(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {

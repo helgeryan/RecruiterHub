@@ -122,7 +122,7 @@ public class DatabaseManager {
     /// Gets all users from a database
     public func getAllUsers( completion: @escaping (Result<[[String: String]], Error>) -> Void) {
         database.child("users").observeSingleEvent(of: .value, with: { snapshot in
-            print(snapshot)
+            
             guard let value = snapshot.value as? [[String: String]] else {
                 print("Failure")
                 completion(.failure(DatabaseError.failedToFetch))
@@ -540,6 +540,7 @@ public class DatabaseManager {
             // No likes
             guard var likes = snapshot.value as? [[String:String]] else {
                 ref.setValue([element])
+                self.newLikeNotification(likerEmail: likerInfo.email, notifiedEmail: email, post: post, completion: {})
                 completion()
                 return
             }
@@ -607,8 +608,6 @@ public class DatabaseManager {
                 let temp = FeedPost(email: email, url: player, image: "")
                 
                 array.append(temp)
-                
-                
             }
             
             completion(array)
@@ -1746,7 +1745,7 @@ public class DatabaseManager {
             let group = DispatchGroup()
             group.enter()
             
-            for (index, notification) in notifications.enumerated() {
+            for notification in notifications {
                 
                 guard let email = notification["email"],
                       let text = notification["text"],
@@ -1762,14 +1761,15 @@ public class DatabaseManager {
                 if type == "like" {
                     var RHuser = RHUser()
                     RHuser.emailAddress = user
-                    guard let url = notification["postID"] else {
+                    guard let urlString = notification["postID"],
+                          let url = URL(string: urlString) else {
                         group.leave()
                         return
                     }
                     notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
                                                                                  postType: .video,
-                                                                                thumbnailImage: URL(string: url)!,
-                                                                                postURL: URL(string: url)!,
+                                                                                thumbnailImage: url,
+                                                                                postURL: url,
                                                                                 caption: "Caption",
                                                                                 likeCount: [],
                                                                                 comments: [],

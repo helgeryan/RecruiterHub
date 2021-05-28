@@ -45,6 +45,8 @@ final class EditProfileViewController: UIViewController {
         configureModels()
         tableView.dataSource = self
         view.addSubview(tableView)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        view.addGestureRecognizer(tapGesture)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSave))
     }
@@ -84,6 +86,11 @@ final class EditProfileViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
+    }
+    
+    @objc private func didTap() {
+        tableView.frame = view.bounds
+        view.endEditing(true)
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -207,8 +214,18 @@ extension EditProfileViewController: UITableViewDataSource {
 }
 
 extension EditProfileViewController: FormTableViewCellDelegate {
-    func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
+    func formTableViewCell(_ cell: FormTableViewCell) {
+        if tableView.top < view.top {
+            return
+        }
         
+        if cell.center.y > (view.height / 2) {
+            tableView.frame = CGRect(x: tableView.left, y: tableView.top - (view.height / 2), width: tableView.width, height: tableView.height)
+        }
+    }
+    
+    func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
+        tableView.frame = view.bounds
         guard let value = updatedModel.value else {
             return
         }

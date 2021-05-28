@@ -65,7 +65,7 @@ class ViewPostViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         //
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "cpu"), style: .plain, target: self, action: #selector(zoom))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.up.backward.and.arrow.down.forward"), style: .plain, target: self, action: #selector(zoom))
         NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
         // Add like button function call
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
@@ -263,18 +263,27 @@ class ViewPostViewController: UIViewController {
 extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let comments = comments else {
-            return 0
+            return 1
         }
         
-        return comments.count
+        return comments.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if indexPath.row == 0 {
+            print("Caption")
+            let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
+            
+            cell.configure(email: post.owner.safeEmail, comment: post.caption ?? "")
+            return cell
+        }
+        
         guard let comments = comments else {
             return UITableViewCell()
         }
         
-        let model = comments[indexPath.row]
+        let model = comments[indexPath.row - 1]
         let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
         
         cell.configure(email: model.email, comment: model.text)
@@ -283,11 +292,21 @@ extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
+        if indexPath.row == 0 {
+            let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
+            label.text = post.caption
+            label.numberOfLines = 0
+            label.adjustsFontSizeToFitWidth = false
+            label.lineBreakMode = .byWordWrapping
+            label.sizeToFit()
+            return label.height + 10
+        }
+        
         guard let comments = comments else {
             return 20
         }
         
-        let model = comments[indexPath.row]
+        let model = comments[indexPath.row - 1]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
         label.text = model.text
         label.numberOfLines = 0

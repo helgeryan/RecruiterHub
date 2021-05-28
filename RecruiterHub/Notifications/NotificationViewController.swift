@@ -99,7 +99,7 @@ final class NotificationViewController: UIViewController {
 }
 
 extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {3
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return models.count
     }
     
@@ -126,7 +126,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
 
 extension NotificationViewController: NotificationLikeEventTableViewCellDelegate {
     func didTapRelatedPostButton(model: UserNotification) {
-        print("Tapped Related Post. Type: \(model.type)")
+        
         switch model.type {
         case .like(let post):
             DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in

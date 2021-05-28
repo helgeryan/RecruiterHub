@@ -69,8 +69,7 @@ class FeedActionsCell: UITableViewCell {
     }
     
     @objc private func didTapLikeButton() {
-        guard let email = email,
-              let url = url else {
+        guard let email = email else {
             return
         }
         
@@ -88,8 +87,6 @@ class FeedActionsCell: UITableViewCell {
         
         DatabaseManager.shared.like(with: email, likerInfo: postLike, post: post, completion: {
         })
-        
-        
         
         delegate?.didTapLikeButton()
     }

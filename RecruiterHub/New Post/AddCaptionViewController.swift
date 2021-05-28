@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 
 class AddCaptionViewController: UIViewController {
     
@@ -14,6 +15,12 @@ class AddCaptionViewController: UIViewController {
     private let email: String
     
     private let filename: String
+    
+    private let spinner: JGProgressHUD = {
+        let spinner = JGProgressHUD(automaticStyle: ())
+        
+        return spinner
+    }()
     
     private let textView: UITextView = {
         let textView = UITextView()
@@ -49,6 +56,7 @@ class AddCaptionViewController: UIViewController {
         
         textView.delegate = self
         view.addSubview(textView)
+        view.addSubview(spinner)
     }
     
     override func viewDidLayoutSubviews() {
@@ -65,6 +73,7 @@ class AddCaptionViewController: UIViewController {
     
     @objc private func didTapDone() {
         print("Tapped Done")
+        spinner.show(in: view)
         StorageManager.shared.uploadVideo(with: data, email: email, filename: filename, completion: { [weak self] result in
 
             guard let email = self?.email else {
@@ -104,9 +113,9 @@ class AddCaptionViewController: UIViewController {
                                         taggedUsers: [],
                                         owner: user)
                     
-                   
-                    
                     DatabaseManager.shared.newPost(post: post)
+                    
+                    self?.spinner.dismiss()
                     //tiffany: change it to popToRootView
                     self?.navigationController?.popToRootViewController(animated: true)
                 })

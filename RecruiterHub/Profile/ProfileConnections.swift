@@ -50,7 +50,7 @@ class ProfileConnections: UICollectionReusableView {
         let label = UILabel()
         label.numberOfLines = 2
         label.font = .systemFont(ofSize: 12)
-        label.text = "Connections\n"
+        label.text = "Endorsers\n"
         label.textAlignment = .center
         label.textColor = .systemBlue
         label.layer.borderColor = UIColor.systemBlue.cgColor

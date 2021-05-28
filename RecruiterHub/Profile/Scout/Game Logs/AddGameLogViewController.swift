@@ -39,6 +39,9 @@ class AddGameLogViewController: UIViewController {
         configureModels()
         tableView.dataSource = self
         view.addSubview(tableView)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        view.addGestureRecognizer(tapGesture)
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSave))
     }
@@ -89,7 +92,11 @@ class AddGameLogViewController: UIViewController {
             model = EditProfileFormModel(label: "SB", placeholder: "0", value: nil)
             models.append(model)
         }
-        
+    }
+    
+    @objc private func didTap() {
+        tableView.frame = view.bounds
+        view.endEditing(true)
     }
     
     override func viewDidLayoutSubviews() {
@@ -144,8 +151,19 @@ extension AddGameLogViewController: UITableViewDataSource {
 }
 
 extension AddGameLogViewController: FormTableViewCellDelegate {
+    func formTableViewCell(_ cell: FormTableViewCell) {
+        if tableView.top < view.top {
+            return
+        }
+        
+        if cell.center.y > (view.height / 2) {
+            tableView.frame = CGRect(x: tableView.left, y: tableView.top - (view.height / 2), width: tableView.width, height: tableView.height)
+        }
+    }
+
     func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
         
+            tableView.frame = view.bounds
         guard let value = updatedModel.value else {
             return
         }
