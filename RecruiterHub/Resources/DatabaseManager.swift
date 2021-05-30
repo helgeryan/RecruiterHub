@@ -338,6 +338,22 @@ public class DatabaseManager {
                     }
                 }
                 
+                var postComments: [PostComment] = []
+                if let comments = post["comments"] as? [[String:String]] {
+                    for comment in comments {
+                        guard let email = comment["email"],
+                              let text = comment["comment"]
+                        else {
+                            completion(nil)
+                            return
+                        }
+                        
+                        let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                        
+                        postComments.append(newElement)
+                    }
+                }
+                
                 self.getDataForUser(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
@@ -350,7 +366,7 @@ public class DatabaseManager {
                                          postURL: videoUrl,
                                          caption: caption,
                                          likeCount: likeCount,
-                                         comments: [],
+                                         comments: postComments,
                                          createdDate: Date(),
                                          taggedUsers: [],
                                          owner: user)
@@ -413,6 +429,23 @@ public class DatabaseManager {
                     }
                 }
                 
+                var postComments: [PostComment] = []
+                if let comments = post["comments"] as? [[String:String]] {
+                    for comment in comments {
+                        
+                        guard let email = comment["email"],
+                              let text = comment["comment"]
+                        else {
+                            completion(nil)
+                            return
+                        }
+                        
+                        let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                        
+                        postComments.append(newElement)
+                    }
+                }
+                
                 self.getDataForUser(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
@@ -425,7 +458,7 @@ public class DatabaseManager {
                                          postURL: videoUrl,
                                          caption: caption,
                                          likeCount: likeCount,
-                                         comments: [],
+                                         comments: postComments,
                                          createdDate: Date(),
                                          taggedUsers: [],
                                          owner: user)

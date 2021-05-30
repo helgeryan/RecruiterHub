@@ -206,9 +206,9 @@ extension FeedViewController: FeedHeaderCellDelegate {
 
 extension FeedViewController: FeedActionsCellDelegate {
     func didTapCommentButton(email: String, url: String) {
-        let newCommentVC = NewCommentViewController(email: email, url: url)
-        newCommentVC.title = "Add Comment"
-        navigationController?.pushViewController(newCommentVC, animated: true)
+//        let newCommentVC = NewCommentViewController(email: email, post: url)
+//        newCommentVC.title = "Add Comment"
+//        navigationController?.pushViewController(newCommentVC, animated: true)
     }
     
     func didTapLikeButton() {

@@ -223,7 +223,7 @@ class ViewPostViewController: UIViewController {
     
     // Function that is called when the like button is tapped
     @objc private func didTapComment() {
-        let newCommentVC = NewCommentViewController(email: user.safeEmail, url: post.postURL.absoluteString)
+        let newCommentVC = NewCommentViewController(email: user.safeEmail, post: post)
         newCommentVC.title = "Add Comment"
         navigationController?.pushViewController(newCommentVC, animated: true)
     }
@@ -245,7 +245,6 @@ class ViewPostViewController: UIViewController {
     
     // Configure the like button
     private func configureLikesLabel() {
-        let numberOfLikes = post.likeCount.count
         likesLabel.text = "\(post.likeCount.count) likes"
         
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
@@ -286,11 +285,7 @@ class ViewPostViewController: UIViewController {
 
 extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let comments = comments else {
-            return 1
-        }
-        
-        return comments.count + 1
+        return post.comments.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -303,11 +298,7 @@ extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }
         
-        guard let comments = comments else {
-            return UITableViewCell()
-        }
-        
-        let model = comments[indexPath.row - 1]
+        let model = post.comments[indexPath.row - 1]
         let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
         
         cell.configure(email: model.email, comment: model.text)
@@ -326,11 +317,7 @@ extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {
             return label.height + 10
         }
         
-        guard let comments = comments else {
-            return 20
-        }
-        
-        let model = comments[indexPath.row - 1]
+        let model = post.comments[indexPath.row - 1]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
         label.text = model.text
         label.numberOfLines = 0

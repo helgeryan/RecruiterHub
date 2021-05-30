@@ -133,8 +133,8 @@ extension NewFeedViewController: FeedPostTableViewCellDelegate {
         navigationController?.pushViewController(vc, animated: false)
     }
     
-    func didTapCommentButton(email: String, url: String) {
-        let newCommentVC = NewCommentViewController(email: email, url: url)
+    func didTapCommentButton(email: String, post: UserPost) {
+        let newCommentVC = NewCommentViewController(email: email, post: post)
         newCommentVC.title = "Add Comment"
         navigationController?.pushViewController(newCommentVC, animated: true)
     }

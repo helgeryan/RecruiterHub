@@ -11,12 +11,7 @@ import InputBarAccessoryView
 
 class NewCommentViewController: UIViewController {
 
-    private let email: String
-    
-    private let url: String
-    private var post: UserPost?
-    
-    private var comments: [PostComment]?
+    private var post: UserPost
     
     private let textView: UITextView = {
         let textView = UITextView()
@@ -41,9 +36,8 @@ class NewCommentViewController: UIViewController {
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     /// Init
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    init(email: String, url: String) {
-        self.email = email
-        self.url = url
+    init(email: String, post: UserPost) {
+        self.post = post
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -120,29 +114,29 @@ class NewCommentViewController: UIViewController {
     /// - Reload table data
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     private func fetchComments() {
-        
-        guard let email = email as String? else {
-            return
-        }
-        
-        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
-            post in
-            guard let post = post else {
-                return
-            }
-            self?.post = post
-            
-            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
-                guard let comments = comments else {
-                    return
-                }
-                
-                self?.comments = comments
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            })
-        })
+//
+//        guard let email = email as String? else {
+//            return
+//        }
+//
+//        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
+//            post in
+//            guard let post = post else {
+//                return
+//            }
+//            self?.post = post
+//
+//            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
+//                guard let comments = comments else {
+//                    return
+//                }
+//
+//                self?.comments = comments
+//                DispatchQueue.main.async {
+//                    self?.tableView.reloadData()
+//                }
+//            })
+//        })
     }
     
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -173,12 +167,7 @@ class NewCommentViewController: UIViewController {
         guard let newComment = textView.text else {
             return
         }
-        
-        guard let email = email as String?,
-              let post = post else {
-            return
-        }
-        
+  
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
@@ -188,25 +177,17 @@ class NewCommentViewController: UIViewController {
         textView.text = "New Comment..."
         textView.textColor = .lightGray
         
-        DatabaseManager.shared.newComment(email: email, postComment: newElement, index: post.identifier)
+        DatabaseManager.shared.newComment(email: post.owner.safeEmail, postComment: newElement, index: post.identifier)
     }
 }
 
 extension NewCommentViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let comments = comments else {
-            return 0
-        }
-        
-        return comments.count
+        return post.comments.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let comments = comments else {
-            return UITableViewCell()
-        }
-        
-        let model = comments[indexPath.row]
+        let model = post.comments[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: CommentsCell.identifier, for: indexPath) as! CommentsCell
         
         cell.configure(email: model.email, comment: model.text)
@@ -215,11 +196,7 @@ extension NewCommentViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        guard let comments = comments else {
-            return 20
-        }
-        
-        let model = comments[indexPath.row]
+        let model = post.comments[indexPath.row]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
         label.text = model.text
         label.numberOfLines = 0

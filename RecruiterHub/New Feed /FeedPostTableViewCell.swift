@@ -12,7 +12,7 @@ import AVKit
 protocol FeedPostTableViewCellDelegate: AnyObject {
     func didTapUsername(_ feedHeaderCell: FeedPostTableViewCell, user: RHUser)
     func didTapLikeButton()
-    func didTapCommentButton(email: String, url: String)
+    func didTapCommentButton(email: String, post: UserPost)
     func didTapSendButton(otherUserEmail: String, id: String?)
 }
 
@@ -24,7 +24,10 @@ class FeedPostTableViewCell: UITableViewCell {
     
     private var post: NewFeedPost?
     
-    private var playerLayer = AVPlayerLayer()
+    private var playerLayer: AVPlayerLayer = {
+        let player = AVPlayerLayer()
+        return player
+    }()
     
     private let usernameLabel: UILabel = {
         let label = UILabel()
@@ -75,8 +78,7 @@ class FeedPostTableViewCell: UITableViewCell {
         usernameLabel.addGestureRecognizer(gesture)
         profilePicImageView.addGestureRecognizer(gesture)
         NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: post?.player.currentItem)
-//        gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
-//        contentView.addGestureRecognizer(gesture)
+        
         //3. Create AVPlayerLayer object
         playerLayer.videoGravity = .resizeAspectFill
         
@@ -127,7 +129,7 @@ class FeedPostTableViewCell: UITableViewCell {
             return
         }
         
-        delegate?.didTapCommentButton(email: post.post.owner.safeEmail, url: post.post.postURL.absoluteString)
+        delegate?.didTapCommentButton(email: post.post.owner.safeEmail, post: post.post)
     }
     
     @objc private func didTapSendButton() {
@@ -259,6 +261,7 @@ class FeedPostTableViewCell: UITableViewCell {
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             // Do any additional setup after loading the view
+            post.player.isMuted = true
             self?.playerLayer.player = post.player
             self?.post?.player.play()
         }
@@ -321,7 +324,6 @@ class FeedPostTableViewCell: UITableViewCell {
         super.prepareForReuse()
         post = nil
         playerLayer.player = nil
-        post?.player.pause()
     }
 
     public func getUser() -> RHUser? {
