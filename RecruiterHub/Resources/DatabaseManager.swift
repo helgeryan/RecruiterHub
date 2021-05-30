@@ -325,6 +325,19 @@ public class DatabaseManager {
                     return
                 }
                 
+                var likeCount: [PostLike] = []
+                if let likes = post["likes"] as? [[String:String]] {
+                    for like in likes {
+                        guard let username = like["username"],
+                              let name = like["name"],
+                              let email = like["email"] else {
+                            return
+                        }
+                        let postLike = PostLike(username: username, email: email, name: name)
+                        likeCount.append(postLike)
+                    }
+                }
+                
                 self.getDataForUser(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
@@ -336,7 +349,7 @@ public class DatabaseManager {
                                          thumbnailImage: thumbnail,
                                          postURL: videoUrl,
                                          caption: caption,
-                                         likeCount: [],
+                                         likeCount: likeCount,
                                          comments: [],
                                          createdDate: Date(),
                                          taggedUsers: [],
@@ -387,6 +400,19 @@ public class DatabaseManager {
                     return
                 }
                 
+                var likeCount: [PostLike] = []
+                if let likes = post["likes"] as? [[String:String]] {
+                    for like in likes {
+                        guard let username = like["username"],
+                              let name = like["name"],
+                              let email = like["email"] else {
+                            return
+                        }
+                        let postLike = PostLike(username: username, email: email, name: name)
+                        likeCount.append(postLike)
+                    }
+                }
+                
                 self.getDataForUser(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
@@ -398,7 +424,7 @@ public class DatabaseManager {
                                          thumbnailImage: thumbnail,
                                          postURL: videoUrl,
                                          caption: caption,
-                                         likeCount: [],
+                                         likeCount: likeCount,
                                          comments: [],
                                          createdDate: Date(),
                                          taggedUsers: [],
@@ -530,7 +556,7 @@ public class DatabaseManager {
         
         let ref = database.child("\(email.safeDatabaseKey())/Posts/\(post.identifier)/likes")
         
-        ref.observeSingleEvent(of: .value, with: {snapshot in
+        ref.observeSingleEvent(of: .value, with: { snapshot in
         
             let element = [
                 "email": likerInfo.email,
@@ -624,14 +650,23 @@ public class DatabaseManager {
             completion(feedPosts)
         })
     }
-    public func getUserFollowing( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+    public func getUserFollowing( email: String, completion: @escaping (([Following]?) -> Void))  {
         database.child("\(email)/following").observe( .value, with: { snapshot in
             guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
+            var array: [Following] = []
+            for follow in following {
+                guard let email = follow["email"] else {
+                    return
+                }
+                
+                let newElement = Following(email: email)
+                array.append(newElement)
+            }
             
-            completion(following)
+            completion(array)
         })
     }
     
@@ -800,7 +835,7 @@ public class DatabaseManager {
         completion(nil)
     }
     
-    public func getLikes(with email: String, index: Int, completion: @escaping (([[String:String]]?) -> Void)) {
+    public func getLikes(with email: String, index: Int, completion: @escaping (([PostLike]?) -> Void)) {
         database.child("\(email)/Posts/\(index)/likes").observe( .value, with: { snapshot in
             
             guard let likes = snapshot.value as? [[String:String]] else {
@@ -808,8 +843,19 @@ public class DatabaseManager {
                 completion(nil)
                 return
             }
-
-            completion(likes)
+            
+            var likeCount: [PostLike] = []
+            for like in likes {
+                guard let username = like["username"],
+                      let name = like["name"],
+                      let email = like["email"] else {
+                    return
+                }
+                let postLike = PostLike(username: username, email: email, name: name)
+                likeCount.append(postLike)
+            }
+            
+            completion(likeCount)
         })
         completion(nil)
     }
@@ -1799,7 +1845,7 @@ public class DatabaseManager {
                         
                         for follow in following {
                             
-                            if follow["email"] == email {
+                            if follow.email == email {
                                 notificationType = UserNotificationType.follow(state: .following )
                                 break
                             }

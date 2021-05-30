@@ -155,7 +155,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
                 self?.followButton.backgroundColor = .link
                 return
             }
-            if result.contains(["email": user.emailAddress.safeDatabaseKey()]) {
+            if result.contains(Following(email: user.safeEmail)) {
                 self?.followButton.setTitle("Unfollow", for: .normal)
                 self?.followButton.backgroundColor = .lightGray
             }

@@ -69,6 +69,8 @@
 		E69AF4DF25F6DBFF00D366A8 /* NewConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF4DE25F6DBFF00D366A8 /* NewConversationTableViewCell.swift */; };
 		E69AF4E225F6DC7E00D366A8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF4E125F6DC7E00D366A8 /* ChatViewController.swift */; };
 		E69AF4E525F6DCAE00D366A8 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF4E425F6DCAE00D366A8 /* ChatModels.swift */; };
+		E6A069C72660761700BE0444 /* NewFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A069C62660761700BE0444 /* NewFeedViewController.swift */; };
+		E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A069CC2660780800BE0444 /* FeedPostTableViewCell.swift */; };
 		E6BED0D625F1F85E00A03720 /* ScoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */; };
 		E6BED10F25F433F300A03720 /* ScoutCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */; };
 		E6C2F9A225FD38D4006ACED2 /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C2F9A125FD38D4006ACED2 /* DatabaseTests.swift */; };
@@ -152,6 +154,8 @@
 		E69AF4DE25F6DBFF00D366A8 /* NewConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationTableViewCell.swift; sourceTree = "<group>"; };
 		E69AF4E125F6DC7E00D366A8 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		E69AF4E425F6DCAE00D366A8 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
+		E6A069C62660761700BE0444 /* NewFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFeedViewController.swift; sourceTree = "<group>"; };
+		E6A069CC2660780800BE0444 /* FeedPostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPostTableViewCell.swift; sourceTree = "<group>"; };
 		E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutViewController.swift; sourceTree = "<group>"; };
 		E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutCollectionViewCell.swift; sourceTree = "<group>"; };
 		E6C2F99525FD3069006ACED2 /* RecruiterHubTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecruiterHubTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -268,6 +272,7 @@
 		E68B73E225B11CB600D15230 /* RecruiterHub */ = {
 			isa = PBXGroup;
 			children = (
+				E6A069C5266075F400BE0444 /* New Feed  */,
 				E688522B26521FB200C177C9 /* Notifications */,
 				E68B73EC25B11CBA00D15230 /* Assets.xcassets */,
 				E68B741225B24CD500D15230 /* GoogleService-Info.plist */,
@@ -344,6 +349,15 @@
 				E69AF4E425F6DCAE00D366A8 /* ChatModels.swift */,
 			);
 			path = Messages;
+			sourceTree = "<group>";
+		};
+		E6A069C5266075F400BE0444 /* New Feed  */ = {
+			isa = PBXGroup;
+			children = (
+				E6A069C62660761700BE0444 /* NewFeedViewController.swift */,
+				E6A069CC2660780800BE0444 /* FeedPostTableViewCell.swift */,
+			);
+			path = "New Feed ";
 			sourceTree = "<group>";
 		};
 		E6BED11125F4355300A03720 /* Scout */ = {
@@ -574,6 +588,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E636611425CA4983007A4EFD /* FeedHeaderCell.swift in Sources */,
+				E6A069C72660761700BE0444 /* NewFeedViewController.swift in Sources */,
 				E68B746125BFAC3900D15230 /* SearchUsersTableViewCell.swift in Sources */,
 				E69AF4E225F6DC7E00D366A8 /* ChatViewController.swift in Sources */,
 				E68B742D25B2502500D15230 /* DatabaseManager.swift in Sources */,
@@ -611,6 +626,7 @@
 				E62C957A25CB8EFA0050A6DA /* FeedActionsCell.swift in Sources */,
 				E66568AA25EACFA800F04EFA /* CommentsViewController.swift in Sources */,
 				E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */,
+				E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */,
 				E63660FC25C7906C007A4EFD /* ProfileConnections.swift in Sources */,
 				E636610325C8DD74007A4EFD /* EditProfileViewController.swift in Sources */,
 				E69AF4BE25F6D56000D366A8 /* ConversationsViewController.swift in Sources */,

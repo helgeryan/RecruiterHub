@@ -97,6 +97,9 @@ class ViewPostViewController: UIViewController {
         // Fetch Comments
         fetchComments()
         
+        // Listen for updates
+        listenForUpdates()
+        
         // Add player and start playing
         playerLayer.player = player
         player?.play()
@@ -137,6 +140,46 @@ class ViewPostViewController: UIViewController {
     // Required init function
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func listenForUpdates() {
+        guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        DatabaseManager.shared.getLikes(with: post.owner.safeEmail, index: post.identifier, completion: {
+            [weak self] likes in
+            guard let likes = likes else {
+                DispatchQueue.main.async {
+                    self?.likesLabel.text = "0 likes"
+                    let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                    let image = UIImage(systemName: "heart", withConfiguration: config)
+                    self?.likeButton.setImage(image, for: .normal)
+                    self?.likeButton.tintColor = .label
+                }
+                return
+            }
+
+            DispatchQueue.main.async {
+                self?.likesLabel.text = "\(likes.count) likes"
+            }
+
+            for like in likes {
+                if like.email == currentEmail {
+                    DispatchQueue.main.async {
+                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                        let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                        self?.likeButton.setImage(image, for: .normal)
+                        self?.likeButton.tintColor = .red
+                        return
+                    }
+                } // end if
+            } // end for
+
+            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+            let image = UIImage(systemName: "heart", withConfiguration: config)
+            self?.likeButton.setImage(image, for: .normal)
+            self?.likeButton.tintColor = .label
+        })
     }
     
     private func fetchComments() {
@@ -203,7 +246,7 @@ class ViewPostViewController: UIViewController {
     // Configure the like button
     private func configureLikesLabel() {
         let numberOfLikes = post.likeCount.count
-        likesLabel.text = "\(numberOfLikes) likes"
+        likesLabel.text = "\(post.likeCount.count) likes"
         
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
         else {
@@ -211,41 +254,22 @@ class ViewPostViewController: UIViewController {
             return
         }
         
-        DatabaseManager.shared.getLikes(with: post.owner.safeEmail, index: post.identifier, completion: {
-            [weak self] likes in
-            guard let likes = likes else {
-                DispatchQueue.main.async {
-                    self?.likesLabel.text = "0 likes"
-                    let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-                    let image = UIImage(systemName: "heart", withConfiguration: config)
-                    self?.likeButton.setImage(image, for: .normal)
-                    self?.likeButton.tintColor = .label
-                }
+        for like in post.likeCount {
+            if like.email == currentEmail {
+                let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                likeButton.setImage(image, for: .normal)
+                likeButton.tintColor = .red
                 return
-            }
-            
-            DispatchQueue.main.async {
-                self?.likesLabel.text = "\(likes.count) likes"
-            }
-            
-            for like in likes {
-                if like["email"] == currentEmail {
-                    DispatchQueue.main.async {
-                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-                        let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-                        self?.likeButton.setImage(image, for: .normal)
-                        self?.likeButton.tintColor = .red
-                        return
-                    }
-                } // end if
-            } // end for
-            
-            let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-            let image = UIImage(systemName: "heart", withConfiguration: config)
-            self?.likeButton.setImage(image, for: .normal)
-            self?.likeButton.tintColor = .label
-        })
+            } // end if
+        } // end for
+
+        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+        let image = UIImage(systemName: "heart", withConfiguration: config)
+        likeButton.setImage(image, for: .normal)
+        likeButton.tintColor = .label
     }
+
     
     // Callback for like label interaction
     @objc private func didTapLikesLabel() {

@@ -18,6 +18,7 @@ class ConversationTableViewCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 50
         imageView.layer.masksToBounds = true
+        imageView.backgroundColor = .secondarySystemBackground
         return imageView
     }()
     
@@ -30,6 +31,7 @@ class ConversationTableViewCell: UITableViewCell {
     private let userMessageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.textColor = .secondaryLabel
         return label
     }()
     

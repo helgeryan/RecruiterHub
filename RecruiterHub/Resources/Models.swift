@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AVKit
 
 enum Gender {
     case male, female, other
@@ -48,6 +49,11 @@ public struct UserPost {
     let owner: RHUser
 }
 
+public struct NewFeedPost {
+    let post: UserPost
+    let player: AVPlayer
+}
+
 struct CommentLike {
     let username: String
     let commentIdentifier: String
@@ -59,4 +65,8 @@ public struct PostComment {
     let text: String
     let createdDate: Date
     let likes: [CommentLike]
+}
+
+public struct Following: Equatable {
+    let email: String
 }

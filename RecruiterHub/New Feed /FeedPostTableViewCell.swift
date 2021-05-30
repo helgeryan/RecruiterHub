@@ -1,29 +1,44 @@
 //
-//  FeedActionsCell.swift
+//  FeedPostInfoCell.swift
 //  RecruiterHub
 //
 //  Created by Ryan Helgeson on 2/3/21.
 //
 
 import UIKit
+import AVKit
 
-protocol FeedActionsCellDelegate: AnyObject {
+
+protocol FeedPostTableViewCellDelegate: AnyObject {
+    func didTapUsername(_ feedHeaderCell: FeedPostTableViewCell, user: RHUser)
     func didTapLikeButton()
     func didTapCommentButton(email: String, url: String)
     func didTapSendButton(otherUserEmail: String, id: String?)
 }
 
-class FeedActionsCell: UITableViewCell {
-   
-    weak var delegate: FeedActionsCellDelegate?
+
+class FeedPostTableViewCell: UITableViewCell {
+    static let identifier = "FeedPostTableViewCell"
     
-    static let identifier = "FeedActionsCell"
+    public weak var delegate: FeedPostTableViewCellDelegate?
     
-    private var url: String?
+    private var post: NewFeedPost?
     
-    private var post: UserPost?
+    private var playerLayer = AVPlayerLayer()
     
-    private var email: String?
+    private let usernameLabel: UILabel = {
+        let label = UILabel()
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    private let profilePicImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.backgroundColor = .secondarySystemBackground
+        return imageView
+    }()
     
     private let commentButton: UIButton = {
         let button = UIButton()
@@ -51,10 +66,23 @@ class FeedActionsCell: UITableViewCell {
         button.tintColor = .label
         return button
     }()
-
-    override init(style:UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemBackground
+        selectionStyle = .none
+        contentView.clipsToBounds = true
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
+        usernameLabel.addGestureRecognizer(gesture)
+        profilePicImageView.addGestureRecognizer(gesture)
+        NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: post?.player.currentItem)
+//        gesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+//        contentView.addGestureRecognizer(gesture)
+        //3. Create AVPlayerLayer object
+        playerLayer.videoGravity = .resizeAspectFill
+        
+        addSubview(profilePicImageView)
+        addSubview(usernameLabel)
+        layer.addSublayer(playerLayer)
         contentView.addSubview(likeButton)
         contentView.addSubview(commentButton)
         contentView.addSubview(sendButton)
@@ -66,17 +94,19 @@ class FeedActionsCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+        
+    }
+    
+    @objc private func didTap() {
+        post?.player.play()
     }
     
     @objc private func didTapLikeButton() {
-        guard let email = email else {
-            return
-        }
         
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String,
               let currentUsername = UserDefaults.standard.value(forKey: "username") as? String,
               let currentName = UserDefaults.standard.value(forKey: "name") as? String,
-              let post = post
+              let post = post?.post
         else {
             print("Failed to get User Defaults")
             return
@@ -85,7 +115,7 @@ class FeedActionsCell: UITableViewCell {
         // Create Post Like
         let postLike = PostLike(username: currentUsername, email: currentEmail.safeDatabaseKey(), name: currentName)
         
-        DatabaseManager.shared.like(with: email, likerInfo: postLike, post: post, completion: {
+        DatabaseManager.shared.like(with: post.owner.safeEmail, likerInfo: postLike, post: post, completion: {
         })
         
         delegate?.didTapLikeButton()
@@ -93,20 +123,16 @@ class FeedActionsCell: UITableViewCell {
     
     @objc private func didTapCommentButton() {
         
-        guard let email = email else {
+        guard let post = post else {
             return
         }
         
-        guard let url = url else {
-            return
-        }
-        
-        delegate?.didTapCommentButton(email: email, url: url)
+        delegate?.didTapCommentButton(email: post.post.owner.safeEmail, url: post.post.postURL.absoluteString)
     }
     
     @objc private func didTapSendButton() {
         
-        guard let otherUserEmail = email else {
+        guard let otherUserEmail = post?.post.owner.safeEmail else {
             return
         }
         
@@ -189,62 +215,101 @@ class FeedActionsCell: UITableViewCell {
         })
     }
     
-    public func configure( with urlString: String, email: String) {
-        // Configure the cell
-        url = urlString
-        self.email = email
-        
-        DatabaseManager.shared.getUserPost(with: email, url: urlString, completion: {
-            [weak self] post in
-            guard let post = post else {
-                return
-            }
-            self?.post = post
-
-            guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
-            else {
-                print("Failed to get User Defaults")
-                return
-            }
-            
-            DatabaseManager.shared.getLikes(with: email, index: post.identifier, completion: {
-                [weak self] likes in
-                guard let likes = likes else {
-                    self?.defaultButton()
-                    return
-                }
-                for like in likes {
-                    if like.email == currentEmail {
-                        let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
-                        let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-                        self?.likeButton.setImage(image, for: .normal)
-                        self?.likeButton.tintColor = .red
-                        return
-                    }
-                }
-                
-                self?.defaultButton()
-            })
-        })
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
+        let padding = 5
+        profilePicImageView.frame = CGRect(x: 10,
+                                           y: padding,
+                                           width: 40,
+                                           height: 50 -  (padding * 2) )
+        profilePicImageView.layer.cornerRadius = profilePicImageView.width / 2
         
-        // like comment send
-        let buttonSize = contentView.height-10
+        usernameLabel.frame = CGRect(x: Int(profilePicImageView.right) + 10,
+                                     y: padding,
+                                     width: Int(contentView.width),
+                                     height: 50 -  (padding * 2) )
+        playerLayer.frame = CGRect(x: 0,
+                                   y: profilePicImageView.bottom + 5,
+                                   width: contentView.width,
+                                   height: contentView.height - profilePicImageView.bottom - 55)
+        let buttonSize = 40
         
         let buttons =  [likeButton, commentButton, sendButton]
         
         for x in 0..<buttons.count {
             let button = buttons[x]
-            button.frame = CGRect(x: (CGFloat(x) * buttonSize) + (10*CGFloat(x+1)),
-                                  y: 5,
+            button.frame = CGRect(x: (x * buttonSize) + (10*(x+1)),
+                                  y: Int(usernameLabel.bottom + playerLayer.frame.height) + 10,
                                   width: buttonSize,
                                   height: buttonSize)
         }
     }
-
+ 
+    public func configure(post: NewFeedPost) {
+        self.post = post
+        
+        
+        DispatchQueue.main.async {
+            self.usernameLabel.text = post.post.owner.username
+        }
+        
+        if let url = URL(string: post.post.owner.profilePicUrl) {
+            self.profilePicImageView.sd_setImage(with: url, completed: nil)
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            // Do any additional setup after loading the view
+            self?.playerLayer.player = post.player
+            self?.post?.player.play()
+        }
+        
+        DatabaseManager.shared.getLikes(with: post.post.owner.safeEmail, index: post.post.identifier, completion: {
+            [weak self] likes in
+            guard let likes = likes else {
+                self?.defaultButton()
+                return
+            }
+            guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+                return
+            }
+            
+            for like in likes {
+                if like.email == currentEmail {
+                    let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
+                    let image = UIImage(systemName: "heart.fill", withConfiguration: config)
+                    self?.likeButton.setImage(image, for: .normal)
+                    self?.likeButton.tintColor = .red
+                    return
+                }
+            }
+            
+            self?.defaultButton()
+        })
+    }
+    
+    @objc private func replay() {
+        post?.player.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
+        post?.player.play()
+    }
+    
+    public func play() {
+        post?.player.play()
+    }
+    
+    public func pause() {
+        post?.player.pause()
+    }
+    
+    @objc private func didTapUsername() {
+        print("tapped username")
+        
+        guard let user = post?.post.owner else {
+            return
+        }
+        
+        delegate?.didTapUsername(self, user: user)
+    }
+    
     private func defaultButton() {
         let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
         let image = UIImage(systemName: "heart", withConfiguration: config)
@@ -254,6 +319,15 @@ class FeedActionsCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        defaultButton()
+        post = nil
+        playerLayer.player = nil
+        post?.player.pause()
+    }
+
+    public func getUser() -> RHUser? {
+        guard let post = post else {
+            return nil
+        }
+        return post.post.owner
     }
 }

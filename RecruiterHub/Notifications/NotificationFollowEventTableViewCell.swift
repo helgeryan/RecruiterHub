@@ -106,7 +106,7 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
                     self?.followButton.backgroundColor = .link
                     return
                 }
-                if following.contains(["email": model.user.safeEmail]) {
+                if following.contains(Following(email: model.user.safeEmail)) {
                     self?.configureForUnfollow()
                 }
                 else {
