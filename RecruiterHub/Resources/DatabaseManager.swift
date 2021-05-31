@@ -10,20 +10,26 @@ import FirebaseDatabase
 import AVFoundation
 import MessageKit
 
+// Class DatabaseManger - Store all Functions that are to connect to Firebase Database
 public class DatabaseManager {
     static let shared = DatabaseManager()
     
+    // Creates a database reference
     private let database = Database.database().reference()
     
+    // Create a safe database key. AKA a email with no '@' or '.' as firebase does not allow them for keys
     static func safeEmail(emailAddress: String) -> String {
         var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
         return safeEmail
     }
     
+    // Creates a thumbnail (image) of the video. Takes the first frame and saves the image
     static func createThumbnail(url: URL) -> UIImage {
+        // Create the asset
         let asset = AVURLAsset(url: url, options: nil)
         let imgGenerator = AVAssetImageGenerator(asset: asset)
+        // Attempt to make the image, if failed return a default image
         do {
             let cgImage = try imgGenerator.copyCGImage(at: CMTimeMake(value: 1, timescale: 1), actualTime: nil)
             let uiImage = UIImage(cgImage: cgImage)
@@ -34,11 +40,24 @@ public class DatabaseManager {
         }
     }
 
+    // MARK: - Users
+    
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /// Function Name: userExists
+    ///
+    /// Inputs:
+    /// - email: Safe database email key
+    /// - completion: closure to run at completion
+    ///
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         
+        // Ensure that the email is database safe
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         print("Checking if user exists")
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
+            
+            // Check if user exists
             guard snapshot.value as? [String: String] != nil else {
                 print("User doesn't exist")
                 completion(false)
@@ -48,24 +67,28 @@ public class DatabaseManager {
             completion(true)
         })
     }
-    
-    //MARK: - Public
-    
-    ///Check if username and email is available
-    /// -Parameters
-    ///     -email: String representing email
-    //      -username: string represting email
+
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /// Function Name: canCreateNewUser
+    ///
+    /// Inputs:
+    /// - email: Safe database email key
+    /// - username: user's username
+    ///
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public func canCreateNewUser(with email: String, username: String, completion: (Bool) -> Void) {
         completion(true)
     }
     
 
-    /*
-     //Inserts new user data to database
-     // -Parameters
-     //     -email: String representing email
-     //         -username: string represting email
-     */
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /// Function Name: insertNewUser
+    ///
+    /// Inputs:
+    /// - email: Safe database email key
+    /// - username: user's username
+    ///
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public func insertNewUser(with email: String, user: RHUser, completion: @escaping (Bool) -> Void) {
         database.child(email.safeDatabaseKey()).child("username").setValue(user.username)
         database.child(email.safeDatabaseKey()).child("firstname").setValue(user.firstName)
@@ -81,18 +104,23 @@ public class DatabaseManager {
         database.child(email.safeDatabaseKey()).child("gradYear").setValue(user.gradYear)
         database.child(email.safeDatabaseKey()).child("phone").setValue(user.phone)
 
+        // Grab the database users reference
         database.child("users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
+            // Check to see if the value exists
             if var usersCollection = snapshot.value as? [[String: String]] {
                 
+                // Create a new User element
                 let newElement = [
                     "name": "\(user.firstName) \(user.lastName)",
                     "email": user.emailAddress.safeDatabaseKey(),
                     "username": "\(user.username)"
                 ]
-                print("appending new user")
+                
+                // Append the new element
                 usersCollection.append(newElement)
                 
+                // Set the new user Collection
                 self?.database.child("users").setValue(usersCollection, withCompletionBlock:  { error, _ in
                     guard error == nil else {
                         return
@@ -100,6 +128,7 @@ public class DatabaseManager {
                 })
             }
             else {
+                //Create a new Collection
                 let newCollection: [[String: String]] = [
                     [
                         "name": "\(user.firstName) \(user.lastName)",
@@ -108,6 +137,7 @@ public class DatabaseManager {
                     ]
                 ]
                 
+                // Set the new user Collection
                 self?.database.child("users").setValue(newCollection, withCompletionBlock:  { error, _ in
                     guard error == nil else {
                         return
@@ -119,7 +149,10 @@ public class DatabaseManager {
         completion(true)
     }
     
-    /// Gets all users from a database
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /// Function Name: getAllUsers
+    ///
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public func getAllUsers( completion: @escaping (Result<[[String: String]], Error>) -> Void) {
         database.child("users").observeSingleEvent(of: .value, with: { snapshot in
             
@@ -133,68 +166,9 @@ public class DatabaseManager {
         })
     }
 
-    public enum DatabaseError: Error {
-        case failedToFetch
-        case conversationsEmpty
-        
-        public var localizedDescription: String {
-            switch self {
-            case .failedToFetch:
-                return "Fetch failed"
-            case .conversationsEmpty:
-                return "Conversations Empty"
-            }
-        }
-    }
     
-    public func insertNewPost(with email: String, url: Upload, caption: String) {
-        database.child("\(email)/Posts").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            var comment: String
-            if caption == "" {
-                comment = ""
-            }
-            else {
-                comment = caption
-            }
-            
-            var comments: [[String:String]] = []
-            comments.append([
-                "email": email,
-                "comment": comment
-            ])
-            
-            let newElement: [String : Any] = [
-                "url": url.videoUrl,
-                "thumbnail": url.thumbnailUrl,
-                "likes": "",
-                "comments": comments
-            ]
-            
-            if var usersCollection = snapshot.value as? [[String: Any]] {
-                print("Collection Exists")
-                usersCollection.append(newElement)
-                
-                self?.database.child("\(email)/Posts").setValue(usersCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
-            }
-            else {
-                print("New Collection")
-                let newCollection: [[String: Any]] = [newElement]
-                
-                self?.database.child("\(email)/Posts").setValue(newCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
-            }
-            self?.insertFeedPost(email: email, url: url.videoUrl)
-            
-        })
-    }
-    
+    //MARK: - Posts
+
     public func newPost(post: UserPost) {
         database.child("\(post.owner.safeEmail)/Posts").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             var caption: String
@@ -246,52 +220,6 @@ public class DatabaseManager {
                     }
                 })
             }
-//            self?.insertFeedPost(email: email, url: url.videoUrl)
-            
-        })
-    }
-    
-    private func insertFeedPost(email: String, url: String) {
-        database.child("FeedPosts").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            if var feedCollection = snapshot.value as? [[String: String]] {
-                
-                let newElement = [
-                    "email": email,
-                    "url": url
-                ]
-                feedCollection.append(newElement)
-                
-                self?.database.child("FeedPosts").setValue(feedCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
-            }
-            else {
-                let newCollection: [[String: String]] = [
-                    [
-                        "email": email,
-                        "url": url
-                    ]
-                ]
-                
-                self?.database.child("FeedPosts").setValue(newCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
-            }
-        })
-    }
-    
-    public func getVideo(completion: @escaping ((String?) -> Void) ) {
-        database.child("Test/Posts").observeSingleEvent(of: .value, with: { snapshot in
-            guard let posts = snapshot.value as! [[String:String]]? else {
-                completion(nil)
-                return
-            }
-            let url = posts[0]["url"]
-            completion(url)
         })
     }
     
@@ -535,55 +463,6 @@ public class DatabaseManager {
         })
     }
     
-    public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
-        
-        database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
-            
-            guard let info = snapshot.value as? [String: Any] else {
-                completion(nil)
-                return
-            }
-            
-            guard let username = info["username"] as? String,
-                  let heightInches =  info["heightInches"] as? Int,
-                  let heightFeet = info["heightFeet"] as? Int,
-                  let weight =  info["weight"] as? Int,
-                  let gradYear =  info["gradYear"] as? Int,
-                  let state = info["state"] as? String,
-                  let highSchool = info["highschool"] as? String,
-//                  let positions = info["positions"] as? [String:String],
-                  let arm = info["arm"] as? String,
-                  let bats = info["bats"] as? String,
-                  let lastname = info["lastname"] as? String,
-                  let firstname = info["firstname"] as? String,
-                  let phone = info["phone"] as? String,
-                  let profilePicUrl = info["profilePicUrl"] as? String else {
-               print("Failed to get user data")
-                completion(nil)
-                return
-            }
-            var userData = RHUser()
-            userData.username = username
-            userData.firstName = firstname
-            userData.lastName = lastname
-            userData.emailAddress = user
-            userData.phone = phone
-            userData.gpa = 0
-            userData.positions = ["RHP", "OF"]
-            userData.highSchool = highSchool
-            userData.state = state
-            userData.gradYear = gradYear
-            userData.heightFeet = heightFeet
-            userData.heightInches = heightInches
-            userData.weight = weight
-            userData.arm = arm
-            userData.bats = bats
-            userData.profilePicUrl = profilePicUrl
-            
-            completion(userData)
-        })
-    }
-    
     public func like(with email: String, likerInfo: PostLike, post: UserPost, completion: @escaping () -> Void ) {
         print("Like")
         
@@ -673,58 +552,54 @@ public class DatabaseManager {
         })
     }
     
-    public func getUserFollowers( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
-        database.child("\(email)/followers").observeSingleEvent(of: .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
-                completion(nil)
-                return
-            }
+    // MARK: - User Info
+    public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
         
-            completion(feedPosts)
-        })
-    }
-    public func getUserFollowing( email: String, completion: @escaping (([Following]?) -> Void))  {
-        database.child("\(email)/following").observe( .value, with: { snapshot in
-            guard let following = snapshot.value as? [[String:String]] else {
-                completion(nil)
-                return
-            }
-            var array: [Following] = []
-            for follow in following {
-                guard let email = follow["email"] else {
-                    return
-                }
-                
-                let newElement = Following(email: email)
-                array.append(newElement)
-            }
+        database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
             
-            completion(array)
-        })
-    }
-    
-    public func getUserFollowingSingleEvent( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
-        database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
-            guard let following = snapshot.value as? [[String:String]] else {
+            guard let info = snapshot.value as? [String: Any] else {
                 completion(nil)
                 return
             }
             
-            completion(following)
-        })
-    }
-    
-    // TODO: Do this function 
-    public func getUserEndorsements( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
-        database.child("\(email)/endorsers").observeSingleEvent(of: .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
+            guard let username = info["username"] as? String,
+                  let heightInches =  info["heightInches"] as? Int,
+                  let heightFeet = info["heightFeet"] as? Int,
+                  let weight =  info["weight"] as? Int,
+                  let gradYear =  info["gradYear"] as? Int,
+                  let state = info["state"] as? String,
+                  let highSchool = info["highschool"] as? String,
+//                  let positions = info["positions"] as? [String:String],
+                  let arm = info["arm"] as? String,
+                  let bats = info["bats"] as? String,
+                  let lastname = info["lastname"] as? String,
+                  let firstname = info["firstname"] as? String,
+                  let phone = info["phone"] as? String,
+                  let profilePicUrl = info["profilePicUrl"] as? String else {
+               print("Failed to get user data")
                 completion(nil)
                 return
             }
-        
-            completion(feedPosts)
+            var userData = RHUser()
+            userData.username = username
+            userData.firstName = firstname
+            userData.lastName = lastname
+            userData.emailAddress = user
+            userData.phone = phone
+            userData.gpa = 0
+            userData.positions = ["RHP", "OF"]
+            userData.highSchool = highSchool
+            userData.state = state
+            userData.gradYear = gradYear
+            userData.heightFeet = heightFeet
+            userData.heightInches = heightInches
+            userData.weight = weight
+            userData.arm = arm
+            userData.bats = bats
+            userData.profilePicUrl = profilePicUrl
+            
+            completion(userData)
         })
-        
     }
     
     public func updateUserInfor( user: RHUser) {
@@ -742,179 +617,6 @@ public class DatabaseManager {
         database.child(email).child("arm").setValue(user.arm)
         database.child(email).child("bats").setValue(user.bats)
         database.child(email).child("gradYear").setValue(user.gradYear)
-    }
-    
-    public func follow( email: String, followerEmail: String, completion: (() -> ())?) {
-        
-        let refFollower = database.child("\(email.safeDatabaseKey())/followers")
-        
-        refFollower.observeSingleEvent(of: .value, with: { [weak self] snapshot in
-        
-            let element = [
-                "email": followerEmail
-            ]
-            
-            // No followers
-            guard var followers = snapshot.value as? [[String:String]] else {
-                refFollower.setValue([element])
-                self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
-                return
-            }
-            
-            // Person already followed, delete their follow
-            if followers.contains(element) {
-                print("Already followed")
-                if let index = followers.firstIndex(of: element) {
-                    followers.remove(at: index)
-                    refFollower.setValue(followers)
-                }
-                return
-            }
-            
-            // Add new follower
-            let newElement = element
-            followers.append(newElement)
-            refFollower.setValue(followers)
-            print("Follow Notification")
-            self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
-        })
-        
-        let refCurrentUser = database.child("\(followerEmail.safeDatabaseKey())/following")
-        
-        refCurrentUser.observeSingleEvent(of: .value, with: { snapshot in
-        
-            let element = [
-                "email": email
-            ]
-            // No followers
-            guard var following = snapshot.value as? [[String:String]] else {
-                refCurrentUser.setValue([element])
-                return
-            }
-            
-            // Person already following, delete their follow
-            if following.contains(element) {
-                print("Already followed")
-                if let index = following.firstIndex(of: element) {
-                    following.remove(at: index)
-                    refCurrentUser.setValue(following)
-                }
-                return
-            }
-            
-            // Add new following
-            let newElement = element
-            following.append(newElement)
-            refCurrentUser.setValue(following)
-        })
-        
-    }
-    
-    public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
-        database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { snapshot in
-            
-            var postComments: [PostComment] = []
-            guard let comments = snapshot.value as? [[String:String]] else {
-                print("Failed to get comments")
-                completion(nil)
-                return
-            }
-            
-            for (index, comment) in comments.enumerated() {
-                
-                guard let email = comment["email"],
-                      let text = comment["comment"]
-                    else {
-                    completion(nil)
-                    return
-                }
-                
-                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
-                
-                postComments.append(newElement)
-            }
-
-            completion(postComments)
-        })
-        completion(nil)
-    }
-    
-    public func getComments(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
-        database.child("\(email)/Posts/\(index)/comments").observe(.value, with: { snapshot in
-            
-            var postComments: [PostComment] = []
-            guard let comments = snapshot.value as? [[String:String]] else {
-                print("Failed to get comments")
-                completion(nil)
-                return
-            }
-            
-            for (index, comment) in comments.enumerated() {
-                
-                guard let email = comment["email"],
-                      let text = comment["comment"]
-                    else {
-                    completion(nil)
-                    return
-                }
-                
-                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
-                
-                postComments.append(newElement)
-            }
-
-            completion(postComments)
-        })
-        completion(nil)
-    }
-    
-    public func getLikes(with email: String, index: Int, completion: @escaping (([PostLike]?) -> Void)) {
-        database.child("\(email)/Posts/\(index)/likes").observe( .value, with: { snapshot in
-            
-            guard let likes = snapshot.value as? [[String:String]] else {
-                print("Failed to get likes")
-                completion(nil)
-                return
-            }
-            
-            var likeCount: [PostLike] = []
-            for like in likes {
-                guard let username = like["username"],
-                      let name = like["name"],
-                      let email = like["email"] else {
-                    return
-                }
-                let postLike = PostLike(username: username, email: email, name: name)
-                likeCount.append(postLike)
-            }
-            
-            completion(likeCount)
-        })
-        completion(nil)
-    }
-    
-    public func newComment( email: String, postComment: PostComment, index: Int) {
-        database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            
-            let newElement = [
-                "email": postComment.email,
-                "comment": postComment.text,
-                "date": ChatViewController.dateFormatter.string(from: Date())
-            ]
-            
-            // Comments exist append the comment
-            if var comments = snapshot.value as? [[String:String]] {
-                
-                comments.append(newElement)
-                
-                self?.database.child("\(email)/Posts/\(index)/comments").setValue(comments)
-            }
-            else {
-                let newCommentsCollection = [newElement]
-                
-                self?.database.child("\(email)/Posts/\(index)/comments").setValue(newCommentsCollection)
-            }
-        })
     }
     
     public func getScoutInfoForUser(user: String, completion: @escaping ((ScoutInfo?) -> Void)) {
@@ -962,29 +664,170 @@ public class DatabaseManager {
         database.child("\(email)/scoutInfo").child("exitVelo").setValue(scoutInfo.exitVelo)
     }
     
-    public func getNumberOf( email: String, connection: Connections, completion: @escaping (Int) -> Void) {
-        var attribute = ""
-        switch connection {
-        case .follower:
-            attribute = "followers"
-            break
-        case .following:
-            attribute = "following"
-            break
-        case .endorsers:
-            attribute = "endorsers"
-            break
-        }
-        database.child("\(email)/\(attribute)").observe( .value, with: {
-            snapshot in
+    public func getPitcherGameLogsForUser(user: String, completion: @escaping (([PitcherGameLog]?) -> Void)) {
+        database.child("\(user)/PitcherGameLogs").observeSingleEvent(of: .value, with:  { snapshot in
             
-            guard let list = snapshot.value as? [[String: String]] else {
-                completion(0)
+            guard let pitcherGameLogsDictionary = snapshot.value as? [[String: Any]] else {
+                completion(nil)
                 return
             }
-            completion(list.count)
+            var pitcherGameLogs: [PitcherGameLog] = []
+            
+            for log in pitcherGameLogsDictionary {
+                guard let date = log["date"] as? String,
+                      let opponent =  log["opponent"] as? String,
+                      let inningsPitched = log["inningsPitched"] as? Double,
+                      let hits =  log["hits"] as? Int,
+                      let runs =  log["runs"] as? Int,
+                      let earnedRuns = log["earnedRuns"] as? Int,
+                      let strikeouts = log["strikeouts"] as? Int,
+                      let walks = log["walks"] as? Int else {
+                   print("Failed to get user data")
+                    completion(nil)
+                    return
+                }
+                var pitcherGameLog = PitcherGameLog()
+                pitcherGameLog.date = date
+                pitcherGameLog.opponent = opponent
+                pitcherGameLog.inningsPitched = inningsPitched
+                pitcherGameLog.hits = hits
+                pitcherGameLog.runs = runs
+                pitcherGameLog.earnedRuns = earnedRuns
+                pitcherGameLog.strikeouts = strikeouts
+                pitcherGameLog.walks = walks
+                pitcherGameLogs.append(pitcherGameLog)
+            }
+            
+            completion(pitcherGameLogs)
         })
     }
+    
+    public func getBatterGameLogsForUser(user: String, completion: @escaping (([BatterGameLog]?) -> Void)) {
+        database.child("\(user)/BatterGameLogs").observeSingleEvent(of: .value, with:  { snapshot in
+            
+            guard let batterGameLogsDictionary = snapshot.value as? [[String: Any]] else {
+                completion(nil)
+                return
+            }
+            var batterGameLogs: [BatterGameLog] = []
+            
+            for log in batterGameLogsDictionary {
+                guard let date = log["date"] as? String,
+                      let opponent =  log["opponent"] as? String,
+                      let atBats = log["atBats"] as? Int,
+                      let hits =  log["hits"] as? Int,
+                      let runs =  log["runs"] as? Int,
+                      let rbis =  log["rbis"] as? Int,
+                      let doubles = log["doubles"] as? Int,
+                      let triples = log["triples"] as? Int,
+                      let homeruns = log["homeruns"] as? Int,
+                      let strikeouts = log["strikeouts"] as? Int,
+                      let walks = log["walks"] as? Int,
+                      let stolenBases = log["stolenBases"] as? Int else {
+                   print("Failed to get user data")
+                    completion(nil)
+                    return
+                }
+                var batterGameLog = BatterGameLog()
+                batterGameLog.date = date
+                batterGameLog.opponent = opponent
+                batterGameLog.atBats = atBats
+                batterGameLog.hits = hits
+                batterGameLog.runs = runs
+                batterGameLog.rbis = rbis
+                batterGameLog.doubles = doubles
+                batterGameLog.triples = triples
+                batterGameLog.homeRuns = homeruns
+                batterGameLog.strikeouts = strikeouts
+                batterGameLog.walks = walks
+                batterGameLog.stolenBases = stolenBases
+                
+                batterGameLogs.append(batterGameLog)
+            }
+            
+            completion(batterGameLogs)
+        })
+    }
+    
+    public func addGameLogForUser( email: String, gameLog: PitcherGameLog) {
+        database.child("\(email)/PitcherGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            
+            let newElement: [String:Any] = [
+                "date": gameLog.date,
+                "opponent": gameLog.opponent,
+                "inningsPitched": gameLog.inningsPitched,
+                "hits": gameLog.hits,
+                "runs": gameLog.runs,
+                "earnedRuns": gameLog.earnedRuns,
+                "strikeouts": gameLog.strikeouts,
+                "walks": gameLog.walks
+            ]
+            
+            if var gameLogs = snapshot.value as? [[String: Any]] {
+                print("Collection Exists")
+                gameLogs.append(newElement)
+                
+                self?.database.child("\(email)/PitcherGameLogs").setValue(gameLogs, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+            else {
+                print("New Collection")
+                let newCollection: [[String: Any]] = [newElement]
+                
+                self?.database.child("\(email)/PitcherGameLogs").setValue(newCollection, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+       })
+    }
+    
+    public func addBatterGameLogForUser( email: String, gameLog: BatterGameLog) {
+        database.child("\(email)/BatterGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            
+            let newElement: [String:Any] = [
+                "date": gameLog.date,
+                "opponent": gameLog.opponent,
+                "atBats": gameLog.atBats,
+                "hits": gameLog.hits,
+                "runs": gameLog.runs,
+                "rbis": gameLog.rbis,
+                "doubles": gameLog.doubles,
+                "triples": gameLog.triples,
+                "homeruns": gameLog.homeRuns,
+                "strikeouts": gameLog.strikeouts,
+                "walks": gameLog.walks,
+                "stolenBases": gameLog.stolenBases
+            ]
+            
+            if var gameLogs = snapshot.value as? [[String: Any]] {
+                print("Collection Exists")
+                gameLogs.append(newElement)
+                
+                self?.database.child("\(email)/BatterGameLogs").setValue(gameLogs, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+            else {
+                print("New Collection")
+                let newCollection: [[String: Any]] = [newElement]
+                
+                self?.database.child("\(email)/BatterGameLogs").setValue(newCollection, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+       })
+    }
+    
+    // MARK: - Messages
     
     public func sendMessage( to conversation: String, otherUserEmail: String, name: String, newMessage: Message, completion: @escaping (Bool) -> Void) {
         //add new messag to messages
@@ -1565,167 +1408,258 @@ public class DatabaseManager {
         })
     }
     
-    public func getPitcherGameLogsForUser(user: String, completion: @escaping (([PitcherGameLog]?) -> Void)) {
-        database.child("\(user)/PitcherGameLogs").observeSingleEvent(of: .value, with:  { snapshot in
-            
-            guard let pitcherGameLogsDictionary = snapshot.value as? [[String: Any]] else {
+    
+    // MARK: - Connections
+    public func getUserFollowers( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+        database.child("\(email)/followers").observeSingleEvent(of: .value, with: { snapshot in
+            guard let feedPosts = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
-            var pitcherGameLogs: [PitcherGameLog] = []
-            
-            for log in pitcherGameLogsDictionary {
-                guard let date = log["date"] as? String,
-                      let opponent =  log["opponent"] as? String,
-                      let inningsPitched = log["inningsPitched"] as? Double,
-                      let hits =  log["hits"] as? Int,
-                      let runs =  log["runs"] as? Int,
-                      let earnedRuns = log["earnedRuns"] as? Int,
-                      let strikeouts = log["strikeouts"] as? Int,
-                      let walks = log["walks"] as? Int else {
-                   print("Failed to get user data")
-                    completion(nil)
-                    return
-                }
-                var pitcherGameLog = PitcherGameLog()
-                pitcherGameLog.date = date
-                pitcherGameLog.opponent = opponent
-                pitcherGameLog.inningsPitched = inningsPitched
-                pitcherGameLog.hits = hits
-                pitcherGameLog.runs = runs
-                pitcherGameLog.earnedRuns = earnedRuns
-                pitcherGameLog.strikeouts = strikeouts
-                pitcherGameLog.walks = walks
-                pitcherGameLogs.append(pitcherGameLog)
-            }
-            
-            completion(pitcherGameLogs)
+        
+            completion(feedPosts)
         })
     }
-    
-    public func getBatterGameLogsForUser(user: String, completion: @escaping (([BatterGameLog]?) -> Void)) {
-        database.child("\(user)/BatterGameLogs").observeSingleEvent(of: .value, with:  { snapshot in
-            
-            guard let batterGameLogsDictionary = snapshot.value as? [[String: Any]] else {
+    public func getUserFollowing( email: String, completion: @escaping (([Following]?) -> Void))  {
+        database.child("\(email)/following").observe( .value, with: { snapshot in
+            guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
-            var batterGameLogs: [BatterGameLog] = []
-            
-            for log in batterGameLogsDictionary {
-                guard let date = log["date"] as? String,
-                      let opponent =  log["opponent"] as? String,
-                      let atBats = log["atBats"] as? Int,
-                      let hits =  log["hits"] as? Int,
-                      let runs =  log["runs"] as? Int,
-                      let rbis =  log["rbis"] as? Int,
-                      let doubles = log["doubles"] as? Int,
-                      let triples = log["triples"] as? Int,
-                      let homeruns = log["homeruns"] as? Int,
-                      let strikeouts = log["strikeouts"] as? Int,
-                      let walks = log["walks"] as? Int,
-                      let stolenBases = log["stolenBases"] as? Int else {
-                   print("Failed to get user data")
-                    completion(nil)
+            var array: [Following] = []
+            for follow in following {
+                guard let email = follow["email"] else {
                     return
                 }
-                var batterGameLog = BatterGameLog()
-                batterGameLog.date = date
-                batterGameLog.opponent = opponent
-                batterGameLog.atBats = atBats
-                batterGameLog.hits = hits
-                batterGameLog.runs = runs
-                batterGameLog.rbis = rbis
-                batterGameLog.doubles = doubles
-                batterGameLog.triples = triples
-                batterGameLog.homeRuns = homeruns
-                batterGameLog.strikeouts = strikeouts
-                batterGameLog.walks = walks
-                batterGameLog.stolenBases = stolenBases
                 
-                batterGameLogs.append(batterGameLog)
+                let newElement = Following(email: email)
+                array.append(newElement)
             }
             
-            completion(batterGameLogs)
+            completion(array)
         })
     }
     
-    public func addGameLogForUser( email: String, gameLog: PitcherGameLog) {
-        database.child("\(email)/PitcherGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            
-            let newElement: [String:Any] = [
-                "date": gameLog.date,
-                "opponent": gameLog.opponent,
-                "inningsPitched": gameLog.inningsPitched,
-                "hits": gameLog.hits,
-                "runs": gameLog.runs,
-                "earnedRuns": gameLog.earnedRuns,
-                "strikeouts": gameLog.strikeouts,
-                "walks": gameLog.walks
-            ]
-            
-            if var gameLogs = snapshot.value as? [[String: Any]] {
-                print("Collection Exists")
-                gameLogs.append(newElement)
-                
-                self?.database.child("\(email)/PitcherGameLogs").setValue(gameLogs, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
+    public func getUserFollowingSingleEvent( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+        database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
+            guard let following = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
             }
-            else {
-                print("New Collection")
-                let newCollection: [[String: Any]] = [newElement]
-                
-                self?.database.child("\(email)/PitcherGameLogs").setValue(newCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
-            }
-       })
+            
+            completion(following)
+        })
     }
     
-    public func addBatterGameLogForUser( email: String, gameLog: BatterGameLog) {
-        database.child("\(email)/BatterGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
-            
-            let newElement: [String:Any] = [
-                "date": gameLog.date,
-                "opponent": gameLog.opponent,
-                "atBats": gameLog.atBats,
-                "hits": gameLog.hits,
-                "runs": gameLog.runs,
-                "rbis": gameLog.rbis,
-                "doubles": gameLog.doubles,
-                "triples": gameLog.triples,
-                "homeruns": gameLog.homeRuns,
-                "strikeouts": gameLog.strikeouts,
-                "walks": gameLog.walks,
-                "stolenBases": gameLog.stolenBases
+    
+    public func getUserEndorsements( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+        database.child("\(email)/endorsers").observeSingleEvent(of: .value, with: { snapshot in
+            guard let feedPosts = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
+            }
+        
+            completion(feedPosts)
+        })
+        
+    }
+    
+    public func follow( email: String, followerEmail: String, completion: (() -> ())?) {
+        
+        let refFollower = database.child("\(email.safeDatabaseKey())/followers")
+        
+        refFollower.observeSingleEvent(of: .value, with: { [weak self] snapshot in
+        
+            let element = [
+                "email": followerEmail
             ]
             
-            if var gameLogs = snapshot.value as? [[String: Any]] {
-                print("Collection Exists")
-                gameLogs.append(newElement)
+            // No followers
+            guard var followers = snapshot.value as? [[String:String]] else {
+                refFollower.setValue([element])
+                self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
+                return
+            }
+            
+            // Person already followed, delete their follow
+            if followers.contains(element) {
+                print("Already followed")
+                if let index = followers.firstIndex(of: element) {
+                    followers.remove(at: index)
+                    refFollower.setValue(followers)
+                }
+                return
+            }
+            
+            // Add new follower
+            let newElement = element
+            followers.append(newElement)
+            refFollower.setValue(followers)
+            print("Follow Notification")
+            self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
+        })
+        
+        let refCurrentUser = database.child("\(followerEmail.safeDatabaseKey())/following")
+        
+        refCurrentUser.observeSingleEvent(of: .value, with: { snapshot in
+        
+            let element = [
+                "email": email
+            ]
+            // No followers
+            guard var following = snapshot.value as? [[String:String]] else {
+                refCurrentUser.setValue([element])
+                return
+            }
+            
+            // Person already following, delete their follow
+            if following.contains(element) {
+                print("Already followed")
+                if let index = following.firstIndex(of: element) {
+                    following.remove(at: index)
+                    refCurrentUser.setValue(following)
+                }
+                return
+            }
+            
+            // Add new following
+            let newElement = element
+            following.append(newElement)
+            refCurrentUser.setValue(following)
+        })
+        
+    }
+    
+    public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
+        database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { snapshot in
+            
+            var postComments: [PostComment] = []
+            guard let comments = snapshot.value as? [[String:String]] else {
+                print("Failed to get comments")
+                completion(nil)
+                return
+            }
+            
+            for (index, comment) in comments.enumerated() {
                 
-                self?.database.child("\(email)/BatterGameLogs").setValue(gameLogs, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
+                guard let email = comment["email"],
+                      let text = comment["comment"]
+                    else {
+                    completion(nil)
+                    return
+                }
+                
+                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                
+                postComments.append(newElement)
+            }
+
+            completion(postComments)
+        })
+        completion(nil)
+    }
+    
+    public func getComments(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
+        database.child("\(email)/Posts/\(index)/comments").observe(.value, with: { snapshot in
+            
+            var postComments: [PostComment] = []
+            guard let comments = snapshot.value as? [[String:String]] else {
+                print("Failed to get comments")
+                completion(nil)
+                return
+            }
+            
+            for (index, comment) in comments.enumerated() {
+                
+                guard let email = comment["email"],
+                      let text = comment["comment"]
+                    else {
+                    completion(nil)
+                    return
+                }
+                
+                let newElement = PostComment(identifier: index, email: email, text: text, createdDate: Date(), likes: [])
+                
+                postComments.append(newElement)
+            }
+
+            completion(postComments)
+        })
+        completion(nil)
+    }
+    
+    public func getLikes(with email: String, index: Int, completion: @escaping (([PostLike]?) -> Void)) {
+        database.child("\(email)/Posts/\(index)/likes").observe( .value, with: { snapshot in
+            
+            guard let likes = snapshot.value as? [[String:String]] else {
+                print("Failed to get likes")
+                completion(nil)
+                return
+            }
+            
+            var likeCount: [PostLike] = []
+            for like in likes {
+                guard let username = like["username"],
+                      let name = like["name"],
+                      let email = like["email"] else {
+                    return
+                }
+                let postLike = PostLike(username: username, email: email, name: name)
+                likeCount.append(postLike)
+            }
+            
+            completion(likeCount)
+        })
+        completion(nil)
+    }
+    
+    public func newComment( email: String, postComment: PostComment, index: Int) {
+        database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            
+            let newElement = [
+                "email": postComment.email,
+                "comment": postComment.text,
+                "date": ChatViewController.dateFormatter.string(from: Date())
+            ]
+            
+            // Comments exist append the comment
+            if var comments = snapshot.value as? [[String:String]] {
+                
+                comments.append(newElement)
+                
+                self?.database.child("\(email)/Posts/\(index)/comments").setValue(comments)
             }
             else {
-                print("New Collection")
-                let newCollection: [[String: Any]] = [newElement]
+                let newCommentsCollection = [newElement]
                 
-                self?.database.child("\(email)/BatterGameLogs").setValue(newCollection, withCompletionBlock:  { error, _ in
-                    guard error == nil else {
-                        return
-                    }
-                })
+                self?.database.child("\(email)/Posts/\(index)/comments").setValue(newCommentsCollection)
             }
-       })
+        })
+    }
+    
+    
+    public func getNumberOf( email: String, connection: Connections, completion: @escaping (Int) -> Void) {
+        var attribute = ""
+        switch connection {
+        case .follower:
+            attribute = "followers"
+            break
+        case .following:
+            attribute = "following"
+            break
+        case .endorsers:
+            attribute = "endorsers"
+            break
+        }
+        database.child("\(email)/\(attribute)").observe( .value, with: {
+            snapshot in
+            
+            guard let list = snapshot.value as? [[String: String]] else {
+                completion(0)
+                return
+            }
+            completion(list.count)
+        })
     }
     
     // MARK: - Notification
@@ -1913,6 +1847,27 @@ public class DatabaseManager {
                 completion(sortedNotifications)
             })
         })
+    }
+    // MARK: - Errors
+    
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    /// Enum Name:  DatabaseError
+    ///
+    /// Descritption: Errors that can occur throughout database interactions
+    ///
+    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    public enum DatabaseError: Error {
+        case failedToFetch              // Failed to Fetch Data
+        case conversationsEmpty         // Conversations are empty
+        
+        public var localizedDescription: String {
+            switch self {
+            case .failedToFetch:
+                return "Fetch failed"
+            case .conversationsEmpty:
+                return "Conversations Empty"
+            }
+        }
     }
 }
 
