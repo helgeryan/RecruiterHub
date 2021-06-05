@@ -18,11 +18,14 @@ class NewFeedViewController: UIViewController {
         let table = UITableView()
         table.allowsSelection = false
         table.autoresizesSubviews = true
+        table.separatorStyle = .singleLine
         return table
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        title = "Under The Radar"
         
         tableView.register(FeedPostTableViewCell.self, forCellReuseIdentifier: FeedPostTableViewCell.identifier)
         
@@ -49,17 +52,21 @@ class NewFeedViewController: UIViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-        
+        let group = DispatchGroup()
+    
+        group.enter()
         var feedPosts: [NewFeedPost] = []
-        DatabaseManager.shared.getUserFollowing(email: email, completion: { [weak self] following in
+        var followingIndex = 0
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: email, completion: { [weak self] following in
             guard let following = following else {
                 return
             }
-            let group = DispatchGroup()
-            group.enter()
+            
             for follow in following {
-                DatabaseManager.shared.getAllUserPostsSingleEvent(with: follow.email, completion: { posts in
+                DatabaseManager.shared.getAllUserPostsSingleEvent(with: follow.email, completion: { [weak self] posts in
+                    
                     guard let posts = posts else {
+                        print("No Posts")
                         return
                     }
                     for post in posts {
@@ -69,21 +76,21 @@ class NewFeedViewController: UIViewController {
                         let feedPost = NewFeedPost(post: post, player: player)
                         feedPosts.append(feedPost)
                     }
-                    
-                    if follow.email == following.last?.email {
+                    followingIndex += 1
+                    if followingIndex == following.count {
+                        print("Leave")
                         group.leave()
                     }
                 })
             }
-            
-            group.notify(queue: .global(qos: .background), execute: {
-                self?.feedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
-
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            })
-            
+        })
+        group.notify(queue: DispatchQueue.main, execute: {
+            print("Ended Grab")
+            self.feedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
+            print(feedPosts.count)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         })
     }
 }
@@ -91,6 +98,7 @@ class NewFeedViewController: UIViewController {
 extension NewFeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        print(feedPosts.count)
         return feedPosts.count
     }
     
@@ -112,16 +120,38 @@ extension NewFeedViewController: UITableViewDelegate, UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: FeedPostTableViewCell.identifier, for: indexPath) as! FeedPostTableViewCell
         cell.configure(post: model)
+        cell.backgroundColor = .systemBackground
         cell.delegate = self
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return view.height * 3 / 4
+        return (view.height * 3 / 4)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: 6))
+        footerView.backgroundColor = .systemBackground
+        return footerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 6
     }
 }
 
 extension NewFeedViewController: FeedPostTableViewCellDelegate {
+    func didTapLikesLabel(_ feedHeaderCell: FeedPostTableViewCell, post: NewFeedPost) {
+        var data: [[String: String]] = []
+        for like in post.post.likeCount {
+            let newElement = ["email": like.email]
+            data.append(newElement)
+        }
+        
+        let vc = ListsViewController(data: data)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func didTapUsername(_ feedTableViewCell: FeedPostTableViewCell, user: RHUser) {
         print("TappedUsername")
         let vc = OtherUserViewController(user: user)

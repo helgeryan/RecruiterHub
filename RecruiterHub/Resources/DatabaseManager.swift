@@ -321,7 +321,7 @@ public class DatabaseManager {
             var userPosts: [UserPost] = []
             guard let posts = snapshot.value as? [[String:Any]] else {
                 print("Failed to get all user posts")
-                completion(nil)
+                completion(userPosts)
                 return
             }
             
@@ -364,7 +364,7 @@ public class DatabaseManager {
                         guard let email = comment["email"],
                               let text = comment["comment"]
                         else {
-                            completion(nil)
+                            completion(userPosts)
                             return
                         }
                         
@@ -403,7 +403,6 @@ public class DatabaseManager {
                 completion(userPosts)
             })
         })
-        completion(nil)
     }
     
     public func getUserPost( with email: String, url: String, completion: @escaping ((UserPost?) -> Void)) {
@@ -1410,14 +1409,24 @@ public class DatabaseManager {
     
     
     // MARK: - Connections
-    public func getUserFollowers( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+    public func getUserFollowersSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
         database.child("\(email)/followers").observeSingleEvent(of: .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
+            guard let followers = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
-        
-            completion(feedPosts)
+            
+            var array: [Following] = []
+            for follow in followers {
+                guard let email = follow["email"] else {
+                    return
+                }
+                
+                let newElement = Following(email: email)
+                array.append(newElement)
+            }
+            
+            completion(array)
         })
     }
     public func getUserFollowing( email: String, completion: @escaping (([Following]?) -> Void))  {
@@ -1440,14 +1449,23 @@ public class DatabaseManager {
         })
     }
     
-    public func getUserFollowingSingleEvent( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+    public func getUserFollowingSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
         database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
             guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
+            var array: [Following] = []
+            for follow in following {
+                guard let email = follow["email"] else {
+                    return
+                }
+                
+                let newElement = Following(email: email)
+                array.append(newElement)
+            }
             
-            completion(following)
+            completion(array)
         })
     }
     

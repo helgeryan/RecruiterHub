@@ -14,6 +14,7 @@ protocol FeedPostTableViewCellDelegate: AnyObject {
     func didTapLikeButton()
     func didTapCommentButton(email: String, post: UserPost)
     func didTapSendButton(otherUserEmail: String, id: String?)
+    func didTapLikesLabel(_ feedHeaderCell: FeedPostTableViewCell, post: NewFeedPost)
 }
 
 
@@ -70,13 +71,40 @@ class FeedPostTableViewCell: UITableViewCell {
         return button
     }()
     
+    private let likesLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
+    private let commentsLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         contentView.clipsToBounds = true
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
+        
+        contentView.layer.borderWidth = 2
+        contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        
+        var gesture = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
         usernameLabel.addGestureRecognizer(gesture)
         profilePicImageView.addGestureRecognizer(gesture)
+        
+        gesture = UITapGestureRecognizer(target: self, action: #selector(didTapLikes))
+        likesLabel.addGestureRecognizer(gesture)
+        
+        gesture = UITapGestureRecognizer(target: self, action: #selector(didTapCommentButton))
+        commentsLabel.addGestureRecognizer(gesture)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: post?.player.currentItem)
         
         //3. Create AVPlayerLayer object
@@ -88,6 +116,8 @@ class FeedPostTableViewCell: UITableViewCell {
         contentView.addSubview(likeButton)
         contentView.addSubview(commentButton)
         contentView.addSubview(sendButton)
+        contentView.addSubview(likesLabel)
+        contentView.addSubview(commentsLabel)
         
         likeButton.addTarget(self, action: #selector(didTapLikeButton), for: .touchUpInside)
         commentButton.addTarget(self, action: #selector(didTapCommentButton), for: .touchUpInside)
@@ -99,8 +129,11 @@ class FeedPostTableViewCell: UITableViewCell {
         
     }
     
-    @objc private func didTap() {
-        post?.player.play()
+    @objc private func didTapLikes() {
+        guard let post = post else {
+            return
+        }
+        delegate?.didTapLikesLabel(self, post: post)
     }
     
     @objc private func didTapLikeButton() {
@@ -234,22 +267,31 @@ class FeedPostTableViewCell: UITableViewCell {
                                    y: profilePicImageView.bottom + 5,
                                    width: contentView.width,
                                    height: contentView.height - profilePicImageView.bottom - 55)
-        let buttonSize = 40
+
+        let buttonSize = Int(contentView.height - playerLayer.bounds.maxY - 50)
         
         let buttons =  [likeButton, commentButton, sendButton]
         
         for x in 0..<buttons.count {
             let button = buttons[x]
             button.frame = CGRect(x: (x * buttonSize) + (10*(x+1)),
-                                  y: Int(usernameLabel.bottom + playerLayer.frame.height) + 10,
+                                  y: Int(usernameLabel.bottom + playerLayer.frame.height) + 5,
                                   width: buttonSize,
                                   height: buttonSize)
         }
+        
+        likesLabel.frame = CGRect(x: sendButton.right, y: sendButton.top, width: (contentView.width - sendButton.right) / 2, height: sendButton.height)
+        
+        commentsLabel.frame = CGRect(x: likesLabel.right, y: sendButton.top, width: (contentView.width - sendButton.right) / 2, height: sendButton.height)
+        
     }
  
     public func configure(post: NewFeedPost) {
         self.post = post
         
+        likesLabel.text = "\(post.post.likeCount.count) likes"
+        
+        commentsLabel.text = "\(post.post.comments.count) comments"
         
         DispatchQueue.main.async {
             self.usernameLabel.text = post.post.owner.username
@@ -291,8 +333,10 @@ class FeedPostTableViewCell: UITableViewCell {
     }
     
     @objc private func replay() {
-        post?.player.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
-        post?.player.play()
+        if post?.player.rate == 0 {
+            post?.player.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
+            post?.player.play()
+        }
     }
     
     public func play() {
@@ -332,4 +376,5 @@ class FeedPostTableViewCell: UITableViewCell {
         }
         return post.post.owner
     }
+
 }

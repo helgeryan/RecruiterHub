@@ -53,7 +53,10 @@ class ProfileViewController: UIViewController {
     
     //tiffany------
     private func addPostButton(){
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .done, target: self, action: #selector(didTapAddPostButton))
+        
+        let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus.square"), style: .done, target: self, action: #selector(didTapAddPostButton))
+        barButtonItem.accessibilityLabel = "barButtonItem"
+        navigationItem.rightBarButtonItem = barButtonItem
     }
     
     @objc private func didTapAddPostButton(){
@@ -283,7 +286,10 @@ extension ProfileViewController: ProfileConnectionsDelegate {
         DatabaseManager.shared.getUserFollowingSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
-                    data = followers
+                for follower in followers {
+                    let newElement = ["email": follower.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Following"
@@ -293,10 +299,13 @@ extension ProfileViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowers(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
-                    data = followers
+                for follower in followers {
+                    let newElement = ["email": follower.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Followers"

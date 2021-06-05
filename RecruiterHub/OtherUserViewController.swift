@@ -216,7 +216,10 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
         DatabaseManager.shared.getUserFollowingSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
-                    data = followers
+                for follower in followers {
+                    let newElement = ["email": follower.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Following"
@@ -226,10 +229,13 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowers(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
-                    data = followers
+                for follower in followers {
+                    let newElement = ["email": follower.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Followers"

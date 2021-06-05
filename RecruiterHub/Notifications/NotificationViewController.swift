@@ -47,7 +47,9 @@ final class NotificationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         fetchNotifications()
-        navigationItem.title = "Notifications"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Notifications"
+        navigationItem.largeTitleDisplayMode = .always
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         tableView.delegate = self

@@ -42,18 +42,37 @@ class ViewPostViewController: UIViewController {
         let label = UILabel()
         label.isUserInteractionEnabled = true
         label.font = UIFont.boldSystemFont(ofSize: 20.0)
+        label.numberOfLines = 1
         return label
     }()
     
-    private let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.separatorStyle = .none
-        tableView.allowsSelection = false
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 600
-        tableView.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.identifier)
-        return tableView
+    // Likes label
+    private let commentLabel: UILabel = {
+        let label = UILabel()
+        label.isUserInteractionEnabled = true
+        label.font = UIFont.boldSystemFont(ofSize: 20.0)
+        label.numberOfLines = 1
+        return label
     }()
+    
+    // Likes label
+    private let captionLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 16.0)
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 0
+        return label
+    }()
+    
+//    private let tableView: UITableView = {
+//        let tableView = UITableView()
+//        tableView.separatorStyle = .none
+//        tableView.allowsSelection = false
+//        tableView.rowHeight = UITableView.automaticDimension
+//        tableView.estimatedRowHeight = 600
+//        tableView.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.identifier)
+//        return tableView
+//    }()
     
     // Player
     private var player: AVPlayer?
@@ -77,16 +96,38 @@ class ViewPostViewController: UIViewController {
         
         // AVPlayer Layer Configuration
         playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
+        playerLayer.videoGravity = .resizeAspectFill
         
         // Add subviews and layers
         view.layer.addSublayer(playerLayer)
         view.addSubview(likeButton)
         view.addSubview(commentButton)
         view.addSubview(likesLabel)
-        view.addSubview(tableView)
-        tableView.delegate = self
-        tableView.dataSource = self
+        view.addSubview(commentLabel)
+        view.addSubview(captionLabel)
+//        view.addSubview(tableView)
+//        tableView.delegate = self
+//        tableView.dataSource = self
+        
+        // Configure Caption
+        captionLabel.preferredMaxLayoutWidth = view.width - 20
+        if let caption = post.caption {
+            let attrs = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 16.0), NSAttributedString.Key.foregroundColor : UIColor.systemBlue]
+            let attributedString = NSMutableAttributedString(string: "\(post.owner.username) ", attributes:attrs)
+            
+            let attrsnormal = [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16.0)]
+            let normalString = NSMutableAttributedString(string: caption, attributes: attrsnormal)
+            
+            attributedString.append(normalString)
+            
+            captionLabel.attributedText = attributedString
+        }
+        else {
+            let attrs = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 16.0), NSAttributedString.Key.foregroundColor : UIColor.systemBlue]
+            let attributedString = NSMutableAttributedString(string: "\(post.owner.username)", attributes:attrs)
+            captionLabel.attributedText = attributedString
+        }
+        captionLabel.sizeToFit()
         
         // Configure likes label
         likesLabel.isUserInteractionEnabled = true
@@ -94,6 +135,7 @@ class ViewPostViewController: UIViewController {
         likesLabel.addGestureRecognizer(gesture)
         configureLikesLabel()
         
+        commentLabel.text = "\(post.comments.count) comments"
         // Fetch Comments
         fetchComments()
         
@@ -109,6 +151,7 @@ class ViewPostViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         
         // Place player layer
+        print(view.height)
         playerLayer.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: view.height / 2)
         
         // Place like button
@@ -123,8 +166,14 @@ class ViewPostViewController: UIViewController {
                                   height: 40)
         
         // Place likes label
-        likesLabel.frame = CGRect(x: 10, y: likeButton.bottom + 10, width: view.width - 20, height: 20)
-        tableView.frame = CGRect(x: 0, y: likesLabel.bottom + 10, width: view.width , height: view.height - likesLabel.bottom - 10)
+        likesLabel.frame = CGRect(x: 10, y: likeButton.bottom + 10, width: view.width / 2, height: 20)
+        likesLabel.sizeToFit()
+        commentLabel.frame = CGRect(x: likesLabel.right + 10, y: likeButton.bottom + 10, width: view.width / 2, height: 20)
+        commentLabel.sizeToFit()
+        
+        captionLabel.frame = CGRect(x: 10, y: likesLabel.bottom + 10, width: view.width - 10, height: 50)
+        captionLabel.sizeToFit()
+//        tableView.frame = CGRect(x: 0, y: likesLabel.bottom + 10, width: view.width , height: view.height - likesLabel.bottom - 10)
     }
     
     /// ViewPostViewController initializer, sets the post, user, and postnumber
@@ -195,9 +244,9 @@ class ViewPostViewController: UIViewController {
             }
             
             self?.comments = comments
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
+//            DispatchQueue.main.async {
+//                self?.tableView.reloadData()
+//            }
         })
     }
     
@@ -239,8 +288,10 @@ class ViewPostViewController: UIViewController {
     
     // Function that is called when the like button is tapped
     @objc private func replay() {
-        player?.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
-        player?.play()
+        if player?.rate == 0 {
+            player?.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
+            player?.play()
+        }
     }
     
     // Configure the like button
@@ -281,6 +332,7 @@ class ViewPostViewController: UIViewController {
         vc.title = "Likes"
         navigationController?.pushViewController(vc, animated: true)
     }
+
 }
 
 extension ViewPostViewController: UITableViewDelegate, UITableViewDataSource {

@@ -36,30 +36,6 @@ class DatabaseTests: XCTestCase {
         XCTAssertEqual(UIImage(systemName: "person.circle")!, image)
     }
     
-    func test_findPostValid() {
-        var data: [[String: Any]] = []
-        for index in 0...9 {
-            data.append([
-                "url": "url\(index).com"
-            ])
-        }
-        
-        let indexOf7 = DatabaseManager.findPost(posts: data, url: "url7.com")
-        XCTAssertEqual(7, indexOf7)
-    }
-    
-    func test_findPostInvalid() {
-        var data: [[String: Any]] = []
-        for index in 0...9 {
-            data.append([
-                "url": "url\(index).com"
-            ])
-        }
-        
-        let badValue = DatabaseManager.findPost(posts: data, url: "urlThatDoesntExist.com")
-        XCTAssertEqual(10, badValue)
-    }
-    
     func test_safeEmail() {
         let email = "ryanhelgeson14@gmail.com"
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
