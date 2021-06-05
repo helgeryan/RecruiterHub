@@ -29,7 +29,6 @@ class NewFeedViewController: UIViewController {
         
         tableView.register(FeedPostTableViewCell.self, forCellReuseIdentifier: FeedPostTableViewCell.identifier)
         
-        
         view.addSubview(tableView)
         tableView.delegate = self
         tableView.dataSource = self
@@ -57,13 +56,13 @@ class NewFeedViewController: UIViewController {
         group.enter()
         var feedPosts: [NewFeedPost] = []
         var followingIndex = 0
-        DatabaseManager.shared.getUserFollowingSingleEvent(email: email, completion: { [weak self] following in
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: email, completion: { following in
             guard let following = following else {
                 return
             }
             
             for follow in following {
-                DatabaseManager.shared.getAllUserPostsSingleEvent(with: follow.email, completion: { [weak self] posts in
+                DatabaseManager.shared.getAllUserPostsSingleEvent(with: follow.email, completion: { posts in
                     
                     guard let posts = posts else {
                         print("No Posts")
@@ -78,14 +77,12 @@ class NewFeedViewController: UIViewController {
                     }
                     followingIndex += 1
                     if followingIndex == following.count {
-                        print("Leave")
                         group.leave()
                     }
                 })
             }
         })
         group.notify(queue: DispatchQueue.main, execute: {
-            print("Ended Grab")
             self.feedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
             print(feedPosts.count)
             DispatchQueue.main.async {
