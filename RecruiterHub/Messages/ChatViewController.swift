@@ -87,7 +87,7 @@ class ChatViewController: MessagesViewController {
         messageInputBar.delegate = self
         setupInputButton()
         
-        DatabaseManager.shared.getDataForUser(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self] user in
+        DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self] user in
             guard let user = user else {
                 return
             }
@@ -323,7 +323,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
                 let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
                 
                 // Fetch url
-                DatabaseManager.shared.getDataForUser(user: safeEmail, completion: { [weak self] user in
+                DatabaseManager.shared.getDataForUserSingleEvent(user: safeEmail, completion: { [weak self] user in
                     
                     guard let user = user else {
                         return
@@ -346,7 +346,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
                 let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
 
                 // Fetch url
-                DatabaseManager.shared.getDataForUser(user: safeEmail, completion: { [weak self] user in
+                DatabaseManager.shared.getDataForUserSingleEvent(user: safeEmail, completion: { [weak self] user in
                     
                     guard let user = user else {
                         return

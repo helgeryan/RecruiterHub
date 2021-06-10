@@ -141,12 +141,12 @@ class DatabaseTests: XCTestCase {
                 XCTAssert(false)
                 break
             case .failure(let error):
-                guard let error = error as? StorageManager.StorageErrors else {
+                guard let error = error as? StorageManager.StorageError else {
                     XCTAssert(false)
                     return
                 }
                 
-                XCTAssertEqual(StorageManager.StorageErrors.failedToGetDownloadUrl, error)
+                XCTAssertEqual(StorageManager.StorageError.failedToGetDownloadUrl, error)
                 break
             }
             expect.fulfill()

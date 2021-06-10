@@ -51,7 +51,7 @@ public struct UserPost {
 
 public struct NewFeedPost {
     let post: UserPost
-    let player: AVPlayer
+    var player: AVPlayer?
 }
 
 struct CommentLike {

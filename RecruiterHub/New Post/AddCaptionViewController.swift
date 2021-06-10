@@ -7,6 +7,7 @@
 
 import UIKit
 import JGProgressHUD
+import NotificationBannerSwift
 
 class AddCaptionViewController: UIViewController {
     
@@ -96,7 +97,7 @@ class AddCaptionViewController: UIViewController {
                     return
                 }
                 
-                DatabaseManager.shared.getDataForUser(user: email, completion: { [weak self] user in
+                DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: { [weak self] user in
                     
                     guard let user = user else {
                         return
@@ -121,7 +122,11 @@ class AddCaptionViewController: UIViewController {
                 })
                break
             case .failure(let error):
-                print(error)
+                let banner = NotificationBanner(title: error.localizedDescription, subtitle: nil, leftView: nil, rightView: nil, style: .danger, colors: nil)
+        
+                banner.dismissOnTap = true
+                banner.show()
+                self?.spinner.dismiss()
             }
         })
     }

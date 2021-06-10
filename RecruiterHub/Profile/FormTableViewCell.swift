@@ -80,6 +80,14 @@ extension FormTableViewCell: UITextFieldDelegate {
         delegate?.formTableViewCell(self)
     }
     
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        model?.value = textField.text
+        guard let model = model, model.value != "" else {
+            return
+        }
+        delegate?.formTableViewCell(self, didUpdateField: model)
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         
         print("Ended Editing")
@@ -90,6 +98,5 @@ extension FormTableViewCell: UITextFieldDelegate {
         }
         delegate?.formTableViewCell(self, didUpdateField: model)
         textField.resignFirstResponder()
-        return
     }
 }

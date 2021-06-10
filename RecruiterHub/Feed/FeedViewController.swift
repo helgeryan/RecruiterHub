@@ -90,7 +90,7 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath.row % 4 == 0 {
-            DatabaseManager.shared.getDataForUser(user: email, completion: {
+            DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: {
                 [weak self] user in
                 guard let user = user else {
                     return
@@ -191,7 +191,7 @@ extension FeedViewController: FeedTableViewCellDelegate {
         print("TappedUsername")
         let vc = OtherUserViewController(user: user)
         vc.title = "\(user.firstName) \(user.lastName)"
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -200,7 +200,7 @@ extension FeedViewController: FeedHeaderCellDelegate {
         print("TappedUsername")
         let vc = OtherUserViewController(user: user)
         vc.title = "\(user.firstName) \(user.lastName)"
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

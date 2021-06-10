@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import NotificationBannerSwift
 
 struct EditProfileFormModel {
     let label: String
@@ -23,6 +24,18 @@ final class EditProfileViewController: UIViewController {
     private var data: Data?
     
     private var image = UIImage()
+    
+    private let profilePicButton: UIButton = {
+        let button = UIButton(frame: .zero)
+        button.layer.masksToBounds = true
+        button.tintColor = .label
+        button.addTarget(self,
+                                     action: #selector(didTapChangeProfilePicture),
+                                     for: .touchUpInside)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        return button
+    }()
     
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -41,10 +54,17 @@ final class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.tableHeaderView = createTableHeaderView()
         configureModels()
         tableView.dataSource = self
+        view.addSubview(profilePicButton)
         view.addSubview(tableView)
+        
+        guard let url = URL(string: user.profilePicUrl) else {
+            return
+        }
+        
+        profilePicButton.sd_setImage(with: url, for: .normal, completed: nil)
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         view.addGestureRecognizer(tapGesture)
 
@@ -53,7 +73,7 @@ final class EditProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.tableHeaderView = createTableHeaderView()
+//        tableView.tableHeaderView = createTableHeaderView()
     }
     
     private func configureModels() {
@@ -85,7 +105,10 @@ final class EditProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.frame = view.bounds
+        
+        profilePicButton.frame = CGRect(x: view.width / 3, y: view.safeAreaInsets.top + 20, width: view.width / 3, height: view.width / 3)
+        profilePicButton.layer.cornerRadius = profilePicButton.height / 2
+        tableView.frame = CGRect(x: 0, y: profilePicButton.bottom + 20, width: view.width, height: view.height - profilePicButton.bottom - 40)
     }
     
     @objc private func didTap() {
@@ -125,22 +148,41 @@ final class EditProfileViewController: UIViewController {
         if let data = data {
             let fileName = user.emailAddress.safeDatabaseKey()
             
-            StorageManager.shared.uploadProfilePic(with: data, filename: fileName, completion: { result in
+            StorageManager.shared.uploadProfilePic(with: data, filename: fileName, completion: { [weak self] result in
                 switch result {
                 case .success(let urlString):
                     DatabaseManager.shared.setProfilePic(with: fileName, url: urlString)
+                    
+                    guard let user = self?.user else {
+                        return
+                    }
+                    
+                    DatabaseManager.shared.updateUserInfor(user: user)
+                    
+                    self?.navigationController?.popViewController(animated: true)
+                    let banner = NotificationBanner(title: "Successfully updated profile!", subtitle: nil, leftView: nil, rightView: nil, style: .success, colors: nil)
+                    
+                    banner.dismissOnTap = true
+                    banner.show()
                 case .failure(let error):
+                    let banner = NotificationBanner(title: "Failed to update profile. Could not upload profile picture.", subtitle: nil, leftView: nil, rightView: nil, style: .danger, colors: nil)
+                    
+                    banner.dismissOnTap = true
+                    banner.show()
                     print(error)
                 }
             })
         }
         else {
             print("Data is nil")
+            DatabaseManager.shared.updateUserInfor(user: user)
+            
+            navigationController?.popViewController(animated: true)
+            let banner = NotificationBanner(title: "Successfully updated profile!", subtitle: nil, leftView: nil, rightView: nil, style: .success, colors: nil)
+            
+            banner.dismissOnTap = true
+            banner.show()
         }
-    
-        DatabaseManager.shared.updateUserInfor(user: user)
-        
-        dismiss(animated: true, completion: nil)
     }
     
     @objc private func didTapChangeProfilePicture() {
@@ -188,14 +230,14 @@ extension EditProfileViewController: UITableViewDataSource {
         profilePhotoButton.addTarget(self,
                                      action: #selector(didTapChangeProfilePicture),
                                      for: .touchUpInside)
+        profilePhotoButton.layer.borderWidth = 1
+        profilePhotoButton.layer.borderColor = UIColor.secondarySystemBackground.cgColor
         
         guard let url = URL(string: user.profilePicUrl) else {
             return header
         }
         
         profilePhotoButton.sd_setImage(with: url, for: .normal, completed: nil)
-        profilePhotoButton.layer.borderWidth = 1
-        profilePhotoButton.layer.borderColor = UIColor.secondarySystemBackground.cgColor
         
         return header
     }
@@ -219,7 +261,7 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             return
         }
         
-        if cell.center.y > (view.height / 2) {
+        if (tableView.top + cell.center.y) > (view.height / 2) {
             tableView.frame = CGRect(x: tableView.left, y: tableView.top - (view.height / 2), width: tableView.width, height: tableView.height)
         }
     }
@@ -268,9 +310,6 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             print("Field doesn't exist")
             break
         }
-        
-        //Update the mdoel
-        print(updatedModel.value ?? "nil")
     }
 }
 
@@ -280,6 +319,8 @@ extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigati
         guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
             return
         }
+        
+        profilePicButton.setImage(selectedImage, for: .normal)
         
         data = selectedImage.pngData()
     }

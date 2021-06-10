@@ -41,7 +41,7 @@ class FeedPostInfoCell: UITableViewCell {
             DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { comments in
                 if let comments = comments {
                     
-                    DatabaseManager.shared.getDataForUser(user: email, completion: {
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: {
                         user in
                         
                         guard let user = user else {

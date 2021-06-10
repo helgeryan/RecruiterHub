@@ -129,7 +129,7 @@ class FeedActionsCell: UITableViewCell {
                 }
                 else {
                     print("Want to create a new conversation")
-                    DatabaseManager.shared.getDataForUser(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
                         user in
                         guard let user = user else {
                             return
@@ -146,7 +146,7 @@ class FeedActionsCell: UITableViewCell {
                     break
                 case DatabaseManager.DatabaseError.conversationsEmpty:
                     print("Convos Empty")
-                    DatabaseManager.shared.getDataForUser(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
                         user in
                         guard let user = user else {
                             return

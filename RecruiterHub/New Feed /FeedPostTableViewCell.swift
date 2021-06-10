@@ -92,9 +92,6 @@ class FeedPostTableViewCell: UITableViewCell {
         selectionStyle = .none
         contentView.clipsToBounds = true
         
-        contentView.layer.borderWidth = 2
-        contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        
         var gesture = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
         usernameLabel.addGestureRecognizer(gesture)
         profilePicImageView.addGestureRecognizer(gesture)
@@ -105,7 +102,7 @@ class FeedPostTableViewCell: UITableViewCell {
         gesture = UITapGestureRecognizer(target: self, action: #selector(didTapCommentButton))
         commentsLabel.addGestureRecognizer(gesture)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: post?.player.currentItem)
+        NotificationCenter.default.addObserver(self, selector: #selector(replay), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: post?.player?.currentItem)
         
         //3. Create AVPlayerLayer object
         playerLayer.videoGravity = .resizeAspectFill
@@ -190,7 +187,7 @@ class FeedPostTableViewCell: UITableViewCell {
                 }
                 else {
                     print("Want to create a new conversation")
-                    DatabaseManager.shared.getDataForUser(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
                         user in
                         guard let user = user else {
                             return
@@ -207,7 +204,7 @@ class FeedPostTableViewCell: UITableViewCell {
                     break
                 case DatabaseManager.DatabaseError.conversationsEmpty:
                     print("Convos Empty")
-                    DatabaseManager.shared.getDataForUser(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
                         user in
                         guard let user = user else {
                             return
@@ -303,9 +300,9 @@ class FeedPostTableViewCell: UITableViewCell {
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             // Do any additional setup after loading the view
-            post.player.isMuted = true
+            post.player?.isMuted = true
             self?.playerLayer.player = post.player
-            self?.post?.player.play()
+            self?.post?.player?.play()
         }
         
         DatabaseManager.shared.getLikes(with: post.post.owner.safeEmail, index: post.post.identifier, completion: {
@@ -333,18 +330,18 @@ class FeedPostTableViewCell: UITableViewCell {
     }
     
     @objc private func replay() {
-        if post?.player.rate == 0 {
-            post?.player.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
-            post?.player.play()
+        if post?.player?.rate == 0 {
+            post?.player?.seek(to: CMTime(seconds: 0.0, preferredTimescale: 1))
+            post?.player?.play()
         }
     }
     
     public func play() {
-        post?.player.play()
+        post?.player?.play()
     }
     
     public func pause() {
-        post?.player.pause()
+        post?.player?.pause()
     }
     
     @objc private func didTapUsername() {

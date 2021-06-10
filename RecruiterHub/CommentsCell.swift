@@ -32,7 +32,7 @@ class CommentsCell: UITableViewCell {
     
     public func configure(email: String, comment: String) {
         
-        DatabaseManager.shared.getDataForUser(user: email, completion: { [weak self]
+        DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: { [weak self]
             user in
             
             guard let user = user else {

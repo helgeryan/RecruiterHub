@@ -135,7 +135,7 @@ class GameLogViewController: UIViewController {
         else {
             vc = AddGameLogViewController(type: .batting)
         }
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

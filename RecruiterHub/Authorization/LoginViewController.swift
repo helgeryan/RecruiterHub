@@ -34,7 +34,7 @@ class LoginViewController: UIViewController {
         field.layer.borderWidth = 1
         field.layer.borderColor = UIColor.lightGray.cgColor
         field.textColor = .darkGray
-        field.placeholder = "Password..."
+        field.placeholder = "Password"
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0) )
         field.leftViewMode = .always
         field.backgroundColor = .secondarySystemBackground
@@ -153,7 +153,7 @@ class LoginViewController: UIViewController {
             
             let user = result.user
             
-            DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: { result in
+            DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: { result in
                 guard let result = result else {
                     print("Failed to cast user result")
                     return
@@ -164,7 +164,6 @@ class LoginViewController: UIViewController {
                 UserDefaults.standard.setValue("\(result.firstName) \(result.lastName)", forKey: "name")
                 UserDefaults.standard.setValue("Yes", forKey: "isLoggedIn")
             })
-            
             
             print("Logged In \(user)")
             
@@ -193,6 +192,7 @@ class LoginViewController: UIViewController {
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == emailField {
+            print("Password Field is first responder")
             passwordField.becomeFirstResponder()
         }
         else if textField == passwordField {

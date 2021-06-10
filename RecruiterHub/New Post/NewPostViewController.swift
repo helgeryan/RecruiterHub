@@ -10,22 +10,12 @@ import AVFoundation
 import AVKit
 
 class NewPostViewController: UIViewController {
-
-//    private let newVideoButton: UIButton = {
-//        let button = UIButton()
-//        button.setTitle("New Video", for: .normal)
-//        button.layer.masksToBounds = true
-//        button.layer.cornerRadius = 4.0
-//        button.backgroundColor = .systemGreen
-//        return button
-//    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         didTapTest()
     }
-
     
     @objc private func didTapTest() {
         
@@ -33,7 +23,7 @@ class NewPostViewController: UIViewController {
         
         actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
             let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
+            picker.sourceType = .camera
             picker.delegate = self
             picker.mediaTypes = ["public.movie"]
             picker.videoQuality = .typeMedium
@@ -78,7 +68,7 @@ extension NewPostViewController: UIImagePickerControllerDelegate, UINavigationCo
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         print("Attempt video upload")
-
+    
         if let videoUrl = info[.mediaURL] as? URL {
             guard let filename = createVideoId() as String? else {
                 return
@@ -96,7 +86,7 @@ extension NewPostViewController: UIImagePickerControllerDelegate, UINavigationCo
             }
             
             let vc = AddCaptionViewController(email: email, data: video, filename: filename)
-            navigationController?.pushViewController(vc, animated: false)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     

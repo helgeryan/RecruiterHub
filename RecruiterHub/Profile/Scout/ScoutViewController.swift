@@ -65,13 +65,13 @@ class ScoutViewController: UIViewController {
             guard let scoutInfo = scoutInfo else {
                 let vc = EditScoutInfoViewController(scoutInfo: ScoutInfo())
                 
-                self?.navigationController?.pushViewController(vc, animated: false)
+                self?.navigationController?.pushViewController(vc, animated: true)
                 return
             }
             print(scoutInfo)
             let vc = EditScoutInfoViewController(scoutInfo: scoutInfo)
             
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
         })
     }
 }
@@ -87,7 +87,7 @@ extension ScoutViewController: UICollectionViewDelegate, UICollectionViewDataSou
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ScoutInfoCollectionReusableView.identifier, for: indexPath) as! ScoutInfoCollectionReusableView
         header.delegate = self
         
-        DatabaseManager.shared.getDataForUser(user: user.safeEmail, completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: user.safeEmail, completion: {
             result in
             guard let result = result else {
                 return

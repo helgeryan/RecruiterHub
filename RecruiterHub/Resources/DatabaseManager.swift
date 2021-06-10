@@ -282,7 +282,7 @@ public class DatabaseManager {
                     }
                 }
                 
-                self.getDataForUser(user: email, completion: { user in
+                self.getDataForUserSingleEvent(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
                         return
@@ -374,7 +374,7 @@ public class DatabaseManager {
                     }
                 }
                 
-                self.getDataForUser(user: email, completion: { user in
+                self.getDataForUserSingleEvent(user: email, completion: { user in
                     guard let user = user else {
                         print("Failed to get User")
                         return
@@ -437,7 +437,7 @@ public class DatabaseManager {
                         caption = ""
                     }
                     
-                    self?.getDataForUser(user: email, completion: { user in
+                    self?.getDataForUserSingleEvent(user: email, completion: { user in
                         guard let user = user else {
                             print("Failed to get User")
                             return
@@ -552,9 +552,58 @@ public class DatabaseManager {
     }
     
     // MARK: - User Info
-    public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
+    public func getDataForUserSingleEvent(user: String, completion: @escaping ((RHUser?) -> Void)) {
         
         database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
+            
+            guard let info = snapshot.value as? [String: Any] else {
+                completion(nil)
+                return
+            }
+            
+            guard let username = info["username"] as? String,
+                  let heightInches =  info["heightInches"] as? Int,
+                  let heightFeet = info["heightFeet"] as? Int,
+                  let weight =  info["weight"] as? Int,
+                  let gradYear =  info["gradYear"] as? Int,
+                  let state = info["state"] as? String,
+                  let highSchool = info["highschool"] as? String,
+//                  let positions = info["positions"] as? [String:String],
+                  let arm = info["arm"] as? String,
+                  let bats = info["bats"] as? String,
+                  let lastname = info["lastname"] as? String,
+                  let firstname = info["firstname"] as? String,
+                  let phone = info["phone"] as? String,
+                  let profilePicUrl = info["profilePicUrl"] as? String else {
+               print("Failed to get user data")
+                completion(nil)
+                return
+            }
+            var userData = RHUser()
+            userData.username = username
+            userData.firstName = firstname
+            userData.lastName = lastname
+            userData.emailAddress = user
+            userData.phone = phone
+            userData.gpa = 0
+            userData.positions = ["RHP", "OF"]
+            userData.highSchool = highSchool
+            userData.state = state
+            userData.gradYear = gradYear
+            userData.heightFeet = heightFeet
+            userData.heightInches = heightInches
+            userData.weight = weight
+            userData.arm = arm
+            userData.bats = bats
+            userData.profilePicUrl = profilePicUrl
+            
+            completion(userData)
+        })
+    }
+    
+    public func getDataForUser(user: String, completion: @escaping ((RHUser?) -> Void)) {
+        
+        database.child(user).observe( .value, with:  { snapshot in
             
             guard let info = snapshot.value as? [String: Any] else {
                 completion(nil)
@@ -1469,17 +1518,45 @@ public class DatabaseManager {
         })
     }
     
-    
-    public func getUserEndorsements( email: String, completion: @escaping (([[String:String]]?) -> Void))  {
+    public func getUserEndorsementsSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
         database.child("\(email)/endorsers").observeSingleEvent(of: .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
+            guard let endorsers = snapshot.value as? [[String:String]] else {
                 completion(nil)
                 return
             }
-        
-            completion(feedPosts)
+            var array: [Following] = []
+            for endorser in endorsers {
+                guard let email = endorser["email"] else {
+                    return
+                }
+                
+                let newElement = Following(email: email)
+                array.append(newElement)
+            }
+            
+            completion(array)
         })
-        
+    }
+    
+    public func getUserEndorsements( email: String, completion: @escaping (([Following]?) -> Void))  {
+        print("fetch Endorsements")
+        database.child("\(email)/endorsers").observe( .value, with: { snapshot in
+            guard let endorsers = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
+            }
+            var array: [Following] = []
+            for endorser in endorsers {
+                guard let email = endorser["email"] else {
+                    return
+                }
+                
+                let newElement = Following(email: email)
+                array.append(newElement)
+            }
+            
+            completion(array)
+        })
     }
     
     public func follow( email: String, followerEmail: String, completion: (() -> ())?) {
@@ -1545,7 +1622,42 @@ public class DatabaseManager {
             following.append(newElement)
             refCurrentUser.setValue(following)
         })
+    }
+    
+    public func endorse( email: String, endorserEmail: String, completion: (() -> ())?) {
         
+        let refFollower = database.child("\(email.safeDatabaseKey())/endorsers")
+        
+        refFollower.observeSingleEvent(of: .value, with: { [weak self] snapshot in
+        
+            let element = [
+                "email": endorserEmail
+            ]
+            
+            // No endorsers
+            guard var followers = snapshot.value as? [[String:String]] else {
+                refFollower.setValue([element])
+//                self?.newFollowNotification(followerEmail: endorserEmail, notifiedEmail: email, completion: {})
+                return
+            }
+            
+            // Person already endorsed, removeEndorsement
+            if followers.contains(element) {
+                print("Already endorsed")
+                if let index = followers.firstIndex(of: element) {
+                    followers.remove(at: index)
+                    refFollower.setValue(followers)
+                }
+                return
+            }
+            
+            // Add new endorsement
+            let newElement = element
+            followers.append(newElement)
+            refFollower.setValue(followers)
+            
+//            self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
+        })
     }
     
     public func getCommentsSingleEvent(with email: String, index: Int, completion: @escaping (([PostComment]?) -> Void)) {
@@ -1687,7 +1799,7 @@ public class DatabaseManager {
         let ref = database.child("\(notifiedEmail)/Notifications")
         ref.observeSingleEvent( of: .value, with: { snapshot in
             
-            self.getDataForUser(user: followerEmail, completion: {
+            self.getDataForUserSingleEvent(user: followerEmail, completion: {
                 user in
                 guard let user = user else {
                     return
@@ -1727,7 +1839,7 @@ public class DatabaseManager {
         let ref = database.child("\(notifiedEmail)/Notifications")
         ref.observeSingleEvent( of: .value, with: { snapshot in
             
-            self.getDataForUser(user: likerEmail, completion: {
+            self.getDataForUserSingleEvent(user: likerEmail, completion: {
                 user in
                 guard let user = user else {
                     return
@@ -1807,7 +1919,7 @@ public class DatabaseManager {
                                                                                 createdDate: Date(),
                                                                                 taggedUsers: [], owner: RHuser))
                     
-                    self?.getDataForUser(user: email, completion: { user in
+                    self?.getDataForUserSingleEvent(user: email, completion: { user in
                         guard let user = user else {
                             group.leave()
                             print("Failed to get User")
@@ -1839,7 +1951,7 @@ public class DatabaseManager {
                             }
                         }
                         
-                        self?.getDataForUser(user: email, completion: { user in
+                        self?.getDataForUserSingleEvent(user: email, completion: { user in
                             guard let user = user else {
                                 group.leave()
                                 print("Failed to get User")

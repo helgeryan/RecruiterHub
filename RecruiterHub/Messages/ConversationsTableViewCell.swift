@@ -61,7 +61,7 @@ class ConversationTableViewCell: UITableViewCell {
         userMessageLabel.text = model.latestMessage.text
         usernameLabel.text = model.name
         
-        DatabaseManager.shared.getDataForUser(user: model.otherUserEmail.safeDatabaseKey(), completion: { [weak self] user in
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.otherUserEmail.safeDatabaseKey(), completion: { [weak self] user in
             
             guard let user = user else {
                 return

@@ -80,13 +80,24 @@ class SearchUserViewController: UIViewController {
 extension SearchUserViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         guard let text = searchBar.text, !text.replacingOccurrences(of: " ", with: "").isEmpty else {
+            results.removeAll()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            tableView.isHidden = true
+            noResultsLabel.isHidden = false
             return
         }
         
-        searchBar.resignFirstResponder()
-        
+        noResultsLabel.isHidden = true
+        tableView.isHidden = false
+
         results.removeAll()
         
         searchUsers(query: text)
@@ -184,7 +195,7 @@ extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
         let model = results[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchUsersTableViewCell.identifier, for: indexPath) as! SearchUsersTableViewCell
         
-        DatabaseManager.shared.getDataForUser(user: model.email.safeDatabaseKey(), completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.email.safeDatabaseKey(), completion: {
             user in
             guard let user = user else {
                 return
@@ -200,7 +211,7 @@ extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         //Start Conversation
         let targetUserData  = results[indexPath.row]
-        DatabaseManager.shared.getDataForUser(user: targetUserData.email.safeDatabaseKey(), completion: { [weak self] user in
+        DatabaseManager.shared.getDataForUserSingleEvent(user: targetUserData.email.safeDatabaseKey(), completion: { [weak self] user in
             
             guard let user = user else {
                 return
@@ -208,7 +219,7 @@ extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
             
             let vc = OtherUserViewController(user: user)
             vc.title = user.name
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
         })
 
     }

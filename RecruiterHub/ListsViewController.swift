@@ -60,7 +60,7 @@ extension ListsViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         }
         
-        DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
             user in
             guard let user = user else {
                 return
@@ -77,7 +77,7 @@ extension ListsViewController: UITableViewDelegate, UITableViewDataSource {
         guard let email = data[indexPath.row]["email"] else {
             return
         }
-        DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
             [weak self] user in
             guard let user = user else {
                 return

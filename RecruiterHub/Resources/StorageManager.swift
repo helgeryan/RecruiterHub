@@ -40,14 +40,14 @@ final class StorageManager {
             guard error == nil else {
                 //Failed
                 print("Failed to upload data to firebase for picture")
-                completion(.failure(StorageErrors.failedToUpload))
+                completion(.failure(StorageError.failedToUpload))
                 return
             }
             
             strongSelf.storage.child("images/\(filename)").downloadURL(completion: { url, error in
                 guard let url = url else {
                     print("Failed to get download url")
-                    completion(.failure(StorageErrors.failedToGetDownloadUrl))
+                    completion(.failure(StorageError.failedToGetDownloadUrl))
                     return
                 }
                 
@@ -67,14 +67,14 @@ final class StorageManager {
             guard error == nil else {
                 //Failed
                 print("Failed to upload data to firebase for picture")
-                completion(.failure(StorageErrors.failedToUpload))
+                completion(.failure(StorageError.failedToUpload))
                 return
             }
             
             self?.storage.child("message_images/\(filename)").downloadURL(completion: { url, error in
                 guard let url = url else {
                     print("Failed to get download url")
-                    completion(.failure(StorageErrors.failedToGetDownloadUrl))
+                    completion(.failure(StorageError.failedToGetDownloadUrl))
                     return
                 }
                 
@@ -95,7 +95,8 @@ final class StorageManager {
             
             guard error == nil else {
                 //Failed
-                print("Failed to upload data to firebase for picture")
+                completion(.failure(StorageError.failedToUpload))
+                print("Failed to upload data to Firebase")
                 return
             }
             
@@ -132,16 +133,11 @@ final class StorageManager {
         })
     }
 
-    public enum StorageErrors: Error {
-        case failedToUpload
-        case failedToGetDownloadUrl
-    }
-
     public func downloadURL( for path: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let reference = storage.child(path)
         reference.downloadURL(completion: { url, error in
             guard let url = url, error == nil else {
-                completion(.failure(StorageErrors.failedToGetDownloadUrl))
+                completion(.failure(StorageError.failedToGetDownloadUrl))
                 return
             }
             completion(.success(url))
@@ -157,14 +153,14 @@ final class StorageManager {
             guard error == nil else {
                 //Failed
                 print("Failed to upload data to firebase")
-                completion(.failure(StorageErrors.failedToUpload))
+                completion(.failure(StorageError.failedToUpload))
                 return
             }
             
             self?.storage.child("message_files/\(UserDefaults.standard.value(forKey: "email") ?? "misc")/\(filename)").downloadURL(completion: { url, error in
                 guard let url = url else {
                     print("Failed to get download url")
-                    completion(.failure(StorageErrors.failedToGetDownloadUrl))
+                    completion(.failure(StorageError.failedToGetDownloadUrl))
                     return
                 }
                 
@@ -173,5 +169,19 @@ final class StorageManager {
                 completion(.success(urlString))
             })
         })
+    }
+    
+    public enum StorageError: Error {
+        case failedToUpload              // Failed to Upload Data
+        case failedToGetDownloadUrl
+        
+        public var localizedDescription: String {
+            switch self {
+            case .failedToUpload:
+                return "Upload failed"
+            case .failedToGetDownloadUrl:
+                return "Failed to get download url."
+            }
+        }
     }
 }

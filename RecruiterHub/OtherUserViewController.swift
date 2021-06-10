@@ -151,7 +151,7 @@ extension OtherUserViewController: UICollectionViewDataSource {
         
         let email = user.safeEmail
         
-        DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
             result in
             guard let result = result else {
                 return
@@ -187,27 +187,30 @@ extension OtherUserViewController: ProfileTabsDelegate {
     func didTapInfoButtonTab() {
         let vc = ContactInformationViewController(user: user)
         vc.title = "Contact Information"
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func didTapScoutButtonTab() {
         let vc = ScoutViewController(user: user)
         vc.title = "Scout Info"
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
 extension OtherUserViewController: ProfileConnectionsDelegate {
     func didTapEndorsementsButton(_ profileConnections: ProfileConnections) {
         //TODO
-        DatabaseManager.shared.getUserEndorsements(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
+        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
             var data:[[String:String]] = []
             if let endorsers = endorsers {
-                    data = endorsers
+                for endorser in endorsers {
+                    let newElement = ["email": endorser.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Endorsers"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }
@@ -223,7 +226,7 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
             }
             let vc = ListsViewController(data: data)
             vc.title = "Following"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }
@@ -239,7 +242,7 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
             }
             let vc = ListsViewController(data: data)
             vc.title = "Followers"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }

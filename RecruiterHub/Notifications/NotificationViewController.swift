@@ -98,6 +98,11 @@ final class NotificationViewController: UIViewController {
         noNotificationsView.center = view.center
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationItem.largeTitleDisplayMode = .never
+    }
+    
 }
 
 extension NotificationViewController: UITableViewDelegate, UITableViewDataSource {
@@ -138,7 +143,7 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
                     return
                 }
                 let vc = ViewPostViewController(post: post, user: post.owner, postNumber: post.identifier)
-                self?.navigationController?.pushViewController(vc, animated: false)
+                self?.navigationController?.pushViewController(vc, animated: true)
             })
             break
         case .follow(_):
@@ -150,11 +155,11 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
         switch model.type {
         case .like(_):
             let vc = OtherUserViewController(user: model.user)
-            navigationController?.pushViewController(vc, animated: false)
+            navigationController?.pushViewController(vc, animated: true)
             break
         case .follow(_):
             let vc = OtherUserViewController(user: model.user)
-            navigationController?.pushViewController(vc, animated: false)
+            navigationController?.pushViewController(vc, animated: true)
             break
         }
     }

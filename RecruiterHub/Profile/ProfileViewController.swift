@@ -115,22 +115,23 @@ class ProfileViewController: UIViewController {
     
     private func fetchPosts() {
       
-        guard var email = UserDefaults.standard.value(forKey: "email") as? String else {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             print("failed")
             return
         }
-        email = DatabaseManager.safeEmail(emailAddress: email)
+        
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         print("Fetching Posts")
-        DatabaseManager.shared.getAllUserPosts(with: email, completion: { [weak self] fetchedPosts in
+        DatabaseManager.shared.getAllUserPosts(with: safeEmail, completion: { [weak self] fetchedPosts in
             self?.posts = fetchedPosts
-            
-            DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
+
+            DatabaseManager.shared.getDataForUser(user: safeEmail, completion: {
                 [weak self] user in
                 guard let user = user else {
                     return
                 }
                 self?.user = user
-                
+
                 self?.collectionView.reloadData()
             })
         })
@@ -163,7 +164,7 @@ extension ProfileViewController: UICollectionViewDelegate {
         
         vc.title = "Post"
         vc.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(vc, animated: false)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -268,14 +269,17 @@ extension ProfileViewController: ProfileTabsDelegate {
 extension ProfileViewController: ProfileConnectionsDelegate {
     func didTapEndorsementsButton(_ profileConnections: ProfileConnections) {
         // TODO
-        DatabaseManager.shared.getUserEndorsements(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
+        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
             var data:[[String:String]] = []
             if let endorsers = endorsers {
-                    data = endorsers
+                for endorser in endorsers {
+                    let newElement = ["email": endorser.email]
+                    data.append(newElement)
+                }
             }
             let vc = ListsViewController(data: data)
             vc.title = "Endorsers"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }
@@ -293,7 +297,7 @@ extension ProfileViewController: ProfileConnectionsDelegate {
             }
             let vc = ListsViewController(data: data)
             vc.title = "Following"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }
@@ -309,7 +313,7 @@ extension ProfileViewController: ProfileConnectionsDelegate {
             }
             let vc = ListsViewController(data: data)
             vc.title = "Followers"
-            self?.navigationController?.pushViewController(vc, animated: false)
+            self?.navigationController?.pushViewController(vc, animated: true)
             return
         })
     }
