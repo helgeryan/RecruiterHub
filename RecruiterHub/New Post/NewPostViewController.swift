@@ -73,6 +73,7 @@ extension NewPostViewController: UIImagePickerControllerDelegate, UINavigationCo
             guard let filename = createVideoId() as String? else {
                 return
             }
+            
             var video:Data
             do {
                 video = try Data(contentsOf: videoUrl)

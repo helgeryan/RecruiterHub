@@ -20,6 +20,14 @@ class ProfileViewController: UIViewController {
     
     private var posts: [UserPost]?
     
+    private let noVideosLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No new videos"
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Your Profile"
@@ -80,6 +88,7 @@ class ProfileViewController: UIViewController {
             fetchPosts()
         }
         else {
+            
             DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
                 guard let posts = posts else {
                     return

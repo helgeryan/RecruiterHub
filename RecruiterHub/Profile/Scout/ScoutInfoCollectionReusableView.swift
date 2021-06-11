@@ -39,6 +39,13 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
         return button
     }()
     
+    private let referencesLabel: UIButton =  {
+        let button = UIButton(frame: .zero)
+        button.setTitle("References", for: .normal)
+        button.setTitleColor(UIColor.link, for: .normal)
+        return button
+    }()
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -61,6 +68,7 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
     private func addSubviews() {
         addSubview(profilePhotoImageView)
         addSubview(nameLabel)
+        addSubview(referencesLabel)
         addSubview(gameLogButton)
     }
     
@@ -89,13 +97,17 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
                                  height: 28)
         nameLabel.textAlignment = .center
         
-        gameLogButton.frame = CGRect(x: 10,
+        referencesLabel.frame = CGRect(x: 10,
                                  y: nameLabel.bottom + 10,
+                                 width: width - 20 ,
+                                 height: 28)
+        gameLogButton.frame = CGRect(x: 10,
+                                 y: referencesLabel.bottom + 10,
                                  width: width - 20 ,
                                  height: 28)
     }
     
     public static func getHeight() -> CGFloat {
-        return 220.0
+        return 248.0
     }
 }

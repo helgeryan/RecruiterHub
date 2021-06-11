@@ -159,7 +159,7 @@ class ChatViewController: MessagesViewController {
         
         actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
             let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
+            picker.sourceType = .camera
             picker.delegate = self
             picker.mediaTypes = ["public.movie"]
             picker.videoQuality = .typeMedium
@@ -426,7 +426,6 @@ extension ChatViewController: UIDocumentPickerDelegate {
             })
         }
         print("Selected Image")
-        print(urls)
     }
     
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {

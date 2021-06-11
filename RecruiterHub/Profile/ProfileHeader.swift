@@ -185,29 +185,23 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
             }
         })
         
-        DatabaseManager.shared.getUserEndorsements(email: user.safeEmail.safeDatabaseKey(), completion: { [weak self]
+        DatabaseManager.shared.getUserEndorsements(email: user.safeEmail, completion: { [weak self]
             result in
-            DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: { [weak self]
-                user in
-                
-                guard let user = user else {
-                    return
-                }
-                
-                guard let result = result else {
-                    self?.endorseButton.setTitle("Endorse", for: .normal)
-                    self?.endorseButton.backgroundColor = .link
-                    return
-                }
-                if result.contains(Following(email: user.safeEmail)) {
-                    self?.endorseButton.setTitle("Endorsing..", for: .normal)
-                    self?.endorseButton.backgroundColor = .lightGray
-                }
-                else {
-                    self?.endorseButton.setTitle("Endorse", for: .normal)
-                    self?.endorseButton.backgroundColor = .link
-                }
-            })
+            
+            guard let result = result else {
+                self?.endorseButton.setTitle("Endorse", for: .normal)
+                self?.endorseButton.backgroundColor = .link
+                return
+            }
+            if result.contains(Following(email: email.safeDatabaseKey())) {
+                self?.endorseButton.setTitle("Endorsing..", for: .normal)
+                self?.endorseButton.backgroundColor = .lightGray
+            }
+            else {
+                self?.endorseButton.setTitle("Endorse", for: .normal)
+                self?.endorseButton.backgroundColor = .link
+            }
+
         })
     }
     

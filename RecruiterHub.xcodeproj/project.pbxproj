@@ -74,6 +74,8 @@
 		E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A069CC2660780800BE0444 /* FeedPostTableViewCell.swift */; };
 		E6B1AB4426671A110054EA0F /* RecruiterHubUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B1AB4326671A110054EA0F /* RecruiterHubUITests.swift */; };
 		E6B1AB882668978E0054EA0F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E68B73E925B11CB600D15230 /* Main.storyboard */; };
+		E6BB9CA92673AA99002369D6 /* ReferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */; };
+		E6BB9CAB2673AAC8002369D6 /* ReferenceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */; };
 		E6BED0D625F1F85E00A03720 /* ScoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */; };
 		E6BED10F25F433F300A03720 /* ScoutCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */; };
 		E6C2F9A225FD38D4006ACED2 /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C2F9A125FD38D4006ACED2 /* DatabaseTests.swift */; };
@@ -172,6 +174,8 @@
 		E6B1AB4126671A110054EA0F /* RecruiterHubUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecruiterHubUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6B1AB4326671A110054EA0F /* RecruiterHubUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecruiterHubUITests.swift; sourceTree = "<group>"; };
 		E6B1AB4526671A110054EA0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencesViewController.swift; sourceTree = "<group>"; };
+		E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceTableViewCell.swift; sourceTree = "<group>"; };
 		E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutViewController.swift; sourceTree = "<group>"; };
 		E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutCollectionViewCell.swift; sourceTree = "<group>"; };
 		E6C2F99525FD3069006ACED2 /* RecruiterHubTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecruiterHubTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -395,6 +399,15 @@
 			path = RecruiterHubUITests;
 			sourceTree = "<group>";
 		};
+		E6BB9CA72673AA70002369D6 /* References */ = {
+			isa = PBXGroup;
+			children = (
+				E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */,
+				E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */,
+			);
+			path = References;
+			sourceTree = "<group>";
+		};
 		E6BED11125F4355300A03720 /* Scout */ = {
 			isa = PBXGroup;
 			children = (
@@ -402,6 +415,7 @@
 				E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */,
 				E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */,
 				E66C79CC260C398F007420D9 /* ScoutInfoCollectionReusableView.swift */,
+				E6BB9CA72673AA70002369D6 /* References */,
 				E66C7AB2260E9A29007420D9 /* Game Logs */,
 			);
 			path = Scout;
@@ -744,7 +758,9 @@
 				E66C7ABE260FD5DC007420D9 /* GameLog.swift in Sources */,
 				E68B744025BA90F100D15230 /* LoginViewController.swift in Sources */,
 				E63660E525C73C62007A4EFD /* ProfileTabs.swift in Sources */,
+				E6BB9CA92673AA99002369D6 /* ReferencesViewController.swift in Sources */,
 				E68B742A25B24FE900D15230 /* AuthManager.swift in Sources */,
+				E6BB9CAB2673AAC8002369D6 /* ReferenceTableViewCell.swift in Sources */,
 				E62C957D25CB97670050A6DA /* FeedPostInfoCell.swift in Sources */,
 				E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */,
 				E69AF4DC25F6DA8B00D366A8 /* NewConversationViewController.swift in Sources */,

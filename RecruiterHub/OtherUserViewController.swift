@@ -53,12 +53,104 @@ class OtherUserViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
+        addPostButton()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
         fetchPosts()
+    }
+    
+    private func addPostButton(){
+        
+        let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapMessageButton))
+        barButtonItem.accessibilityLabel = "barButtonItem"
+        navigationItem.rightBarButtonItem = barButtonItem
+    }
+    
+    @objc private func didTapMessageButton() {
+        
+        let otherUserEmail = user.safeEmail
+        
+        guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
+        else {
+            print("Failed to get User Defaults")
+            return
+        }
+        
+        DatabaseManager.shared.getAllConversations(for: currentEmail.safeDatabaseKey(), completion: { [weak self]
+            conversations in
+
+            switch conversations {
+            case .success(let conversations):
+                if let targetConversation = conversations.first(where: {
+                    $0.otherUserEmail == DatabaseManager.safeEmail(emailAddress: otherUserEmail)
+                }) {
+                    print("Want to append conversation")
+                    
+                    let vc = ChatViewController(with: otherUserEmail, id: targetConversation.id)
+                    vc.isNewConversation = false
+                    vc.navigationItem.largeTitleDisplayMode = .never
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+                else {
+                    print("Want to create a new conversation")
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                        user in
+                        guard let user = user else {
+                            return
+                        }
+                        let result = SearchResult(name: user.name, email: user.safeEmail)
+                        self?.createNewConversation(result: result)
+                    })
+                }
+                break
+            case .failure(let error):
+                switch error {
+                case DatabaseManager.DatabaseError.failedToFetch:
+                    print("Failed to Fetch")
+                    break
+                case DatabaseManager.DatabaseError.conversationsEmpty:
+                    print("Convos Empty")
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: otherUserEmail.safeDatabaseKey(), completion: { [weak self]
+                        user in
+                        guard let user = user else {
+                            return
+                        }
+                        let result = SearchResult(name: user.name, email: user.safeEmail)
+                        self?.createNewConversation(result: result)
+                    })
+                    break
+                default:
+                    break
+                }
+                break
+            }
+        })
+    }
+    
+    private func createNewConversation(result: SearchResult) {
+        let email = result.email
+
+        // Check in the database if the conversation with these two users exists
+        // if it does, reuse conversatiionid
+        // if not create new
+        DatabaseManager.shared.conversationExists(with: email, completion: { [weak self] result in
+
+            switch result {
+            case .success(let conversationId):
+                let vc = ChatViewController(with: email, id: conversationId)
+                vc.isNewConversation = true
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+            case .failure(_):
+                let vc = ChatViewController(with: email, id: nil)
+                vc.isNewConversation = true
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        })
     }
     
     private func fetchPosts() {

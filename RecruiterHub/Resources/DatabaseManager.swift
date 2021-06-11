@@ -1499,6 +1499,7 @@ public class DatabaseManager {
     }
     
     public func getUserFollowingSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
+        print(email)
         database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
             guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)
@@ -1540,6 +1541,7 @@ public class DatabaseManager {
     
     public func getUserEndorsements( email: String, completion: @escaping (([Following]?) -> Void))  {
         print("fetch Endorsements")
+
         database.child("\(email)/endorsers").observe( .value, with: { snapshot in
             guard let endorsers = snapshot.value as? [[String:String]] else {
                 completion(nil)
@@ -1628,7 +1630,7 @@ public class DatabaseManager {
         
         let refFollower = database.child("\(email.safeDatabaseKey())/endorsers")
         
-        refFollower.observeSingleEvent(of: .value, with: { [weak self] snapshot in
+        refFollower.observeSingleEvent(of: .value, with: { snapshot in
         
             let element = [
                 "email": endorserEmail
@@ -1637,7 +1639,6 @@ public class DatabaseManager {
             // No endorsers
             guard var followers = snapshot.value as? [[String:String]] else {
                 refFollower.setValue([element])
-//                self?.newFollowNotification(followerEmail: endorserEmail, notifiedEmail: email, completion: {})
                 return
             }
             
@@ -1656,7 +1657,6 @@ public class DatabaseManager {
             followers.append(newElement)
             refFollower.setValue(followers)
             
-//            self?.newFollowNotification(followerEmail: followerEmail, notifiedEmail: email, completion: {})
         })
     }
     

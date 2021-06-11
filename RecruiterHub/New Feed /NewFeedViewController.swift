@@ -68,7 +68,8 @@ class NewFeedViewController: UIViewController {
         group.enter()
         var feedPosts: [NewFeedPost] = []
         var followingIndex = 0
-        DatabaseManager.shared.getUserFollowingSingleEvent(email: email, completion: { [weak self] following in
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: safeEmail, completion: { [weak self] following in
             guard let following = following else {
                 self?.noVideosLabel.isHidden = false
                 self?.tableView.isHidden = true
@@ -97,18 +98,34 @@ class NewFeedViewController: UIViewController {
             }
         })
         group.notify(queue: DispatchQueue.main, execute: {
-            let sortedFeedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
-            var trimmedFeedPosts = sortedFeedPosts[0..<10]
-            for (index, trimmedPost) in trimmedFeedPosts.enumerated() {
-                let asset = AVAsset(url: trimmedPost.post.postURL)
-                let playerItem = AVPlayerItem(asset: asset)
-                let player = AVPlayer(playerItem: playerItem)
-                trimmedFeedPosts[index].player = player
+            var sortedFeedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
+            
+            if sortedFeedPosts.count < 10 {
+                for (index, sortedPost) in sortedFeedPosts.enumerated() {
+                    let asset = AVAsset(url: sortedPost.post.postURL)
+                    let playerItem = AVPlayerItem(asset: asset)
+                    let player = AVPlayer(playerItem: playerItem)
+                    sortedFeedPosts[index].player = player
+                }
+                
+                self.feedPosts = [NewFeedPost](sortedFeedPosts)
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
-           
-            self.feedPosts = [NewFeedPost](trimmedFeedPosts)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+            else {
+                var trimmedFeedPosts = sortedFeedPosts[0..<10]
+                for (index, trimmedPost) in trimmedFeedPosts.enumerated() {
+                    let asset = AVAsset(url: trimmedPost.post.postURL)
+                    let playerItem = AVPlayerItem(asset: asset)
+                    let player = AVPlayer(playerItem: playerItem)
+                    trimmedFeedPosts[index].player = player
+                }
+                
+                self.feedPosts = [NewFeedPost](trimmedFeedPosts)
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
             }
         })
     }

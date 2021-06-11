@@ -159,7 +159,7 @@ class LoginViewController: UIViewController {
                     return
                 }
                 
-                UserDefaults.standard.set(result.emailAddress, forKey: "email")
+                UserDefaults.standard.set(result.safeEmail, forKey: "email")
                 UserDefaults.standard.setValue(result.username, forKey: "username")
                 UserDefaults.standard.setValue("\(result.firstName) \(result.lastName)", forKey: "name")
                 UserDefaults.standard.setValue("Yes", forKey: "isLoggedIn")

@@ -162,7 +162,6 @@ extension FeedViewController: UITableViewDelegate, UITableViewDataSource {
         else {
             let cell = tableView.dequeueReusableCell(withIdentifier: FeedTableViewCell.identifier, for: indexPath) as! FeedTableViewCell
             
-            
             let temp = ultimatePosts[ultimatePosts.count - (indexPath.row / 4) - 1]
             cell.configure(url: temp.url)
             cell.delegate = self

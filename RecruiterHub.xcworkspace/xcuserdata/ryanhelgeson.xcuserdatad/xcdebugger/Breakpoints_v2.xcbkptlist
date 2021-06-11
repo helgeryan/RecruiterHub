@@ -14,8 +14,8 @@
             filePath = "RecruiterHub/Feed/FeedViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
             landmarkName = "didTapUsername(_:user:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "RecruiterHub/Feed/FeedViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
             landmarkName = "didTapUsername(_:user:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -146,6 +146,54 @@
             endingLineNumber = "159"
             landmarkName = "unknown"
             landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F8AEBA10-2AC3-4B56-BB7F-637171DFEB71"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RecruiterHub/Profile/ProfileConnections.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "configure(email:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F8AEBA10-2AC3-4B56-BB7F-637171DFEB71 - 1ac9a187db16e40d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RecruiterHub.ProfileConnections.configure(email: Swift.String) -&gt; ()"
+                  moduleName = "RecruiterHub"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryanhelgeson/Documents/RecruiterHub/RecruiterHub/Profile/ProfileConnections.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "292">
+               </Location>
+               <Location
+                  uuid = "F8AEBA10-2AC3-4B56-BB7F-637171DFEB71 - 3a073ea0572acb0a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Int) -&gt; () in RecruiterHub.ProfileConnections.configure(email: Swift.String) -&gt; ()"
+                  moduleName = "RecruiterHub"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ryanhelgeson/Documents/RecruiterHub/RecruiterHub/Profile/ProfileConnections.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

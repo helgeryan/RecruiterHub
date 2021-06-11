@@ -285,7 +285,7 @@ class RegisterViewController: UIViewController {
                     
                     self?.dismiss(animated: true, completion: nil)
                     
-                    UserDefaults.standard.setValue(email, forKey: "email")
+                    UserDefaults.standard.setValue(email.safeDatabaseKey(), forKey: "email")
                     UserDefaults.standard.setValue(user.username, forKey: "username")
                     UserDefaults.standard.setValue("\(user.firstName) \(user.lastName)", forKey: "name")
                     UserDefaults.standard.setValue("Yes", forKey: "isLoggedIn")
