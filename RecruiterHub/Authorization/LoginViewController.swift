@@ -134,7 +134,7 @@ class LoginViewController: UIViewController {
         passwordField.resignFirstResponder()
         
         guard let email = emailField.text, let password = passwordField.text, !email.isEmpty, !password.isEmpty, password.count >= 6 else {
-            alertUserLoginError()
+            alertUserLoginError(message: "Invalid Credentials")
             return
         }
     
@@ -147,6 +147,7 @@ class LoginViewController: UIViewController {
             }
             
             guard let result = authResult, error == nil else {
+                self?.alertUserLoginError(message: "Invalid Credentials")
                 print("Failed to login user with email: \(email)")
                 return
             }
@@ -182,8 +183,8 @@ class LoginViewController: UIViewController {
         
     }
     
-    func alertUserLoginError() {
-        let alert = UIAlertController(title: "Whoops", message: "Please enter all information to login", preferredStyle: .alert)
+    func alertUserLoginError(message: String) {
+        let alert = UIAlertController(title: "Failed to Login", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         present(alert, animated: true)
     }

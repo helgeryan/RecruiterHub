@@ -10,20 +10,18 @@
 		4EA8CD43DA1FC3CCB5DD0485 /* Pods_RecruiterHubTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5818E128F578169023D10D3 /* Pods_RecruiterHubTests.framework */; };
 		69ED835858DB78F3C51AF1C8 /* Pods_RecruiterHubUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AFF73F9B8B9A4613D42B15 /* Pods_RecruiterHubUITests.framework */; };
 		8478858931F3AF385F451E63 /* Pods_RecruiterHub.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C93CAC1684AFA16D7D91075 /* Pods_RecruiterHub.framework */; };
+		E6001F712673AF7E00BB1EAB /* ReferenceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F702673AF7E00BB1EAB /* ReferenceTableViewCell.swift */; };
+		E6001F732673AF8900BB1EAB /* ReferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F722673AF8900BB1EAB /* ReferencesViewController.swift */; };
+		E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F742673F3BE00BB1EAB /* AddReferenceViewController.swift */; };
+		E6001F772676A16300BB1EAB /* ManagePostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */; };
 		E612737825EC1579008F24AB /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E612737725EC1579008F24AB /* CommentsCell.swift */; };
 		E612737B25EC3A57008F24AB /* NewCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E612737A25EC3A57008F24AB /* NewCommentViewController.swift */; };
 		E61273BE25F17707008F24AB /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61273BD25F17707008F24AB /* Keyboard.swift */; };
-		E62C957A25CB8EFA0050A6DA /* FeedActionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62C957925CB8EFA0050A6DA /* FeedActionsCell.swift */; };
-		E62C957D25CB97670050A6DA /* FeedPostInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62C957C25CB97670050A6DA /* FeedPostInfoCell.swift */; };
-		E63660DA25C619A9007A4EFD /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660D925C619A9007A4EFD /* FeedViewController.swift */; };
-		E63660DD25C61CD9007A4EFD /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660DC25C61CD9007A4EFD /* FeedTableViewCell.swift */; };
 		E63660E525C73C62007A4EFD /* ProfileTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660E425C73C61007A4EFD /* ProfileTabs.swift */; };
 		E63660FC25C7906C007A4EFD /* ProfileConnections.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660FB25C7906C007A4EFD /* ProfileConnections.swift */; };
 		E63660FF25C7C259007A4EFD /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660FE25C7C259007A4EFD /* ListsViewController.swift */; };
 		E636610325C8DD74007A4EFD /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636610225C8DD74007A4EFD /* EditProfileViewController.swift */; };
 		E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */; };
-		E636611125CA45BF007A4EFD /* FeedHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636611025CA45BF007A4EFD /* FeedHeaderView.swift */; };
-		E636611425CA4983007A4EFD /* FeedHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636611325CA4982007A4EFD /* FeedHeaderCell.swift */; };
 		E65802E8261BF47100903F4B /* GameLogHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65802E7261BF47100903F4B /* GameLogHeaderView.swift */; };
 		E665688125DB537300F04EFA /* ContactInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E665688025DB537300F04EFA /* ContactInfoCell.swift */; };
 		E66568AA25EACFA800F04EFA /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66568A925EACFA800F04EFA /* CommentsViewController.swift */; };
@@ -74,8 +72,6 @@
 		E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A069CC2660780800BE0444 /* FeedPostTableViewCell.swift */; };
 		E6B1AB4426671A110054EA0F /* RecruiterHubUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B1AB4326671A110054EA0F /* RecruiterHubUITests.swift */; };
 		E6B1AB882668978E0054EA0F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E68B73E925B11CB600D15230 /* Main.storyboard */; };
-		E6BB9CA92673AA99002369D6 /* ReferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */; };
-		E6BB9CAB2673AAC8002369D6 /* ReferenceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */; };
 		E6BED0D625F1F85E00A03720 /* ScoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */; };
 		E6BED10F25F433F300A03720 /* ScoutCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */; };
 		E6C2F9A225FD38D4006ACED2 /* DatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C2F9A125FD38D4006ACED2 /* DatabaseTests.swift */; };
@@ -107,20 +103,18 @@
 		CB80AD7D3CDE31250386C792 /* Pods-RecruiterHubTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecruiterHubTests.debug.xcconfig"; path = "Target Support Files/Pods-RecruiterHubTests/Pods-RecruiterHubTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CF7A5D147E3D111AF11D2A94 /* Pods-RecruiterHub.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecruiterHub.debug.xcconfig"; path = "Target Support Files/Pods-RecruiterHub/Pods-RecruiterHub.debug.xcconfig"; sourceTree = "<group>"; };
 		D8AC0575499F28E61E21EFC2 /* Pods-RecruiterHubUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecruiterHubUITests.release.xcconfig"; path = "Target Support Files/Pods-RecruiterHubUITests/Pods-RecruiterHubUITests.release.xcconfig"; sourceTree = "<group>"; };
+		E6001F702673AF7E00BB1EAB /* ReferenceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReferenceTableViewCell.swift; path = RecruiterHub/Profile/Scout/ReferenceTableViewCell.swift; sourceTree = SOURCE_ROOT; };
+		E6001F722673AF8900BB1EAB /* ReferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReferencesViewController.swift; path = RecruiterHub/Profile/Scout/ReferencesViewController.swift; sourceTree = SOURCE_ROOT; };
+		E6001F742673F3BE00BB1EAB /* AddReferenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReferenceViewController.swift; sourceTree = "<group>"; };
+		E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePostsViewController.swift; sourceTree = "<group>"; };
 		E612737725EC1579008F24AB /* CommentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
 		E612737A25EC3A57008F24AB /* NewCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCommentViewController.swift; sourceTree = "<group>"; };
 		E61273BD25F17707008F24AB /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
-		E62C957925CB8EFA0050A6DA /* FeedActionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedActionsCell.swift; sourceTree = "<group>"; };
-		E62C957C25CB97670050A6DA /* FeedPostInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPostInfoCell.swift; sourceTree = "<group>"; };
-		E63660D925C619A9007A4EFD /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
-		E63660DC25C61CD9007A4EFD /* FeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
 		E63660E425C73C61007A4EFD /* ProfileTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTabs.swift; sourceTree = "<group>"; };
 		E63660FB25C7906C007A4EFD /* ProfileConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileConnections.swift; sourceTree = "<group>"; };
 		E63660FE25C7C259007A4EFD /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsViewController.swift; sourceTree = "<group>"; };
 		E636610225C8DD74007A4EFD /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTableViewCell.swift; sourceTree = "<group>"; };
-		E636611025CA45BF007A4EFD /* FeedHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedHeaderView.swift; sourceTree = "<group>"; };
-		E636611325CA4982007A4EFD /* FeedHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedHeaderCell.swift; sourceTree = "<group>"; };
 		E65802E7261BF47100903F4B /* GameLogHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogHeaderView.swift; sourceTree = "<group>"; };
 		E665688025DB537300F04EFA /* ContactInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactInfoCell.swift; sourceTree = "<group>"; };
 		E66568A925EACFA800F04EFA /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
@@ -174,8 +168,6 @@
 		E6B1AB4126671A110054EA0F /* RecruiterHubUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecruiterHubUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6B1AB4326671A110054EA0F /* RecruiterHubUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecruiterHubUITests.swift; sourceTree = "<group>"; };
 		E6B1AB4526671A110054EA0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencesViewController.swift; sourceTree = "<group>"; };
-		E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceTableViewCell.swift; sourceTree = "<group>"; };
 		E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutViewController.swift; sourceTree = "<group>"; };
 		E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutCollectionViewCell.swift; sourceTree = "<group>"; };
 		E6C2F99525FD3069006ACED2 /* RecruiterHubTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecruiterHubTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -212,19 +204,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E62C957F25CB9F150050A6DA /* Feed */ = {
-			isa = PBXGroup;
-			children = (
-				E62C957C25CB97670050A6DA /* FeedPostInfoCell.swift */,
-				E63660DC25C61CD9007A4EFD /* FeedTableViewCell.swift */,
-				E636611025CA45BF007A4EFD /* FeedHeaderView.swift */,
-				E636611325CA4982007A4EFD /* FeedHeaderCell.swift */,
-				E62C957925CB8EFA0050A6DA /* FeedActionsCell.swift */,
-				E63660D925C619A9007A4EFD /* FeedViewController.swift */,
-			);
-			path = Feed;
-			sourceTree = "<group>";
-		};
 		E62C958025CB9F7F0050A6DA /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -318,7 +297,6 @@
 				E62C958225CB9FED0050A6DA /* Authorization */,
 				E62C958125CB9FC60050A6DA /* Storyboards */,
 				E62C958025CB9F7F0050A6DA /* Search */,
-				E62C957F25CB9F150050A6DA /* Feed */,
 				E68B740325B123C800D15230 /* Resources */,
 				E68B740225B123AE00D15230 /* Profile */,
 			);
@@ -339,6 +317,7 @@
 				E63660E425C73C61007A4EFD /* ProfileTabs.swift */,
 				E63660FB25C7906C007A4EFD /* ProfileConnections.swift */,
 				E6BED11125F4355300A03720 /* Scout */,
+				E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -399,24 +378,17 @@
 			path = RecruiterHubUITests;
 			sourceTree = "<group>";
 		};
-		E6BB9CA72673AA70002369D6 /* References */ = {
-			isa = PBXGroup;
-			children = (
-				E6BB9CA82673AA99002369D6 /* ReferencesViewController.swift */,
-				E6BB9CAA2673AAC8002369D6 /* ReferenceTableViewCell.swift */,
-			);
-			path = References;
-			sourceTree = "<group>";
-		};
 		E6BED11125F4355300A03720 /* Scout */ = {
 			isa = PBXGroup;
 			children = (
 				E6BED0D525F1F85E00A03720 /* ScoutViewController.swift */,
 				E6BED10E25F433F300A03720 /* ScoutCollectionViewCell.swift */,
 				E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */,
+				E6001F722673AF8900BB1EAB /* ReferencesViewController.swift */,
+				E6001F702673AF7E00BB1EAB /* ReferenceTableViewCell.swift */,
 				E66C79CC260C398F007420D9 /* ScoutInfoCollectionReusableView.swift */,
-				E6BB9CA72673AA70002369D6 /* References */,
 				E66C7AB2260E9A29007420D9 /* Game Logs */,
+				E6001F742673F3BE00BB1EAB /* AddReferenceViewController.swift */,
 			);
 			path = Scout;
 			sourceTree = "<group>";
@@ -711,9 +683,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E636611425CA4983007A4EFD /* FeedHeaderCell.swift in Sources */,
 				E6A069C72660761700BE0444 /* NewFeedViewController.swift in Sources */,
 				E68B746125BFAC3900D15230 /* SearchUsersTableViewCell.swift in Sources */,
+				E6001F712673AF7E00BB1EAB /* ReferenceTableViewCell.swift in Sources */,
 				E69AF4E225F6DC7E00D366A8 /* ChatViewController.swift in Sources */,
 				E68B742D25B2502500D15230 /* DatabaseManager.swift in Sources */,
 				E68B743025B2527C00D15230 /* RegisterViewController.swift in Sources */,
@@ -723,7 +695,6 @@
 				E69AF4DF25F6DBFF00D366A8 /* NewConversationTableViewCell.swift in Sources */,
 				E68852242651A4CF00C177C9 /* NoNotificationsView.swift in Sources */,
 				E665688125DB537300F04EFA /* ContactInfoCell.swift in Sources */,
-				E63660DD25C61CD9007A4EFD /* FeedTableViewCell.swift in Sources */,
 				E68B743D25BA4D3400D15230 /* VideoCollectionViewCell.swift in Sources */,
 				E61273BE25F17707008F24AB /* Keyboard.swift in Sources */,
 				E68852202651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift in Sources */,
@@ -732,11 +703,11 @@
 				E65802E8261BF47100903F4B /* GameLogHeaderView.swift in Sources */,
 				E68B740525B124A700D15230 /* ProfileHeader.swift in Sources */,
 				E68B744625BB425600D15230 /* ViewPostViewController.swift in Sources */,
-				E636611125CA45BF007A4EFD /* FeedHeaderView.swift in Sources */,
 				E6BED10F25F433F300A03720 /* ScoutCollectionViewCell.swift in Sources */,
 				E68B741025B170C400D15230 /* ContactInformationViewController.swift in Sources */,
 				E612737B25EC3A57008F24AB /* NewCommentViewController.swift in Sources */,
 				E66C7ABA260F9182007420D9 /* PitcherGameLogTableViewCell.swift in Sources */,
+				E6001F772676A16300BB1EAB /* ManagePostsViewController.swift in Sources */,
 				E66C79CD260C398F007420D9 /* ScoutInfoCollectionReusableView.swift in Sources */,
 				E63660FF25C7C259007A4EFD /* ListsViewController.swift in Sources */,
 				E69AF4E525F6DCAE00D366A8 /* ChatModels.swift in Sources */,
@@ -747,7 +718,6 @@
 				E68B746B25C0E6F500D15230 /* SettingsViewController.swift in Sources */,
 				E68B745E25BF8D2200D15230 /* SearchUsersViewController.swift in Sources */,
 				E68B73E625B11CB600D15230 /* SceneDelegate.swift in Sources */,
-				E62C957A25CB8EFA0050A6DA /* FeedActionsCell.swift in Sources */,
 				E66568AA25EACFA800F04EFA /* CommentsViewController.swift in Sources */,
 				E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */,
 				E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */,
@@ -758,19 +728,17 @@
 				E66C7ABE260FD5DC007420D9 /* GameLog.swift in Sources */,
 				E68B744025BA90F100D15230 /* LoginViewController.swift in Sources */,
 				E63660E525C73C62007A4EFD /* ProfileTabs.swift in Sources */,
-				E6BB9CA92673AA99002369D6 /* ReferencesViewController.swift in Sources */,
 				E68B742A25B24FE900D15230 /* AuthManager.swift in Sources */,
-				E6BB9CAB2673AAC8002369D6 /* ReferenceTableViewCell.swift in Sources */,
-				E62C957D25CB97670050A6DA /* FeedPostInfoCell.swift in Sources */,
 				E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */,
 				E69AF4DC25F6DA8B00D366A8 /* NewConversationViewController.swift in Sources */,
 				E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */,
 				E66C7B9A26113592007420D9 /* BatterGameLogTableViewCell.swift in Sources */,
-				E63660DA25C619A9007A4EFD /* FeedViewController.swift in Sources */,
 				E68B743325B25F7700D15230 /* StorageManager.swift in Sources */,
+				E6001F732673AF8900BB1EAB /* ReferencesViewController.swift in Sources */,
 				E68B743A25B7E1D400D15230 /* NewPostViewController.swift in Sources */,
 				E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */,
 				E688521A2651A38B00C177C9 /* Models.swift in Sources */,
+				E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */,
 				E69AF4D925F6D8A400D366A8 /* ConversationsTableViewCell.swift in Sources */,
 				E69AF4BA25F5DBD200D366A8 /* AddCaptionViewController.swift in Sources */,
 			);

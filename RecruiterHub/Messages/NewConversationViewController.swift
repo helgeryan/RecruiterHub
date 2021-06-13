@@ -89,6 +89,15 @@ extension NewConversationViewController: UISearchBarDelegate {
         searchUsers(query: text)
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        results.removeAll()
+        
+        spinner.show(in: view)
+        
+        searchUsers(query: searchText)
+    }
+    
     private func searchUsers(query: String) {
         //Check if array has firebase result
         if hasFetched {

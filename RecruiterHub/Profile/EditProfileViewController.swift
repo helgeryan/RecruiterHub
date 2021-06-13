@@ -54,6 +54,8 @@ final class EditProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        
         configureModels()
         tableView.dataSource = self
         view.addSubview(profilePicButton)
@@ -100,6 +102,8 @@ final class EditProfileViewController: UIViewController {
         model = EditProfileFormModel(label: "Bats", placeholder: "\(user.bats)", value: nil)
         models.append(model)
         model = EditProfileFormModel(label: "GPA", placeholder: "\(user.gpa)", value: nil)
+        models.append(model)
+        model = EditProfileFormModel(label: "Positions", placeholder: "ex. RHP, CF, 1B", value: nil)
         models.append(model)
     }
     
@@ -148,7 +152,7 @@ final class EditProfileViewController: UIViewController {
         if let data = data {
             let fileName = user.emailAddress.safeDatabaseKey()
             
-            StorageManager.shared.uploadProfilePic(with: data, filename: fileName, completion: { [weak self] result in
+            StorageManager.shared.uploadProfilePic(with: data, email: fileName, completion: { [weak self] result in
                 switch result {
                 case .success(let urlString):
                     DatabaseManager.shared.setProfilePic(with: fileName, url: urlString)
@@ -258,6 +262,7 @@ extension EditProfileViewController: UITableViewDataSource {
 extension EditProfileViewController: FormTableViewCellDelegate {
     func formTableViewCell(_ cell: FormTableViewCell) {
         if tableView.top < view.top {
+            tableView.frame = view.bounds
             return
         }
         
@@ -267,7 +272,7 @@ extension EditProfileViewController: FormTableViewCellDelegate {
     }
     
     func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
-        tableView.frame = view.bounds
+//        tableView.frame = view.bounds
         guard let value = updatedModel.value else {
             return
         }
@@ -305,6 +310,9 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             break
         case "Bats":
             user.bats = value
+            break
+        case "Positions":
+            user.positions = value
             break
         default:
             print("Field doesn't exist")

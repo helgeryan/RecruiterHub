@@ -57,8 +57,8 @@ class SettingsViewController: UIViewController {
             SettingCellModel(title: "Invite Friends") { [weak self] in
                 self?.didTapInviteFriends()
             },
-            SettingCellModel(title: "Save Original Posts") { [weak self] in
-                self?.didTapSaveOriginalPosts()
+            SettingCellModel(title: "Manage Posts") { [weak self] in
+                self?.didTapManagePosts()
             }
         ])
 
@@ -92,8 +92,10 @@ class SettingsViewController: UIViewController {
         
     }
     
-    private func didTapSaveOriginalPosts() {
-        
+    private func didTapManagePosts() {
+        let vc = ManagePostsViewController(user: user)
+        vc.title = "Manage Posts"
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     enum SettingsURLType {

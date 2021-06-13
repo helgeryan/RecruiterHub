@@ -148,4 +148,9 @@ extension ScoutViewController: ScoutInfoDelegate {
         let vc = GameLogViewController(user: user)
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func didTapReferences(_ header: ScoutInfoCollectionReusableView) {
+        let vc = ReferencesViewController(user: user)
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }

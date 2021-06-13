@@ -32,6 +32,7 @@ class OtherUserViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "\(user.firstName) \(user.lastName)"
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1

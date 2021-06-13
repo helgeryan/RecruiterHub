@@ -29,9 +29,9 @@ final class StorageManager {
     
     // Uploads a picture to firebase and returns a completion with url string to download
     public func uploadProfilePic(with data: Data,
-                                 filename: String,
+                                 email: String,
                                  completion: @escaping UploadPictureCompletion) {
-        storage.child("images/\(filename)").putData(data, metadata: nil, completion: { [weak self] metadata, error in
+        storage.child("\(email)/profile_pic").putData(data, metadata: nil, completion: { [weak self] metadata, error in
             
             guard let strongSelf = self else {
                 return
@@ -44,7 +44,7 @@ final class StorageManager {
                 return
             }
             
-            strongSelf.storage.child("images/\(filename)").downloadURL(completion: { url, error in
+            strongSelf.storage.child("\(email)/profile_pic").downloadURL(completion: { url, error in
                 guard let url = url else {
                     print("Failed to get download url")
                     completion(.failure(StorageError.failedToGetDownloadUrl))

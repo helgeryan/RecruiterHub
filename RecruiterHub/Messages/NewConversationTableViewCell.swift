@@ -47,8 +47,8 @@ class NewConversationCell: UITableViewCell {
     
     public func configure( with model: SearchResult) {
         usernameLabel.text = model.name
-        
-        let path = "images/\(model.email)_profile_picture.png"
+        print(model)
+        let path = "images/\(model.email)"
         StorageManager.shared.downloadURL(for: path) { [weak self] result in
             switch result {
             case .success(let url):
@@ -59,5 +59,11 @@ class NewConversationCell: UITableViewCell {
                 print("Failed to get image url: \(error)")
             }
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        usernameLabel.text = ""
+        userImageView.image = nil
     }
 }

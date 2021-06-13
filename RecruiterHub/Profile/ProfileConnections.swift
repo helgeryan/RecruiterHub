@@ -31,6 +31,7 @@ class ProfileConnections: UICollectionReusableView {
         label.textColor = .systemBlue
         label.layer.borderColor = UIColor.systemBlue.cgColor
         label.layer.borderWidth = 2
+        label.layer.cornerRadius = 5
         return label
     }()
     
@@ -43,6 +44,7 @@ class ProfileConnections: UICollectionReusableView {
         label.textColor = .systemBlue
         label.layer.borderColor = UIColor.systemBlue.cgColor
         label.layer.borderWidth = 2
+        label.layer.cornerRadius = 5
         return label
     }()
     
@@ -55,6 +57,7 @@ class ProfileConnections: UICollectionReusableView {
         label.textColor = .systemBlue
         label.layer.borderColor = UIColor.systemBlue.cgColor
         label.layer.borderWidth = 2
+        label.layer.cornerRadius = 5
         return label
     }()
     

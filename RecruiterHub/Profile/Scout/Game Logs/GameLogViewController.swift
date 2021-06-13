@@ -33,7 +33,7 @@ class GameLogViewController: UIViewController {
     
     private let pitcherTableView: UITableView = {
         let table = UITableView()
-        table.allowsSelection = false
+        table.allowsSelection = true
         table.register(PitcherGameLogTableViewCell.self, forCellReuseIdentifier: PitcherGameLogTableViewCell.identifier)
         table.separatorStyle = .singleLine
         return table
@@ -41,7 +41,7 @@ class GameLogViewController: UIViewController {
     
     private let batterTableView: UITableView = {
         let table = UITableView()
-        table.allowsSelection = false
+        table.allowsSelection = true
         table.register(BatterGameLogTableViewCell.self, forCellReuseIdentifier: BatterGameLogTableViewCell.identifier)
         table.separatorStyle = .singleLine
         table.isHidden = true
@@ -87,6 +87,10 @@ class GameLogViewController: UIViewController {
         
         if user.safeEmail == UserDefaults.standard.value(forKey: "email") as? String {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
+        }
+        else {
+            batterTableView.allowsSelection = false
+            pitcherTableView.allowsSelection = false
         }
     }
     
@@ -240,5 +244,53 @@ extension GameLogViewController: UITableViewDelegate, UITableViewDataSource, Gam
             cell.configure(game: model)
             return cell
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.row == 0 || indexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
+            return
+        }
+        let alert = UIAlertController(title: "Do you want to delete game log?", message: "Yes or No?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [weak self] _ in
+            if tableView == self?.pitcherTableView {
+                //begin delete
+                
+                tableView.beginUpdates()
+                self?.pitcherGameLogs.remove(at: indexPath.row - 1)
+                tableView.deleteRows(at: [indexPath], with: .left)
+                
+                DatabaseManager.shared.deletePitcherGameLog(index: indexPath.row - 1, completion: {
+                    success in
+                    if !success {
+                        print("Failed to delete")
+                    }
+                })
+                
+                tableView.endUpdates()
+                
+                tableView.reloadData()
+            }
+            if tableView == self?.batterTableView {
+                //begin delete
+                tableView.beginUpdates()
+                self?.batterGameLogs.remove(at: indexPath.row - 1)
+                tableView.deleteRows(at: [indexPath], with: .left)
+                
+                DatabaseManager.shared.deleteBatterGameLog( index: indexPath.row - 1, completion: {
+                    success in
+                    if !success {
+                        print("Failed to delete")
+                    }
+                })
+                
+                tableView.endUpdates()
+                
+                tableView.reloadData()
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "No", style: .destructive, handler: nil))
+        present(alert, animated: true, completion: nil)
+        
     }
 }

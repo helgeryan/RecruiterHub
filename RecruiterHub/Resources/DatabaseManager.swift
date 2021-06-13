@@ -58,7 +58,7 @@ public class DatabaseManager {
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
             
             // Check if user exists
-            guard snapshot.value as? [String: String] != nil else {
+            guard snapshot.value as? [String: Any] != nil else {
                 print("User doesn't exist")
                 completion(false)
                 return
@@ -337,6 +337,12 @@ public class DatabaseManager {
                     caption = ""
                 }
                 
+                var date = Date()
+                if let dateString = post["date"] as? String {
+                    date = ChatViewController.dateFormatter.date(from: dateString) ?? Date()
+                }
+                   
+                
                 guard let thumbnailString = post["thumbnail"] as? String,
                     let thumbnail = URL(string: thumbnailString),
                     let videoUrlString = post["url"] as? String,
@@ -387,7 +393,7 @@ public class DatabaseManager {
                                          caption: caption,
                                          likeCount: likeCount,
                                          comments: postComments,
-                                         createdDate: Date(),
+                                         createdDate: date,
                                          taggedUsers: [],
                                          owner: user)
                     userPosts.append(temp)
@@ -518,37 +524,32 @@ public class DatabaseManager {
         })
     }
     
-    public func newGetFeedPosts(completion: @escaping (([FeedPost]?) -> Void))  {
-        database.child("FeedPosts").observeSingleEvent(of: .value, with: { snapshot in
-            guard let feedPosts = snapshot.value as? [[String:String]] else {
-                completion(nil)
-                return
-            }
-            var array = [FeedPost]()
-            for post in feedPosts {
-                
-                guard let email = post["email"] else {
-                    return
-                }
-                
-                guard let urlString = post["url"],
-                      let url = URL(string: urlString) else {
-                    print("Url Failed")
-                    return
-                }
+    public func deletePost(index: Int, completion: @escaping (Bool) -> Void) {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        
+        // Get all conversations for current User
+        //Delete convesation with target id
+        // Reset those conversations for use in database
+        let ref = database.child("\(safeEmail)/Posts")
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var posts = snapshot.value as? [[String: Any]] {
 
-                let asset = AVAsset(url: url)
-                let playerItem = AVPlayerItem(asset: asset)
-                let player = AVPlayer(playerItem: playerItem)
-                
-                
-                let temp = FeedPost(email: email, url: player, image: "")
-                
-                array.append(temp)
+                posts.remove(at: index)
+                ref.setValue(posts, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write post array")
+                        return
+                    }
+                    print("Deleted Post")
+                    completion(true)
+                })
             }
-            
-            completion(array)
-        })
+        }
     }
     
     // MARK: - User Info
@@ -568,7 +569,7 @@ public class DatabaseManager {
                   let gradYear =  info["gradYear"] as? Int,
                   let state = info["state"] as? String,
                   let highSchool = info["highschool"] as? String,
-//                  let positions = info["positions"] as? [String:String],
+                  let positions = info["positions"] as? String,
                   let arm = info["arm"] as? String,
                   let bats = info["bats"] as? String,
                   let lastname = info["lastname"] as? String,
@@ -586,7 +587,7 @@ public class DatabaseManager {
             userData.emailAddress = user
             userData.phone = phone
             userData.gpa = 0
-            userData.positions = ["RHP", "OF"]
+            userData.positions = positions
             userData.highSchool = highSchool
             userData.state = state
             userData.gradYear = gradYear
@@ -617,7 +618,7 @@ public class DatabaseManager {
                   let gradYear =  info["gradYear"] as? Int,
                   let state = info["state"] as? String,
                   let highSchool = info["highschool"] as? String,
-//                  let positions = info["positions"] as? [String:String],
+                  let positions = info["positions"] as? String,
                   let arm = info["arm"] as? String,
                   let bats = info["bats"] as? String,
                   let lastname = info["lastname"] as? String,
@@ -635,7 +636,7 @@ public class DatabaseManager {
             userData.emailAddress = user
             userData.phone = phone
             userData.gpa = 0
-            userData.positions = ["RHP", "OF"]
+            userData.positions = positions
             userData.highSchool = highSchool
             userData.state = state
             userData.gradYear = gradYear
@@ -797,6 +798,82 @@ public class DatabaseManager {
         })
     }
     
+    public func addReferenceForUser( email: String, reference: Reference) {
+        database.child("\(email)/References").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            
+            let newElement: [String: String] = [
+                "name": reference.name,
+                "phone": reference.phone,
+                "email": reference.emailAddress
+            ]
+            
+            if var references = snapshot.value as? [[String: Any]] {
+                print("Collection Exists")
+                references.append(newElement)
+                
+                self?.database.child("\(email)/References").setValue(references, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+            else {
+                print("New Collection")
+                let newCollection: [[String: Any]] = [newElement]
+                
+                self?.database.child("\(email)/References").setValue(newCollection, withCompletionBlock:  { error, _ in
+                    guard error == nil else {
+                        return
+                    }
+                })
+            }
+       })
+    }
+    
+    public func deleteReference(reference: Reference, completion: @escaping (Bool) -> Void) {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        
+        print("Deleting the reference: \(reference)")
+        // Get all conversations for current User
+        //Delete convesation with target id
+        // Reset those conversations for use in database
+        let ref = database.child("\(safeEmail)/References")
+        
+        let removedElement = [
+            "name": reference.name,
+            "email": reference.emailAddress,
+            "phone": reference.phone
+            
+        ]
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var references = snapshot.value as? [[String: String]] {
+                var positionToRemove = 0
+                for reference in references {
+                    if reference == removedElement {
+                        print("Found reference to delete")
+                        break
+                    }
+                    positionToRemove += 1
+                }
+                
+                references.remove(at: positionToRemove)
+                ref.setValue(references, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write new reference array")
+                        return
+                    }
+                    print("Deleted Reference")
+                    completion(true)
+                })
+            }
+        }
+    }
+    
     public func addGameLogForUser( email: String, gameLog: PitcherGameLog) {
         database.child("\(email)/PitcherGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
@@ -832,6 +909,34 @@ public class DatabaseManager {
                 })
             }
        })
+    }
+    
+    public func deletePitcherGameLog(index: Int, completion: @escaping (Bool) -> Void) {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        
+        // Get all conversations for current User
+        //Delete convesation with target id
+        // Reset those conversations for use in database
+        let ref = database.child("\(safeEmail)/PitcherGameLogs")
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var gameLogs = snapshot.value as? [[String: Any]] {
+
+                gameLogs.remove(at: index)
+                ref.setValue(gameLogs, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write new pitcher game log array")
+                        return
+                    }
+                    print("Deleted Pitcher Game Log")
+                    completion(true)
+                })
+            }
+        }
     }
     
     public func addBatterGameLogForUser( email: String, gameLog: BatterGameLog) {
@@ -873,6 +978,34 @@ public class DatabaseManager {
                 })
             }
        })
+    }
+    
+    public func deleteBatterGameLog( index: Int, completion: @escaping (Bool) -> Void) {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+
+        // Get all conversations for current User
+        //Delete convesation with target id
+        // Reset those conversations for use in database
+        let ref = database.child("\(safeEmail)/BatterGameLogs")
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var gameLogs = snapshot.value as? [[String: Any]] {
+                
+                gameLogs.remove(at: index)
+                ref.setValue(gameLogs, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write new pitcher game log array")
+                        return
+                    }
+                    print("Deleted Pitcher Game Log")
+                    completion(true)
+                })
+            }
+        }
     }
     
     // MARK: - Messages
@@ -1215,7 +1348,7 @@ public class DatabaseManager {
     
     // Fetches and returns all conversations for the user with passed in email
     public func getAllConversations( for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void ) {
-        database.child("\(email)/conversations").observeSingleEvent(of: .value, with: { snapshot in
+        database.child("\(email)/conversations").observe( .value, with: { snapshot in
             
             if snapshot.exists() == false {
                 completion(.failure(DatabaseError.conversationsEmpty))
@@ -1538,6 +1671,51 @@ public class DatabaseManager {
             completion(array)
         })
     }
+    
+    public func getUserReferencesSingleEvent( email: String, completion: @escaping (([Reference]?) -> Void))  {
+        database.child("\(email)/References").observeSingleEvent(of: .value, with: { snapshot in
+            guard let references = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
+            }
+            var array: [Reference] = []
+            for reference in references {
+                guard let email = reference["email"],
+                      let name = reference["name"],
+                      let phone = reference["phone"] else {
+                    return
+                }
+                
+                let newElement = Reference(emailAddress: email, phone: phone, name: name)
+                array.append(newElement)
+            }
+            
+            completion(array)
+        })
+    }
+    
+    public func getUserReferences( email: String, completion: @escaping (([Reference]?) -> Void))  {
+        database.child("\(email)/References").observe( .value, with: { snapshot in
+            guard let references = snapshot.value as? [[String:String]] else {
+                completion(nil)
+                return
+            }
+            var array: [Reference] = []
+            for reference in references {
+                guard let email = reference["email"],
+                      let name = reference["name"],
+                      let phone = reference["phone"] else {
+                    return
+                }
+                
+                let newElement = Reference(emailAddress: email, phone: phone, name: name)
+                array.append(newElement)
+            }
+            
+            completion(array)
+        })
+    }
+    
     
     public func getUserEndorsements( email: String, completion: @escaping (([Following]?) -> Void))  {
         print("fetch Endorsements")

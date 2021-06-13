@@ -20,8 +20,18 @@ public struct UserNotification {
     let date: Date
 }
 
-final class NotificationViewController: UIViewController {
+class NotificationViewController: UIViewController {
  
+    private let noNotificationsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No Notifications!"
+        label.textAlignment = .center
+        label.textColor = .gray
+        label.font = .systemFont(ofSize: 21, weight: .medium)
+        label.isHidden = true
+        return label
+    }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.allowsSelection = false
@@ -30,14 +40,7 @@ final class NotificationViewController: UIViewController {
         tableView.register(NotificationFollowEventTableViewCell.self, forCellReuseIdentifier: NotificationFollowEventTableViewCell.identifier)
         return tableView
     }()
-    
-    private let spinner: UIActivityIndicatorView = {
-        let spinner = UIActivityIndicatorView(style: .large)
-        spinner.hidesWhenStopped = true
-        spinner.tintColor = .label
-        return spinner
-    }()
-    
+
     private lazy var noNotificationsView = NoNotificationsView()
 
     private var models = [UserNotification]()
@@ -48,19 +51,24 @@ final class NotificationViewController: UIViewController {
         super.viewDidLoad()
         fetchNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barTintColor = .secondarySystemBackground
         title = "Notifications"
-        navigationItem.largeTitleDisplayMode = .always
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
+        view.addSubview(noNotificationsLabel)
         tableView.delegate = self
         tableView.dataSource = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.largeTitleDisplayMode = .always
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
-        spinner.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-        spinner.center = view.center
+        noNotificationsLabel.frame = view.bounds
     }
     
     private func fetchNotifications() {
@@ -72,9 +80,15 @@ final class NotificationViewController: UIViewController {
         DatabaseManager.shared.getUserNotifications(user: user, completion: { [weak self] notifications in
             
             guard let notifications = notifications else {
+                self?.noNotificationsLabel.isHidden = false
+                self?.tableView.isHidden = true
                 print("Failed to get Notifications")
                 return
             }
+            
+            self?.noNotificationsLabel.isHidden = true
+            self?.tableView.isHidden = false
+            
             let model = notifications[0]
             if model.date >= Date().addingTimeInterval(TimeInterval(-10)) {
                 let banner = NotificationBanner(title: "\(model.text)", subtitle: nil, leftView: nil, rightView: nil, style: .info, colors: nil)

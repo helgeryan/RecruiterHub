@@ -9,6 +9,7 @@ import UIKit
 
 protocol ScoutInfoDelegate: AnyObject {
     func didTapGameLog(_ header: ScoutInfoCollectionReusableView)
+    func didTapReferences(_ header: ScoutInfoCollectionReusableView)
 }
 
 final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigationControllerDelegate {
@@ -51,6 +52,7 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
     override init(frame: CGRect) {
         super.init(frame: frame)
         gameLogButton.addTarget(self, action: #selector(didTapGameLog), for: .touchUpInside)
+        referencesLabel.addTarget(self, action: #selector(didTapReferences), for: .touchUpInside)
         
         addSubviews()
         clipsToBounds = true
@@ -63,6 +65,10 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
     
     @objc private func didTapGameLog() {
         delegate?.didTapGameLog(self)
+    }
+    
+    @objc private func didTapReferences() {
+        delegate?.didTapReferences(self)
     }
     
     private func addSubviews() {
@@ -108,6 +114,7 @@ final class ScoutInfoCollectionReusableView: UICollectionReusableView, UINavigat
     }
     
     public static func getHeight() -> CGFloat {
-        return 248.0
+        let height = (UIScreen.main.bounds.width / 3) + 120
+        return height
     }
 }

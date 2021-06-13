@@ -86,11 +86,12 @@ class FeedPostTableViewCell: UITableViewCell {
         label.isUserInteractionEnabled = true
         return label
     }()
-    
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         contentView.clipsToBounds = true
+        backgroundColor = .systemBackground
         
         var gesture = UITapGestureRecognizer(target: self, action: #selector(didTapUsername))
         usernameLabel.addGestureRecognizer(gesture)
@@ -107,9 +108,9 @@ class FeedPostTableViewCell: UITableViewCell {
         //3. Create AVPlayerLayer object
         playerLayer.videoGravity = .resizeAspectFill
         
-        addSubview(profilePicImageView)
-        addSubview(usernameLabel)
-        layer.addSublayer(playerLayer)
+        contentView.addSubview(profilePicImageView)
+        contentView.addSubview(usernameLabel)
+        contentView.layer.addSublayer(playerLayer)
         contentView.addSubview(likeButton)
         contentView.addSubview(commentButton)
         contentView.addSubview(sendButton)
@@ -249,30 +250,33 @@ class FeedPostTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let padding = 5
+        let padding:CGFloat = 5.0
         profilePicImageView.frame = CGRect(x: 10,
                                            y: padding,
                                            width: 40,
                                            height: 50 -  (padding * 2) )
         profilePicImageView.layer.cornerRadius = profilePicImageView.width / 2
         
-        usernameLabel.frame = CGRect(x: Int(profilePicImageView.right) + 10,
+        usernameLabel.frame = CGRect(x: profilePicImageView.right + 10,
                                      y: padding,
-                                     width: Int(contentView.width),
+                                     width: contentView.width - profilePicImageView.right - 20,
                                      height: 50 -  (padding * 2) )
         playerLayer.frame = CGRect(x: 0,
                                    y: profilePicImageView.bottom + 5,
                                    width: contentView.width,
                                    height: contentView.height - profilePicImageView.bottom - 55)
 
-        let buttonSize = Int(contentView.height - playerLayer.bounds.maxY - 50)
+        let buttonSize:CGFloat = contentView.height - playerLayer.bounds.maxY - 50
         
         let buttons =  [likeButton, commentButton, sendButton]
         
         for x in 0..<buttons.count {
             let button = buttons[x]
-            button.frame = CGRect(x: (x * buttonSize) + (10*(x+1)),
-                                  y: Int(usernameLabel.bottom + playerLayer.frame.height) + 5,
+            let buttonSizes:CGFloat = (CGFloat(x) * buttonSize)
+            let buttonPadding: CGFloat = CGFloat((10*(x+1)))
+            let buttonX: CGFloat = buttonSizes + buttonPadding
+            button.frame = CGRect(x: buttonX,
+                                  y: usernameLabel.bottom + playerLayer.frame.height + 5,
                                   width: buttonSize,
                                   height: buttonSize)
         }
@@ -287,12 +291,12 @@ class FeedPostTableViewCell: UITableViewCell {
         self.post = post
         
         likesLabel.text = "\(post.post.likeCount.count) likes"
-        
         commentsLabel.text = "\(post.post.comments.count) comments"
         
         DispatchQueue.main.async {
-            self.usernameLabel.text = post.post.owner.username
+            self.usernameLabel.text = "\(post.post.owner.username) - \(post.post.owner.positions)"
         }
+        
         
         if let url = URL(string: post.post.owner.profilePicUrl) {
             self.profilePicImageView.sd_setImage(with: url, completed: nil)

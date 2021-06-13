@@ -143,19 +143,8 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         let bats = user.bats
         bodyLabel.text = String(heightFeet) + "'" + String(heightInches) + "  "  + String(weight) + " lbs"
         handLabel.text = "Throws: " + String(arm) + "   Bats: " + String(bats)
-        var positions = ""
-        var x = 0
-        for position in user.positions {
-            x += 1
-            if user.positions.count == x {
-                positions.append(position)
-            }
-            else {
-                positions.append(position + ", ")
-            }
-            
-        }
-        positionLabel.text = positions
+
+        positionLabel.text = "Pos: \(user.positions)"
         if let url = URL(string: user.profilePicUrl) {
             profilePhotoImageView.sd_setImage(with: url, completed: nil)
         }
@@ -166,6 +155,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         
         if email == user.emailAddress.safeDatabaseKey() {
             followButton.isHidden = true
+            endorseButton.isHidden = true
         }
         
         DatabaseManager.shared.getUserFollowing(email: email.safeDatabaseKey(), completion: { [weak self]

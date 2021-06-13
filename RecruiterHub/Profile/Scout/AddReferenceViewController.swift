@@ -1,19 +1,17 @@
 //
-//  EditScoutInfoViewController.swift
+//  AddReferenceViewController.swift
 //  RecruiterHub
 //
-//  Created by Ryan Helgeson on 3/7/21.
+//  Created by Ryan Helgeson on 6/11/21.
 //
 
 import UIKit
 
-class EditScoutInfoViewController: UIViewController {
+class AddReferenceViewController: UIViewController {
 
     private var models = [EditProfileFormModel]()
-    
-    private var scoutInfo: ScoutInfo
-    
-    private var data: Data?
+
+    private var reference = Reference(emailAddress: "", phone: "", name: "")
     
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -21,8 +19,7 @@ class EditScoutInfoViewController: UIViewController {
         return tableView
     }()
     
-    init(scoutInfo: ScoutInfo) {
-        self.scoutInfo = scoutInfo
+    init() {
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,31 +32,30 @@ class EditScoutInfoViewController: UIViewController {
         configureModels()
         tableView.dataSource = self
         view.addSubview(tableView)
-
+        title = "Add Reference"
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         view.addGestureRecognizer(tapGesture)
-        
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSave))
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.largeTitleDisplayMode = .always
+    }
+    
     private func configureModels() {
-        // name, username, website, bio
-        var model = EditProfileFormModel(label: "Fastball", placeholder: "\(scoutInfo.fastball)", value: nil)
+        var model = EditProfileFormModel(label: "Name", placeholder: "First Last", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Curveball", placeholder: "\(scoutInfo.curveball)", value: nil)
+        model = EditProfileFormModel(label: "Phone", placeholder: "###-###-####", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Slider", placeholder: "\(scoutInfo.slider)", value: nil)
+        model = EditProfileFormModel(label: "Email", placeholder: "name@gmail.com", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Changeup", placeholder: "\(scoutInfo.changeup)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "60", placeholder: "\(scoutInfo.sixty)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Infield", placeholder: "\(scoutInfo.infield)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Outfield", placeholder: "\(scoutInfo.outfield)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Exit Velo", placeholder: "\(scoutInfo.exitVelo)", value: nil)
-        models.append(model)
+    }
+    
+    @objc private func didTap() {
+        tableView.frame = view.bounds
+        view.endEditing(true)
     }
     
     override func viewDidLayoutSubviews() {
@@ -71,30 +67,37 @@ class EditScoutInfoViewController: UIViewController {
         guard section == 1 else {
             return nil
         }
-        return "Scout Info"
+        return "Reference Info"
     }
     
     // MARK: -Action
-    @objc private func didTap() {
-        tableView.frame = view.bounds
-        view.endEditing(true)
-    }
     
     @objc private func didTapSave() {
-        
+        print("Tapped Save")
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
+        print(reference)
+        guard reference.name != "",
+              reference.phone != "",
+              reference.emailAddress != "" else {
+            let alert = UIAlertController(title: "Failed to add refrence", message: "One or more fields may be empty", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            print("Failed to save user")
+            return
+        }
         
-        DatabaseManager.shared.updateScoutInfoForUser(email: email, scoutInfo: scoutInfo)
-        
-        dismiss(animated: true, completion: nil)
+        print("Adding References")
+        DatabaseManager.shared.addReferenceForUser(email: email.safeDatabaseKey(), reference: reference)
+
+        navigationController?.popViewController(animated: true)
     }
 }
 
-// MARK: - TableView
+// MARK: - TableViewDelegate and TableViewDataSource Methods
 
-extension EditScoutInfoViewController: UITableViewDataSource {
+extension AddReferenceViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -111,12 +114,14 @@ extension EditScoutInfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return models.count
     }
+
 }
 
-extension EditScoutInfoViewController: FormTableViewCellDelegate {
+// MARK: - FormTableViewCellDelegate Methods
+
+extension AddReferenceViewController: FormTableViewCellDelegate {
     func formTableViewCell(_ cell: FormTableViewCell) {
         if tableView.top < view.top {
-            tableView.frame = view.bounds
             return
         }
         
@@ -124,44 +129,28 @@ extension EditScoutInfoViewController: FormTableViewCellDelegate {
             tableView.frame = CGRect(x: tableView.left, y: tableView.top - (view.height / 2), width: tableView.width, height: tableView.height)
         }
     }
-    
+
     func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
-//        
-//        tableView.frame = view.bounds
+        
         guard let value = updatedModel.value else {
             return
         }
         switch updatedModel.label {
-        case "Fastball":
-            scoutInfo.fastball = Double(value) ?? 0
+        case "Name":
+            reference.name = value
             break
-        case "Curveball":
-            scoutInfo.curveball = Double(value) ?? 0
+        case "Phone":
+            reference.phone = value
             break
-        case "Slider":
-            scoutInfo.slider = Double(value) ?? 0
-            break
-        case "Changeup":
-            scoutInfo.changeup = Double(value) ?? 0
-            break
-        case "60":
-            scoutInfo.sixty = Double(value) ?? 0
-            break
-        case "Infield":
-            scoutInfo.infield = Double(value) ?? 0
-            break
-        case "Outfield":
-            scoutInfo.outfield = Double(value) ?? 0
-            break
-        case "Exit Velo":
-            scoutInfo.exitVelo = Double(value) ?? 0
+        case "Email":
+            reference.emailAddress = value.lowercased()
             break
         default:
             print("Field doesn't exist")
             break
         }
-        
         //Update the mdoel
         print(updatedModel.value ?? "nil")
     }
 }
+

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 class AddGameLogViewController: UIViewController {
 
@@ -125,7 +126,12 @@ class AddGameLogViewController: UIViewController {
             DatabaseManager.shared.addBatterGameLogForUser(email: email, gameLog: batterGameLog)
         }
         
-        dismiss(animated: true, completion: nil)
+        let banner = NotificationBanner(title: "Successfully updated game log!", subtitle: nil, leftView: nil, rightView: nil, style: .success, colors: nil)
+        
+        banner.dismissOnTap = true
+        banner.show()
+        
+        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -153,6 +159,7 @@ extension AddGameLogViewController: UITableViewDataSource {
 extension AddGameLogViewController: FormTableViewCellDelegate {
     func formTableViewCell(_ cell: FormTableViewCell) {
         if tableView.top < view.top {
+            tableView.frame = view.bounds
             return
         }
         
@@ -163,7 +170,6 @@ extension AddGameLogViewController: FormTableViewCellDelegate {
 
     func formTableViewCell(_ cell: FormTableViewCell, didUpdateField updatedModel: EditProfileFormModel) {
         
-            tableView.frame = view.bounds
         guard let value = updatedModel.value else {
             return
         }

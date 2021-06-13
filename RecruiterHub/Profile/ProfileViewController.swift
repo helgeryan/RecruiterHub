@@ -54,6 +54,8 @@ class ProfileViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
         
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.barTintColor = .secondarySystemBackground
         view.addSubview(collectionView)
         //tiffany------
         addPostButton()
@@ -79,26 +81,13 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         handleNotAuthenticated()
         
+        navigationItem.largeTitleDisplayMode = .never
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
             print("Email not set")
             return
         }
-        
-        if currentEmail != user.safeEmail {
-            fetchPosts()
-        }
-        else {
-            
-            DatabaseManager.shared.getAllUserPosts(with: user.safeEmail, completion: { [weak self] posts in
-                guard let posts = posts else {
-                    return
-                }
 
-                if posts.count != self?.posts?.count {
-                    self?.fetchPosts()
-                }
-            })
-        }
+        fetchPosts(email: currentEmail)
     }
     
     func handleNotAuthenticated() {
@@ -122,13 +111,8 @@ class ProfileViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    private func fetchPosts() {
-      
-        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
-            print("failed")
-            return
-        }
-        
+    private func fetchPosts(email: String) {
+
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         print("Fetching Posts")
         DatabaseManager.shared.getAllUserPosts(with: safeEmail, completion: { [weak self] fetchedPosts in

@@ -102,7 +102,8 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
                 guard let following = following else {
                     self?.followButton.setTitle("Follow", for: .normal)
                     self?.followButton.setTitleColor(.white, for: .normal)
-                    self?.followButton.layer.borderWidth = 0
+                    self?.followButton.layer.borderWidth = 2
+                    self?.followButton.layer.borderColor = UIColor.secondaryLabel.cgColor
                     self?.followButton.backgroundColor = .link
                     return
                 }
@@ -112,7 +113,8 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
                 else {
                     self?.followButton.setTitle("Follow", for: .normal)
                     self?.followButton.setTitleColor(.white, for: .normal)
-                    self?.followButton.layer.borderWidth = 0
+                    self?.followButton.layer.borderWidth = 2
+                    self?.followButton.layer.borderColor = UIColor.secondaryLabel.cgColor
                     self?.followButton.backgroundColor = .link
                 }
             })
@@ -130,7 +132,7 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
     private func configureForUnfollow() {
         followButton.setTitle("Unfollow", for: .normal)
         followButton.setTitleColor(.label, for: .normal)
-        followButton.layer.borderWidth = 1
+        followButton.layer.borderWidth = 2
         followButton.layer.borderColor = UIColor.secondaryLabel.cgColor
         followButton.backgroundColor = .lightGray
     }
@@ -139,7 +141,6 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
         super.prepareForReuse()
         followButton.setTitle(nil, for: .normal)
         followButton.backgroundColor = nil
-        followButton.layer.borderWidth = 0
         label.text = nil
         profileImageView.image = nil
     }

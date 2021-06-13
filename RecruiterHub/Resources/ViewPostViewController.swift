@@ -17,6 +17,12 @@ class ViewPostViewController: UIViewController {
     
     private var comments: [PostComment]?
     
+    private let scrollView: UIScrollView = {
+        let scroll = UIScrollView(frame: .zero)
+        scroll.isScrollEnabled = true 
+        return scroll
+    }()
+    
     // Like button
     private let likeButton: UIButton = {
         let button = UIButton()
@@ -64,16 +70,6 @@ class ViewPostViewController: UIViewController {
         return label
     }()
     
-//    private let tableView: UITableView = {
-//        let tableView = UITableView()
-//        tableView.separatorStyle = .none
-//        tableView.allowsSelection = false
-//        tableView.rowHeight = UITableView.automaticDimension
-//        tableView.estimatedRowHeight = 600
-//        tableView.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.identifier)
-//        return tableView
-//    }()
-    
     // Player
     private var player: AVPlayer?
     private var playerLayer = AVPlayerLayer()
@@ -99,15 +95,13 @@ class ViewPostViewController: UIViewController {
         playerLayer.videoGravity = .resizeAspectFill
         
         // Add subviews and layers
-        view.layer.addSublayer(playerLayer)
-        view.addSubview(likeButton)
-        view.addSubview(commentButton)
-        view.addSubview(likesLabel)
-        view.addSubview(commentLabel)
-        view.addSubview(captionLabel)
-//        view.addSubview(tableView)
-//        tableView.delegate = self
-//        tableView.dataSource = self
+        view.addSubview(scrollView)
+        scrollView.layer.addSublayer(playerLayer)
+        scrollView.addSubview(likeButton)
+        scrollView.addSubview(commentButton)
+        scrollView.addSubview(likesLabel)
+        scrollView.addSubview(commentLabel)
+        scrollView.addSubview(captionLabel)
         
         // Configure Caption
         captionLabel.preferredMaxLayoutWidth = view.width - 20
@@ -149,21 +143,21 @@ class ViewPostViewController: UIViewController {
     
     // Design layout
     override func viewDidLayoutSubviews() {
-        
+        scrollView.frame = CGRect(x: 0, y: view.top, width: view.width, height: view.height)
         // Place player layer
         print(view.height)
-        playerLayer.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: view.height / 2)
+        playerLayer.frame = CGRect(x: 0, y: scrollView.top, width: scrollView.width, height: view.height * 2 / 3)
         
         // Place like button
         likeButton.frame = CGRect(x: 10,
-                                  y: view.safeAreaInsets.top + playerLayer.frame.height + 5,
+                                  y: scrollView.top + playerLayer.frame.height + 5,
                                   width: 40,
                                   height: 40)
         // Place comment button
         commentButton.frame = CGRect(x: likeButton.right + 10,
-                                  y: view.safeAreaInsets.top + playerLayer.frame.height + 5,
-                                  width: 40,
-                                  height: 40)
+                                     y: scrollView.top + playerLayer.frame.height + 5,
+                                     width: 40,
+                                     height: 40)
         
         // Place likes label
         likesLabel.frame = CGRect(x: 10, y: likeButton.bottom + 10, width: view.width / 2, height: 20)
@@ -173,6 +167,7 @@ class ViewPostViewController: UIViewController {
         
         captionLabel.frame = CGRect(x: 10, y: likesLabel.bottom + 10, width: view.width - 10, height: 50)
         captionLabel.sizeToFit()
+        scrollView.contentSize = CGSize(width: view.width, height: captionLabel.bottom - view.top + 10)
 //        tableView.frame = CGRect(x: 0, y: likesLabel.bottom + 10, width: view.width , height: view.height - likesLabel.bottom - 10)
     }
     

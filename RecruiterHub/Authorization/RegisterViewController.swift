@@ -260,7 +260,8 @@ class RegisterViewController: UIViewController {
         user.username = username
         user.firstName = firstname
         user.lastName = lastname
-        user.emailAddress = email
+        user.emailAddress = email.lowercased()
+        user.positions = ""
         user.highSchool = "High School"
         user.state = "State"
         user.arm = "R"
@@ -275,7 +276,7 @@ class RegisterViewController: UIViewController {
                 
                 let fileName = DatabaseManager.safeEmail(emailAddress: email)
                     
-                StorageManager.shared.uploadProfilePic(with: data, filename: fileName, completion: { [weak self] result in
+                StorageManager.shared.uploadProfilePic(with: data, email: fileName, completion: { [weak self] result in
                     switch result {
                     case .success(let urlString):
                         DatabaseManager.shared.setProfilePic(with: email, url: urlString)
