@@ -13,11 +13,21 @@ class ScoutViewController: UIViewController {
     
     private var scoutInfo: ScoutInfo = ScoutInfo()
     
-    private var collectionView: UICollectionView
+    private var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+        let size = (UIScreen.main.bounds.width - 4)/2
+        layout.itemSize = CGSize(width: size, height: size)
+        let  collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .systemBackground
+        return collectionView
+    }()
     
     init(user: RHUser) {
         self.user = user
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -28,16 +38,7 @@ class ScoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 1
-        layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
-        let size = (view.width - 4)/3
-        layout.itemSize = CGSize(width: size, height: size)
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
-        
+       
         collectionView.register(ScoutInfoCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ScoutInfoCollectionReusableView.identifier)
         
         collectionView.register(ScoutCollectionViewCell.self, forCellWithReuseIdentifier: ScoutCollectionViewCell.identifier)
@@ -50,6 +51,8 @@ class ScoutViewController: UIViewController {
         if user.safeEmail == UserDefaults.standard.value(forKey: "email") as? String {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
         }
+        
+        fetchScoutInfo()
     }
     
     override func viewDidLayoutSubviews() {
@@ -57,22 +60,26 @@ class ScoutViewController: UIViewController {
         collectionView.frame = view.bounds
     }
     
-    @objc private func didTapEditButton() {
-        
+    private func fetchScoutInfo() {
         DatabaseManager.shared.getScoutInfoForUser(user: user.safeEmail, completion: { [weak self]
             scoutInfo in
             
             guard let scoutInfo = scoutInfo else {
-                let vc = EditScoutInfoViewController(scoutInfo: ScoutInfo())
-                
-                self?.navigationController?.pushViewController(vc, animated: true)
+                self?.scoutInfo = ScoutInfo()
+                self?.collectionView.reloadData()
                 return
             }
-            print(scoutInfo)
-            let vc = EditScoutInfoViewController(scoutInfo: scoutInfo)
             
-            self?.navigationController?.pushViewController(vc, animated: true)
+            self?.scoutInfo = scoutInfo
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
         })
+    }
+    
+    @objc private func didTapEditButton() {
+        let vc = EditScoutInfoViewController(scoutInfo: scoutInfo)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -110,31 +117,30 @@ extension ScoutViewController: UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScoutCollectionViewCell.identifier, for: indexPath) as! ScoutCollectionViewCell
         
-        
         switch indexPath.row {
         case 0:
-            cell.configure(email: user.safeEmail, attribute: .fastball)
+            cell.configure(scoutInfo: scoutInfo, attribute: .fastball)
             break
         case 1:
-            cell.configure(email: user.safeEmail, attribute: .curveball)
+            cell.configure(scoutInfo: scoutInfo, attribute: .curveball)
             break
         case 2:
-            cell.configure(email: user.safeEmail, attribute: .slider)
+            cell.configure(scoutInfo: scoutInfo, attribute: .slider)
             break
         case 3:
-            cell.configure(email: user.safeEmail, attribute: .changeup)
+            cell.configure(scoutInfo: scoutInfo, attribute: .changeup)
             break
         case 4:
-            cell.configure(email: user.safeEmail, attribute: .sixty)
+            cell.configure(scoutInfo: scoutInfo, attribute: .sixty)
             break
         case 5:
-            cell.configure(email: user.safeEmail, attribute: .infield)
+            cell.configure(scoutInfo: scoutInfo, attribute: .infield)
             break
         case 6:
-            cell.configure(email: user.safeEmail, attribute: .outfield)
+            cell.configure(scoutInfo: scoutInfo, attribute: .outfield)
             break
         case 7:
-            cell.configure(email: user.safeEmail, attribute: .exitVelo)
+            cell.configure(scoutInfo: scoutInfo, attribute: .exitVelo)
             break
         default:
             print("Default")
