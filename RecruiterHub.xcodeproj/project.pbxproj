@@ -14,6 +14,7 @@
 		E6001F732673AF8900BB1EAB /* ReferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F722673AF8900BB1EAB /* ReferencesViewController.swift */; };
 		E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F742673F3BE00BB1EAB /* AddReferenceViewController.swift */; };
 		E6001F772676A16300BB1EAB /* ManagePostsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */; };
+		E6001F7A267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6001F79267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift */; };
 		E612737825EC1579008F24AB /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E612737725EC1579008F24AB /* CommentsCell.swift */; };
 		E612737B25EC3A57008F24AB /* NewCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E612737A25EC3A57008F24AB /* NewCommentViewController.swift */; };
 		E61273BE25F17707008F24AB /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61273BD25F17707008F24AB /* Keyboard.swift */; };
@@ -107,6 +108,7 @@
 		E6001F722673AF8900BB1EAB /* ReferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReferencesViewController.swift; path = RecruiterHub/Profile/Scout/ReferencesViewController.swift; sourceTree = SOURCE_ROOT; };
 		E6001F742673F3BE00BB1EAB /* AddReferenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReferenceViewController.swift; sourceTree = "<group>"; };
 		E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePostsViewController.swift; sourceTree = "<group>"; };
+		E6001F79267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachProfileHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		E612737725EC1579008F24AB /* CommentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
 		E612737A25EC3A57008F24AB /* NewCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCommentViewController.swift; sourceTree = "<group>"; };
 		E61273BD25F17707008F24AB /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
@@ -204,6 +206,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E6001F78267D410F00BB1EAB /* Coach Profile */ = {
+			isa = PBXGroup;
+			children = (
+				E6001F79267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift */,
+			);
+			path = "Coach Profile";
+			sourceTree = "<group>";
+		};
 		E62C958025CB9F7F0050A6DA /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -306,6 +316,7 @@
 		E68B740225B123AE00D15230 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				E6001F78267D410F00BB1EAB /* Coach Profile */,
 				E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */,
 				E665688025DB537300F04EFA /* ContactInfoCell.swift */,
 				E636610225C8DD74007A4EFD /* EditProfileViewController.swift */,
@@ -736,6 +747,7 @@
 				E68B743325B25F7700D15230 /* StorageManager.swift in Sources */,
 				E6001F732673AF8900BB1EAB /* ReferencesViewController.swift in Sources */,
 				E68B743A25B7E1D400D15230 /* NewPostViewController.swift in Sources */,
+				E6001F7A267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift in Sources */,
 				E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */,
 				E688521A2651A38B00C177C9 /* Models.swift in Sources */,
 				E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */,

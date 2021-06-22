@@ -16,6 +16,19 @@ class ProfileViewController: UIViewController {
         return collectionView
     }()
     
+    private var coachCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+        let size = (UIScreen.main.bounds.width - 4)/3
+        layout.itemSize = CGSize(width: size, height: size)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isHidden = true
+        return collectionView
+    }()
+    
     private var user: RHUser = RHUser()
     
     private var posts: [UserPost]?
@@ -54,6 +67,7 @@ class ProfileViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
         
+       configureCoachCollectionView()
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.barTintColor = .secondarySystemBackground
         view.addSubview(collectionView)
@@ -76,6 +90,15 @@ class ProfileViewController: UIViewController {
         
     }
     //end: tiffany------
+    
+    private func configureCoachCollectionView() {
+        coachCollectionView.delegate = self
+        coachCollectionView.dataSource = self
+        
+        coachCollectionView.register(CoachProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CoachProfileHeader.identifier)
+        coachCollectionView.register(VideoCollectionViewCell.self, forCellWithReuseIdentifier: VideoCollectionViewCell.identifier)
+        
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -102,6 +125,8 @@ class ProfileViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: view.height - view.safeAreaInsets.top)
+        coachCollectionView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: view.height - view.safeAreaInsets.top)
+        
     }
     
     @objc private func didTapEditButton() {
