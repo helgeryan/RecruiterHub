@@ -104,13 +104,16 @@ class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         handleNotAuthenticated()
         
-        navigationItem.largeTitleDisplayMode = .never
         guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
             print("Email not set")
             return
         }
-
+        
+    
         fetchPosts(email: currentEmail)
+        
+        navigationItem.largeTitleDisplayMode = .never
+        
     }
     
     func handleNotAuthenticated() {
