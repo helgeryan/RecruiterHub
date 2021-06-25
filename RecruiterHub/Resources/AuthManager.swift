@@ -63,7 +63,6 @@ public class AuthManager {
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 guard authResult != nil, error == nil else {
                     print("Firebase signIn Failed")
-                    print(error!)
                     completion(false)
                     return
                 }

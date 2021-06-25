@@ -77,7 +77,7 @@ class AddReferenceViewController: UIViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-        print(reference)
+
         guard reference.name != "",
               reference.phone != "",
               reference.emailAddress != "" else {

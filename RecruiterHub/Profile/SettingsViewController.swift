@@ -137,8 +137,7 @@ class SettingsViewController: UIViewController {
                 document = "Privacy Policy.pdf"
                 break
             case .help:
-                print("Help")
-                document = "Privacy Policy.pdf"
+                document = "Help.pdf"
                 break
         }
         

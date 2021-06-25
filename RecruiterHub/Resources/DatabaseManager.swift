@@ -1726,7 +1726,6 @@ public class DatabaseManager {
     }
     
     public func getUserFollowingSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
-        print(email)
         database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
             guard let following = snapshot.value as? [[String:String]] else {
                 completion(nil)

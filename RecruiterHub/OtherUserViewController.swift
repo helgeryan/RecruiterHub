@@ -224,7 +224,6 @@ extension OtherUserViewController: UICollectionViewDelegate {
             let postLike = PostLike(username: like.username, email: like.email, name: like.name)
             postLikes.append(postLike)
         }
-        print(model.postURL)
         
         let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
         

@@ -184,7 +184,6 @@ final class EditProfileViewController: UIViewController {
         }
         else {
             print("Data is nil")
-            print(user)
             DatabaseManager.shared.updateUserInfor(user: user)
             
             navigationController?.popViewController(animated: true)

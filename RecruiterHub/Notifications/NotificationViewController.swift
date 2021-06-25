@@ -76,10 +76,8 @@ class NotificationViewController: UIViewController {
         guard let user = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-        print(user)
         
         DatabaseManager.shared.getUserNotifications(user: user, completion: { [weak self] notifications in
-            print(notifications)
             guard let notifications = notifications else {
                 self?.noNotificationsLabel.isHidden = false
                 self?.tableView.isHidden = true

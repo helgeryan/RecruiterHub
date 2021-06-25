@@ -102,7 +102,6 @@ class NewFeedViewController: UIViewController {
             
             if sortedFeedPosts.count < 10 {
                 for (index, sortedPost) in sortedFeedPosts.enumerated() {
-                    print(sortedPost.post.createdDate)
                     let asset = AVAsset(url: sortedPost.post.postURL)
                     let playerItem = AVPlayerItem(asset: asset)
                     let player = AVPlayer(playerItem: playerItem)
@@ -117,7 +116,6 @@ class NewFeedViewController: UIViewController {
             else {
                 var trimmedFeedPosts = sortedFeedPosts[0..<10]
                 for (index, trimmedPost) in trimmedFeedPosts.enumerated() {
-                    print(trimmedPost.post.createdDate)
                     let asset = AVAsset(url: trimmedPost.post.postURL)
                     let playerItem = AVPlayerItem(asset: asset)
                     let player = AVPlayer(playerItem: playerItem)

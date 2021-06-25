@@ -76,7 +76,6 @@ extension CommentsViewController: UITableViewDelegate, UITableViewDataSource {
               comments.count != 0 else {
             return 0
         }
-        print(comments.count)
         return comments.count
     }
     

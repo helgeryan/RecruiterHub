@@ -145,7 +145,6 @@ class ViewPostViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         scrollView.frame = CGRect(x: 0, y: view.top, width: view.width, height: view.height)
         // Place player layer
-        print(view.height)
         playerLayer.frame = CGRect(x: 0, y: scrollView.top, width: scrollView.width, height: view.height * 2 / 3)
         
         // Place like button
