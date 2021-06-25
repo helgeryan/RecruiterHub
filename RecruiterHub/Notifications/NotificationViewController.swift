@@ -72,24 +72,21 @@ class NotificationViewController: UIViewController {
     }
     
     private func fetchNotifications() {
-        
+        print("Get Notificiations")
         guard let user = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
+        print(user)
         
         DatabaseManager.shared.getUserNotifications(user: user, completion: { [weak self] notifications in
-            
+            print(notifications)
             guard let notifications = notifications else {
                 self?.noNotificationsLabel.isHidden = false
                 self?.tableView.isHidden = true
                 print("Failed to get Notifications")
                 return
             }
-            
-            for notification in notifications {
-                print(notification.date)
-            }
-            
+
             self?.noNotificationsLabel.isHidden = true
             self?.tableView.isHidden = false
             

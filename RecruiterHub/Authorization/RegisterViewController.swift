@@ -13,6 +13,8 @@ class RegisterViewController: UIViewController {
         static let cornerRadius:CGFloat = 8.0
     }
     
+    private let profileTypes = ["player", "coach"]
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "person")
@@ -119,6 +121,11 @@ class RegisterViewController: UIViewController {
         return button
     }()
     
+    private let profileType: UIPickerView = {
+        let spinner = UIPickerView(frame: .zero)
+        return spinner
+    }()
+    
     private let imageBackgroundView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "LaunchScreen")
@@ -139,6 +146,8 @@ class RegisterViewController: UIViewController {
         usernameField.delegate = self
         emailField.delegate = self
         passwordField.delegate = self
+        profileType.delegate = self
+        profileType.dataSource = self
         
         view.addSubview(imageBackgroundView)
         view.addSubview(imageView)
@@ -148,6 +157,7 @@ class RegisterViewController: UIViewController {
         view.addSubview(registerButton)
         view.addSubview(lastNameField)
         view.addSubview(firstNameField)
+        view.addSubview(profileType)
         
         imageView.isUserInteractionEnabled = true
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapChangeProfilePic))
@@ -158,7 +168,7 @@ class RegisterViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         imageBackgroundView.frame = view.bounds
-        imageView.frame = CGRect(x: view.width/3, y: view.top + 130, width: view.width/3, height: view.width/3)
+        imageView.frame = CGRect(x: view.width/3, y: view.safeAreaInsets.top + 10, width: view.width/3, height: view.width/3)
         imageView.layer.cornerRadius = imageView.width/2
         
         firstNameField.frame = CGRect(x: 20,
@@ -177,8 +187,12 @@ class RegisterViewController: UIViewController {
                                   y: usernameField.bottom + 10,
                                   width: view.width - 40,
                                   height: 52)
+        profileType.frame = CGRect(x: 20,
+                                  y: emailField.bottom + 10,
+                                  width: view.width - 40,
+                                  height: 52)
         passwordField.frame = CGRect(x: 20,
-                                     y: emailField.bottom + 10,
+                                     y: profileType.bottom + 10,
                                      width: view.width - 40,
                                      height: 52)
 
@@ -266,6 +280,7 @@ class RegisterViewController: UIViewController {
         user.state = "State"
         user.arm = "R"
         user.bats = "R"
+        user.profileType = profileTypes[profileType.selectedRow(inComponent: 0)]
         
         AuthManager.shared.registerNewUser(username: username, email: email, password: password, user: user) { [weak self] registered in
             if registered {
@@ -289,8 +304,6 @@ class RegisterViewController: UIViewController {
                     UserDefaults.standard.setValue(email.safeDatabaseKey(), forKey: "email")
                     UserDefaults.standard.setValue(user.username, forKey: "username")
                     UserDefaults.standard.setValue("\(user.firstName) \(user.lastName)", forKey: "name")
-                    UserDefaults.standard.setValue("Yes", forKey: "isLoggedIn")
-                    
                 })
             }
             else {
@@ -333,5 +346,19 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         }
         
         imageView.image = selectedImage
+    }
+}
+
+extension RegisterViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return profileTypes[row]
+    }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        2
     }
 }

@@ -103,6 +103,8 @@ public class DatabaseManager {
         database.child(email.safeDatabaseKey()).child("bats").setValue(user.bats)
         database.child(email.safeDatabaseKey()).child("gradYear").setValue(user.gradYear)
         database.child(email.safeDatabaseKey()).child("phone").setValue(user.phone)
+        database.child(email.safeDatabaseKey()).child("profileType").setValue(user.profileType)
+        database.child(email.safeDatabaseKey()).child("title").setValue(user.title)
 
         // Grab the database users reference
         database.child("users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
@@ -2206,7 +2208,24 @@ public class DatabaseManager {
                 }
                 else {
                     self?.getUserFollowing(email: user, completion: { following in
-                        guard let following = following else {
+                        guard let following = following  else {
+                            
+                            let notificationType = UserNotificationType.follow(state: .not_following )
+                            
+                            self?.getDataForUserSingleEvent(user: email, completion: { user in
+                                guard let user = user else {
+                                    group.leave()
+                                    print("Failed to get User")
+                                    return
+                                }
+                                
+                                let temp = UserNotification(type: notificationType, text: text, user: user, date: date)
+                                array.append(temp)
+                                // If the array is complete leave the function
+                                if array.count == notifications.count {
+                                    group.leave()
+                                }
+                            })
                             return
                         }
                         
