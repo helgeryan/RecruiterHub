@@ -79,17 +79,42 @@ class SettingsViewController: UIViewController {
                 self?.didTapLogOut()
             }
         ])
+        
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        
+        if "ryanhelgeson14-gmail-com" == email {
+            data.append([
+                SettingCellModel(title: "Manage Users") { [weak self] in
+                    self?.didTapManageUsers()
+                }
+            ])
+            return
+        }
     }
     
     private func didTapEditProfile() {
         let vc = EditProfileViewController(user: user)
         vc.title = "Edit Profile"
         navigationController?.pushViewController(vc, animated: true)
-        
     }
     
     private func didTapInviteFriends() {
         
+    }
+    
+    private func didTapManageUsers() {
+        DatabaseManager.shared.getAllUsers(completion: { [weak self] result in
+            switch result {
+            case .success(let userCollection):
+                let vc = ManageUsersViewController(data: userCollection)
+                self?.navigationController?.pushViewController(vc, animated: true)
+                break
+            case .failure(let error):
+                print("Failed to get users: \(error)")
+            }
+        })
     }
     
     private func didTapManagePosts() {

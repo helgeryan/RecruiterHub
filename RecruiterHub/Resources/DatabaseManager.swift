@@ -165,7 +165,27 @@ public class DatabaseManager {
             completion(.success(value))
         })
     }
+    
+    public func deleteUser(index: Int, completion: @escaping (Bool) -> Void) {
 
+        let ref = database.child("users")
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var users = snapshot.value as? [[String: Any]] {
+
+                users.remove(at: index)
+                ref.setValue(users, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write post array")
+                        return
+                    }
+                    print("Deleted Post")
+                    completion(true)
+                })
+            }
+        }
+    }
     
     //MARK: - Posts
 
