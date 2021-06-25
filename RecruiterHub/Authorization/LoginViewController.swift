@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import SafariServices
 
 class LoginViewController: UIViewController {
     
@@ -42,7 +43,7 @@ class LoginViewController: UIViewController {
         return field
      }()
     
-    private let loginButton:UIButton = {
+    private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Log in", for: .normal)
         button.backgroundColor = .link
@@ -52,10 +53,33 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         return button
     }()
-    private let registerButton:UIButton = {
+    
+    private let registerButton: UIButton = {
         let button = UIButton()
         button.setTitle("Register", for: .normal)
         button.backgroundColor = .systemGreen
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        return button
+    }()
+    
+    private let termsButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Terms and Conditions", for: .normal)
+        button.backgroundColor = .lightGray
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 12
+        button.layer.masksToBounds = true
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        return button
+    }()
+    
+    private let privacyButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Privacy Policy", for: .normal)
+        button.backgroundColor = .lightGray
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
@@ -81,6 +105,8 @@ class LoginViewController: UIViewController {
 
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         registerButton.addTarget(self, action: #selector(registerButtonTapped), for: .touchUpInside)
+        termsButton.addTarget(self, action: #selector(didTapTerms), for: .touchUpInside)
+        privacyButton.addTarget(self, action: #selector(didTapPrivacy), for: .touchUpInside)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         view.addGestureRecognizer(tapGesture)
         emailField.delegate = self
@@ -92,6 +118,8 @@ class LoginViewController: UIViewController {
         view.addSubview(passwordField)
         view.addSubview(loginButton)
         view.addSubview(registerButton)
+        view.addSubview(termsButton)
+        view.addSubview(privacyButton)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -121,11 +149,41 @@ class LoginViewController: UIViewController {
         passwordField.frame = CGRect(x:30 , y: emailField.bottom + 10, width: view.width-60, height: 52)
         loginButton.frame = CGRect(x:30 , y: passwordField.bottom + 10, width: view.width-60, height: 52)
         registerButton.frame = CGRect(x:30 , y: loginButton.bottom + 10, width: view.width-60, height: 52)
+        termsButton.frame = CGRect(x:30 , y: registerButton.bottom + 10, width: view.width-60, height: 22)
+        privacyButton.frame = CGRect(x:30 , y: termsButton.bottom + 10, width: view.width-60, height: 22)
         
     }
     
     @objc private func didTap() {
         view.endEditing(true)
+    }
+    
+    @objc private func didTapTerms() {
+        StorageManager.shared.downloadURL(for: "Terms and Conditions.pdf", completion: { [weak self] result in
+            switch result {
+            case .failure(let error):
+                print(error)
+                return
+            case .success(let url):
+                let vc = SFSafariViewController(url: url)
+                self?.present(vc, animated: true)
+                break
+            }
+        })
+    }
+    
+    @objc private func didTapPrivacy() {
+        StorageManager.shared.downloadURL(for: "Privacy Policy.pdf", completion: { [weak self] result in
+            switch result {
+            case .failure(let error):
+                print(error)
+                return
+            case .success(let url):
+                let vc = SFSafariViewController(url: url)
+                self?.present(vc, animated: true)
+                break
+            }
+        })
     }
     
     @objc private func loginButtonTapped() {
