@@ -26,6 +26,7 @@ class ProfileViewController: UIViewController {
         layout.itemSize = CGSize(width: size, height: size)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.isHidden = true
+        collectionView.backgroundColor = .systemBackground
         return collectionView
     }()
     
@@ -40,6 +41,15 @@ class ProfileViewController: UIViewController {
         label.isHidden = true
         return label
     }()
+    
+    init(user: RHUser) {
+        self.user = user
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,9 +105,14 @@ class ProfileViewController: UIViewController {
         coachCollectionView.delegate = self
         coachCollectionView.dataSource = self
         
+        coachCollectionView.register(ProfileTabs.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileTabs.identifier)
+        
+        coachCollectionView.register(ProfileConnections.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileConnections.identifier)
+        
         coachCollectionView.register(CoachProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CoachProfileHeader.identifier)
         coachCollectionView.register(VideoCollectionViewCell.self, forCellWithReuseIdentifier: VideoCollectionViewCell.identifier)
         
+        view.addSubview(coachCollectionView)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -109,11 +124,13 @@ class ProfileViewController: UIViewController {
             return
         }
         
-    
-        fetchPosts(email: currentEmail)
-        
         navigationItem.largeTitleDisplayMode = .never
         
+        if user.safeEmail == currentEmail {
+            return
+        }
+        
+        fetchPosts(email: currentEmail)
     }
     
     func handleNotAuthenticated() {
@@ -153,7 +170,16 @@ class ProfileViewController: UIViewController {
                 }
                 self?.user = user
 
-                self?.collectionView.reloadData()
+                if self?.user.profileType == "coach" {
+                    self?.coachCollectionView.isHidden = false
+                    self?.collectionView.isHidden = true
+                    self?.coachCollectionView.reloadData()
+                }
+                else {
+                    self?.coachCollectionView.isHidden = true
+                    self?.collectionView.isHidden = false
+                    self?.collectionView.reloadData()
+                }
             })
         })
     }
@@ -173,14 +199,7 @@ extension ProfileViewController: UICollectionViewDelegate {
         }
         
         let model = posts[posts.count - indexPath.row - 1]
-        
-        var postLikes :[PostLike] = []
-        
-        for like in model.likeCount {
-            let postLike = PostLike(username: like.username, email: like.email, name: like.name)
-            postLikes.append(postLike)
-        }
-        
+
         let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
         
         vc.title = "Post"
@@ -191,11 +210,7 @@ extension ProfileViewController: UICollectionViewDelegate {
 
 extension ProfileViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let posts = posts else {
-            return 0
-        }
-        
-        if section != 2 {
+        guard let posts = posts, section == 2 else {
             return 0
         }
         
@@ -232,21 +247,22 @@ extension ProfileViewController: UICollectionViewDataSource {
             return profileConnections
         }
         
+        if coachCollectionView == collectionView {
+            // Dequeue reusable view of type ProfileHeader
+            let coachProfileHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CoachProfileHeader.identifier, for: indexPath) as! CoachProfileHeader
+//            coachProfileHeader.delegate = self
+
+            coachProfileHeader.configure(user: user, hideFollowButton: true)
+
+            return coachProfileHeader
+        }
+        
         // Dequeue reusable view of type ProfileHeader
         let profileHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ProfileHeader.identifier, for: indexPath) as! ProfileHeader
         profileHeader.delegate = self
-        
-        if let email = UserDefaults.standard.value(forKey: "email") as? String, email != "" {
-           
-            DatabaseManager.shared.getDataForUser(user: email.safeDatabaseKey(), completion: {
-                result in
-                guard let result = result else {
-                    return
-                }
-                
-                profileHeader.configure(user: result, hideFollowButton: true)
-            })
-        }
+
+                profileHeader.configure(user: user, hideFollowButton: true)
+
         return profileHeader
     }
 }
@@ -260,6 +276,10 @@ extension ProfileViewController: UICollectionViewDelegateFlowLayout {
         
         if section == 2 {
             return CGSize(width: view.width, height: 70)
+        }
+        
+        if coachCollectionView == collectionView {
+            return CGSize(width: view.width, height: CoachProfileHeader.getHeight(isYourProfile: true))
         }
         
         return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: true))

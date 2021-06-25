@@ -32,6 +32,7 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
+        label.textAlignment = .center
         label.numberOfLines = 1
         return label
     }()
@@ -39,6 +40,7 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
+        label.textAlignment = .center
         label.numberOfLines = 1
         return label
     }()
@@ -47,6 +49,7 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         let label = UILabel()
         label.textColor = .label
         label.numberOfLines = 1
+        label.textAlignment = .center
         return label
     }()
     
@@ -116,17 +119,15 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         }
         
         nameLabel.text = user.firstName + " " + user.lastName
+        titleLabel.text = user.title
+        organizationLabel.text = user.highSchool
+        
         if let url = URL(string: user.profilePicUrl) {
             profilePhotoImageView.sd_setImage(with: url, completed: nil)
         }
         
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
-        }
-        
-        if email == user.emailAddress.safeDatabaseKey() {
-            followButton.isHidden = true
-            endorseButton.isHidden = true
         }
         
         DatabaseManager.shared.getUserFollowing(email: email.safeDatabaseKey(), completion: { [weak self]
@@ -180,18 +181,33 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
                                  y: profilePhotoImageView.bottom + 10,
                                  width: width - 20 ,
                                  height: 28)
-        nameLabel.textAlignment = .center
-        titleLabel.frame = CGRect(x: 10,
+        organizationLabel.frame = CGRect(x: 10,
                                              y: nameLabel.bottom + 5,
+                                             width: width - 20,
+                                             height: 28)
+        titleLabel.frame = CGRect(x: 10,
+                                             y: organizationLabel.bottom + 5,
+                                             width: width - 20,
+                                             height: 28)
+        
+        followButton.frame = CGRect(x: 10,
+                                             y: titleLabel.bottom + 5,
                                              width: width / 2 - 20,
                                              height: 50)
+        followButton.layer.cornerRadius = 3.0
+        
+        endorseButton.frame = CGRect(x: (width / 2) + 10,
+                                             y: titleLabel.bottom + 5,
+                                             width: width / 2 - 20,
+                                             height: 50)
+        endorseButton.layer.cornerRadius = 3.0
     }
     
     public static func getHeight(isYourProfile: Bool) -> CGFloat {
         let screenSize = UIScreen.main.bounds
         if isYourProfile {
-            return screenSize.width / 3 + 160
+            return screenSize.width / 3 + 115
         }
-        return screenSize.width / 3 + 200
+        return screenSize.width / 3 + 170
     }
 }

@@ -83,28 +83,33 @@ final class EditProfileViewController: UIViewController {
         // name, username, website, bio
         var model = EditProfileFormModel(label: "Name", placeholder: "\(user.firstName) \(user.lastName)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Username", placeholder: "\(user.username)", value: nil)
+        model = EditProfileFormModel(label: "Phone", placeholder: "\(user.phone)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Phone", placeholder: "N/A", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "High School", placeholder: "\(user.highSchool)", value: nil)
+        model = EditProfileFormModel(label: "School", placeholder: "\(user.highSchool)", value: nil)
         models.append(model)
         model = EditProfileFormModel(label: "State", placeholder: "\(user.state)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "Height Feet", placeholder: "\(user.heightFeet)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Height Inches", placeholder: "\(user.heightInches)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Weight", placeholder: "\(user.weight)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Arm", placeholder: "\(user.arm)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Bats", placeholder: "\(user.bats)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "GPA", placeholder: "\(user.gpa)", value: nil)
-        models.append(model)
-        model = EditProfileFormModel(label: "Positions", placeholder: "ex. RHP, CF, 1B", value: nil)
-        models.append(model)
+        
+        if user.profileType == "coach" {
+            model = EditProfileFormModel(label: "Title", placeholder: "\(user.title)", value: nil)
+            models.append(model)
+        }
+        else {
+            model = EditProfileFormModel(label: "Height Feet", placeholder: "\(user.heightFeet)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "Height Inches", placeholder: "\(user.heightInches)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "Weight", placeholder: "\(user.weight)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "Arm", placeholder: "\(user.arm)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "Bats", placeholder: "\(user.bats)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "GPA", placeholder: "\(user.gpa)", value: nil)
+            models.append(model)
+            model = EditProfileFormModel(label: "Positions", placeholder: "ex. RHP, CF, 1B", value: nil)
+            models.append(model)
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -160,7 +165,7 @@ final class EditProfileViewController: UIViewController {
                     guard let user = self?.user else {
                         return
                     }
-                    
+                
                     DatabaseManager.shared.updateUserInfor(user: user)
                     
                     self?.navigationController?.popViewController(animated: true)
@@ -179,6 +184,7 @@ final class EditProfileViewController: UIViewController {
         }
         else {
             print("Data is nil")
+            print(user)
             DatabaseManager.shared.updateUserInfor(user: user)
             
             navigationController?.popViewController(animated: true)
@@ -284,9 +290,6 @@ extension EditProfileViewController: FormTableViewCellDelegate {
                 user.lastName = String((names[1]))
             }
             break
-        case "Username":
-            user.username = value
-            break
         case "Phone":
             user.phone = value
             break
@@ -313,6 +316,9 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             break
         case "Positions":
             user.positions = value
+            break
+        case "Title":
+            user.title = value
             break
         default:
             print("Field doesn't exist")

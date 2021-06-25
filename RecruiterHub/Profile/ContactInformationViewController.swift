@@ -38,8 +38,8 @@ class ContactInformationViewController: UIViewController {
     
     init(user: RHUser) {
         self.user = user
-//        nameLabel.text = "\(user.firstName) \(user.lastName)"
         super.init(nibName: nil, bundle: nil)
+        self.title = "\(user.firstName) \(user.lastName)"
         self.tableView.delegate = self
         self.tableView.dataSource = self
     }
@@ -53,30 +53,27 @@ class ContactInformationViewController: UIViewController {
         models.append(model)
         model = ContactInfoModel(label: "Username", value: "\(user.username)")
         models.append(model)
-        model = ContactInfoModel(label: "Phone", value: user.phone)
+        model = ContactInfoModel(label: "Phone", value: "\(user.phone)")
         models.append(model)
-        model = ContactInfoModel(label: "High School", value: "\(user.highSchool)")
+        model = ContactInfoModel(label: "School", value: "\(user.highSchool)")
         models.append(model)
-        model = ContactInfoModel(label: "State", value: "\(user.state)")
-        models.append(model)
-        model = ContactInfoModel(label: "Height Feet", value: "\(user.heightFeet)")
-        models.append(model)
-        model = ContactInfoModel(label: "Height Inches", value: "\(user.heightInches)")
-        models.append(model)
-        model = ContactInfoModel(label: "Weight", value: "\(user.weight)")
-        models.append(model)
-        model = ContactInfoModel(label: "Arm", value: "\(user.arm)")
-        models.append(model)
-        model = ContactInfoModel(label: "Bats", value: "\(user.bats)")
-        models.append(model)
-        model = ContactInfoModel(label: "GPA", value: "\(user.bats)")
-        models.append(model)
+        
+        if user.profileType == "coach" {
+            // Do nothing
+        }
+        else {
+            model = ContactInfoModel(label: "State", value: "\(user.state)")
+            models.append(model)
+            model = ContactInfoModel(label: "GPA", value: "\(user.gpa)")
+            models.append(model)
+        }
+        tableView.reloadData()
     }
 }
 
 extension ContactInformationViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return models.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

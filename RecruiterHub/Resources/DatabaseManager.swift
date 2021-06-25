@@ -580,6 +580,23 @@ public class DatabaseManager {
                 completion(nil)
                 return
             }
+            
+            var profileType: String
+            if let temp = info["profileType"] as? String {
+                profileType = temp
+            }
+            else {
+                profileType = "player"
+            }
+            
+            var title: String
+            if let temp = info["title"] as? String {
+                title = temp
+            }
+            else {
+                title = "player"
+            }
+            
             var userData = RHUser()
             userData.username = username
             userData.firstName = firstname
@@ -597,6 +614,8 @@ public class DatabaseManager {
             userData.arm = arm
             userData.bats = bats
             userData.profilePicUrl = profilePicUrl
+            userData.profileType = profileType
+            userData.title = title
             
             completion(userData)
         })
@@ -629,6 +648,23 @@ public class DatabaseManager {
                 completion(nil)
                 return
             }
+            
+            var profileType: String
+            if let temp = info["profileType"] as? String {
+                profileType = temp
+            }
+            else {
+                profileType = "player"
+            }
+            
+            var title: String
+            if let temp = info["title"] as? String {
+                title = temp
+            }
+            else {
+                title = "player"
+            }
+            
             var userData = RHUser()
             userData.username = username
             userData.firstName = firstname
@@ -646,8 +682,23 @@ public class DatabaseManager {
             userData.arm = arm
             userData.bats = bats
             userData.profilePicUrl = profilePicUrl
+            userData.profileType = profileType
+            userData.title = title
             
             completion(userData)
+        })
+    }
+    
+    public func getProfileType(email: String, completion: @escaping ((String?) -> Void)) {
+        
+        database.child("\(email)/profileType").observeSingleEvent(of: .value, with:  { snapshot in
+            
+            guard let profileType = snapshot.value as? String else {
+                completion(nil)
+                return
+            }
+            
+            completion(profileType)
         })
     }
     
@@ -666,6 +717,8 @@ public class DatabaseManager {
         database.child(email).child("arm").setValue(user.arm)
         database.child(email).child("bats").setValue(user.bats)
         database.child(email).child("gradYear").setValue(user.gradYear)
+        database.child(email).child("title").setValue(user.title)
+        database.child(email).child("phone").setValue(user.phone)
     }
     
     public func getScoutInfoForUser(user: String, completion: @escaping ((ScoutInfo?) -> Void)) {

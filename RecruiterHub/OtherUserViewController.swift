@@ -17,6 +17,20 @@ class OtherUserViewController: UIViewController {
         return collection
     }()
     
+    private var coachCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+        let size = (UIScreen.main.bounds.width - 4)/3
+        layout.itemSize = CGSize(width: size, height: size)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isHidden = true
+        collectionView.backgroundColor = .systemBackground
+        return collectionView
+    }()
+    
     private var user: RHUser
     
     private var posts: [UserPost]?
@@ -50,6 +64,7 @@ class OtherUserViewController: UIViewController {
         
         collectionView.register(ProfileConnections.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileConnections.identifier)
         
+        configureCoachCollectionView()
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
@@ -60,6 +75,7 @@ class OtherUserViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
+        coachCollectionView.frame = view.bounds
         fetchPosts()
     }
     
@@ -68,6 +84,20 @@ class OtherUserViewController: UIViewController {
         let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapMessageButton))
         barButtonItem.accessibilityLabel = "barButtonItem"
         navigationItem.rightBarButtonItem = barButtonItem
+    }
+    
+    private func configureCoachCollectionView() {
+        coachCollectionView.delegate = self
+        coachCollectionView.dataSource = self
+        
+        coachCollectionView.register(ProfileTabs.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileTabs.identifier)
+        
+        coachCollectionView.register(ProfileConnections.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileConnections.identifier)
+        
+        coachCollectionView.register(CoachProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CoachProfileHeader.identifier)
+        coachCollectionView.register(VideoCollectionViewCell.self, forCellWithReuseIdentifier: VideoCollectionViewCell.identifier)
+        
+        view.addSubview(coachCollectionView)
     }
     
     @objc private func didTapMessageButton() {
@@ -135,7 +165,7 @@ class OtherUserViewController: UIViewController {
         let email = result.email
 
         // Check in the database if the conversation with these two users exists
-        // if it does, reuse conversatiionid
+        // if it does, reuse conversationid
         // if not create new
         DatabaseManager.shared.conversationExists(with: email, completion: { [weak self] result in
 
@@ -159,7 +189,16 @@ class OtherUserViewController: UIViewController {
             self?.posts = fetchedPosts
             
             DispatchQueue.main.async {
-                self?.collectionView.reloadData()
+                if self?.user.profileType == "coach" {
+                    self?.coachCollectionView.isHidden = false
+                    self?.collectionView.isHidden = true
+                    self?.coachCollectionView.reloadData()
+                }
+                else {
+                    self?.coachCollectionView.isHidden = true
+                    self?.collectionView.isHidden = false
+                    self?.collectionView.reloadData()
+                }
             }
         })
     }
@@ -238,20 +277,21 @@ extension OtherUserViewController: UICollectionViewDataSource {
             return profileConnections
         }
         
+        if coachCollectionView == collectionView {
+            // Dequeue reusable view of type ProfileHeader
+            let coachProfileHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CoachProfileHeader.identifier, for: indexPath) as! CoachProfileHeader
+//            coachProfileHeader.delegate = self
+
+            coachProfileHeader.configure(user: user, hideFollowButton: false)
+
+            return coachProfileHeader
+        }
+        
         // Dequeue reusable view of type ProfileHeader
         let profileHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ProfileHeader.identifier, for: indexPath) as! ProfileHeader
+        
         profileHeader.delegate = self
-        
-        let email = user.safeEmail
-        
-        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
-            result in
-            guard let result = result else {
-                return
-            }
-            
-            profileHeader.configure(user: result, hideFollowButton: false)
-        })
+        profileHeader.configure(user: user, hideFollowButton: false)
         
         return profileHeader
     }
@@ -266,6 +306,10 @@ extension OtherUserViewController: UICollectionViewDelegateFlowLayout {
         
         if section == 2 {
             return CGSize(width: view.width, height: 70)
+        }
+        
+        if coachCollectionView == collectionView {
+            return CGSize(width: view.width, height: CoachProfileHeader.getHeight(isYourProfile: false))
         }
         
         return CGSize(width: view.width, height: ProfileHeader.getHeight(isYourProfile: false))

@@ -86,6 +86,10 @@ class NotificationViewController: UIViewController {
                 return
             }
             
+            for notification in notifications {
+                print(notification.date)
+            }
+            
             self?.noNotificationsLabel.isHidden = true
             self?.tableView.isHidden = false
             

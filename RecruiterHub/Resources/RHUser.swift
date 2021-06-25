@@ -24,6 +24,9 @@ public struct RHUser {
     var arm: String
     var bats: String
     var profilePicUrl: String
+    var profileType: String
+    var title: String
+    
     
     var safeEmail: String {
         var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
@@ -57,8 +60,11 @@ public struct RHUser {
         arm = ""
         bats = ""
         profilePicUrl = ""
+        title = ""
+        profileType = ""
     }
 }
+
 
 public enum Connections {
     case follower
