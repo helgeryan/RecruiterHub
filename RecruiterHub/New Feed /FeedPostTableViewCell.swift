@@ -293,8 +293,16 @@ class FeedPostTableViewCell: UITableViewCell {
         likesLabel.text = "\(post.post.likeCount.count) likes"
         commentsLabel.text = "\(post.post.comments.count) comments"
         
+        var feedLabel: String
+        if post.post.owner.profileType == "coach" {
+            feedLabel = "\(post.post.owner.username) - \(post.post.owner.highSchool)"
+        }
+        else {
+            feedLabel = "\(post.post.owner.username) - \(post.post.owner.gradYear) - \(post.post.owner.positions)"
+        }
+        
         DispatchQueue.main.async {
-            self.usernameLabel.text = "\(post.post.owner.username) - \(post.post.owner.positions)"
+            self.usernameLabel.text = feedLabel
         }
         
         
