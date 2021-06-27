@@ -52,6 +52,9 @@ class NewFeedViewController: UIViewController {
         self.tabBarController?.tabBar.isHidden = false
     }
     
+    /*  layoutSubviews()
+        Override layoutSubviews() to organize all subviews on the viewController.
+    */
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds

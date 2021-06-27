@@ -25,7 +25,6 @@
 		E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */; };
 		E65802E8261BF47100903F4B /* GameLogHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65802E7261BF47100903F4B /* GameLogHeaderView.swift */; };
 		E665688125DB537300F04EFA /* ContactInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E665688025DB537300F04EFA /* ContactInfoCell.swift */; };
-		E66568AA25EACFA800F04EFA /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66568A925EACFA800F04EFA /* CommentsViewController.swift */; };
 		E66BB15026856F08004C65E0 /* ManageUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */; };
 		E66C79CD260C398F007420D9 /* ScoutInfoCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C79CC260C398F007420D9 /* ScoutInfoCollectionReusableView.swift */; };
 		E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7AB3260E9A77007420D9 /* GameLogViewController.swift */; };
@@ -120,7 +119,6 @@
 		E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTableViewCell.swift; sourceTree = "<group>"; };
 		E65802E7261BF47100903F4B /* GameLogHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogHeaderView.swift; sourceTree = "<group>"; };
 		E665688025DB537300F04EFA /* ContactInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactInfoCell.swift; sourceTree = "<group>"; };
-		E66568A925EACFA800F04EFA /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
 		E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUsersViewController.swift; sourceTree = "<group>"; };
 		E66C79CC260C398F007420D9 /* ScoutInfoCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutInfoCollectionReusableView.swift; sourceTree = "<group>"; };
 		E66C7AB3260E9A77007420D9 /* GameLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogViewController.swift; sourceTree = "<group>"; };
@@ -301,7 +299,6 @@
 				E68B746325C0801C00D15230 /* OtherUserViewController.swift */,
 				E612737A25EC3A57008F24AB /* NewCommentViewController.swift */,
 				E63660FE25C7C259007A4EFD /* ListsViewController.swift */,
-				E66568A925EACFA800F04EFA /* CommentsViewController.swift */,
 				E612737725EC1579008F24AB /* CommentsCell.swift */,
 				E61273BD25F17707008F24AB /* Keyboard.swift */,
 				E69AF4C025F6D6AE00D366A8 /* Messages */,
@@ -733,7 +730,6 @@
 				E68B746B25C0E6F500D15230 /* SettingsViewController.swift in Sources */,
 				E68B745E25BF8D2200D15230 /* SearchUsersViewController.swift in Sources */,
 				E68B73E625B11CB600D15230 /* SceneDelegate.swift in Sources */,
-				E66568AA25EACFA800F04EFA /* CommentsViewController.swift in Sources */,
 				E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */,
 				E6A069CD2660780800BE0444 /* FeedPostTableViewCell.swift in Sources */,
 				E63660FC25C7906C007A4EFD /* ProfileConnections.swift in Sources */,

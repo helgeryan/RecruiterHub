@@ -112,6 +112,9 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         profileImageView.image = nil
     }
     
+    /*  layoutSubviews()
+        Override layoutSubviews() to organize all subviews on the viewController.
+    */
     override func layoutSubviews() {
         super.layoutSubviews()
         

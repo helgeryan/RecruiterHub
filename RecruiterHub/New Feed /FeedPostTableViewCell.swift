@@ -248,6 +248,9 @@ class FeedPostTableViewCell: UITableViewCell {
         })
     }
     
+    /*  layoutSubviews()
+        Override layoutSubviews() to organize all subviews on the viewController.
+    */
     override func layoutSubviews() {
         super.layoutSubviews()
         let padding:CGFloat = 5.0

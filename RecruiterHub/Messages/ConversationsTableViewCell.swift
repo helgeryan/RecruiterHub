@@ -35,18 +35,26 @@ class ConversationTableViewCell: UITableViewCell {
         return label
     }()
     
+    // MARK: - Init / Overrides
+    
+    // Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        // Add Subviews
         contentView.addSubview(userImageView)
         contentView.addSubview(usernameLabel)
         contentView.addSubview(userMessageLabel)
     }
     
+    // Required Init
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /*  layoutSubviews()
+        Override layoutSubviews() to organize all subviews on the viewController.
+    */
     override func layoutSubviews() {
         super.layoutSubviews()
         

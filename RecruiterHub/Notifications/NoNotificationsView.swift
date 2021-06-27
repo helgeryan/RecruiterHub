@@ -26,6 +26,8 @@ class NoNotificationsView: UIView {
         return imageView
     }()
     
+    // MARK: - Init / Overrides
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(label)
@@ -36,6 +38,9 @@ class NoNotificationsView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /*  layoutSubviews()
+        Override layoutSubviews() to organize all subviews on the viewController.
+    */
     override func layoutSubviews() {
         super.layoutSubviews()
         
