@@ -12,7 +12,14 @@ import FirebaseAuth
 class OtherUserViewController: UIViewController {
 
     private var collectionView: UICollectionView = {
+        
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+        let size = (UIScreen.main.bounds.width - 4)/3
+        layout.itemSize = CGSize(width: size, height: size)
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collection
     }()
@@ -47,14 +54,6 @@ class OtherUserViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "\(user.firstName) \(user.lastName)"
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 1
-        layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
-        let size = (view.width - 4)/3
-        layout.itemSize = CGSize(width: size, height: size)
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
         collectionView.register(VideoCollectionViewCell.self, forCellWithReuseIdentifier: VideoCollectionViewCell.identifier)
         
@@ -69,17 +68,17 @@ class OtherUserViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
-        addPostButton()
+        addSendButton()
+        fetchPosts()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
         coachCollectionView.frame = view.bounds
-        fetchPosts()
     }
     
-    private func addPostButton(){
+    private func addSendButton(){
         
         let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapMessageButton))
         barButtonItem.accessibilityLabel = "barButtonItem"
@@ -217,14 +216,7 @@ extension OtherUserViewController: UICollectionViewDelegate {
         }
         
         let model = posts[posts.count - indexPath.row - 1]
-        
-        var postLikes :[PostLike] = []
-        
-        for like in model.likeCount {
-            let postLike = PostLike(username: like.username, email: like.email, name: like.name)
-            postLikes.append(postLike)
-        }
-        
+
         let vc = ViewPostViewController(post: model, user: user, postNumber: posts.count - indexPath.row - 1)
         
         vc.title = "Post"
@@ -336,7 +328,7 @@ extension OtherUserViewController: ProfileTabsDelegate {
 extension OtherUserViewController: ProfileConnectionsDelegate {
     func didTapEndorsementsButton(_ profileConnections: ProfileConnections) {
         //TODO
-        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
+        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.safeEmail, completion: { [weak self] endorsers in
             var data:[[String:String]] = []
             if let endorsers = endorsers {
                 for endorser in endorsers {
@@ -352,7 +344,7 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowingSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: user.safeEmail, completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
                 for follower in followers {
@@ -368,7 +360,7 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.safeEmail, completion: { [weak self] followers in
             var data:[[String:String]] = []
             if let followers = followers {
                 for follower in followers {

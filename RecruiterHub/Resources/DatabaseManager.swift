@@ -53,7 +53,7 @@ public class DatabaseManager {
     public func userExists(with email: String, completion: @escaping ((Bool) -> Void)) {
         
         // Ensure that the email is database safe
-        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        let safeEmail = email.safeDatabaseKey()
         print("Checking if user exists")
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
             
@@ -63,6 +63,7 @@ public class DatabaseManager {
                 completion(false)
                 return
             }
+            
             print("User exists")
             completion(true)
         })
@@ -76,10 +77,31 @@ public class DatabaseManager {
     /// - username: user's username
     ///
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    public func canCreateNewUser(with email: String, username: String, completion: (Bool) -> Void) {
-        completion(true)
+    public func canCreateNewUser(with email: String, username: String, completion: @escaping (Bool) -> Void) {
+        
+        // Ensure that the email is database safe
+        let safeEmail = email.safeDatabaseKey()
+        print("Checking if user exists")
+        database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+            
+            // Check if user exists
+            guard let users = snapshot.value as? [[String: String]] else {
+                print("User doesn't exist")
+                completion(false)
+                return
+            }
+            
+            if users.contains(where: { ($0["email"] == safeEmail) || ($0["username"] == username) } ) {
+                print("User exists")
+                completion(true)
+            }
+            else {
+                print("User doesn't exist")
+                completion(false)
+            }
+        })
     }
-    
+
 
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     /// Function Name: insertNewUser

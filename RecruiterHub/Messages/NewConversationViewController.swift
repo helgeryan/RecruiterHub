@@ -29,7 +29,7 @@ class NewConversationViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView()
         table.isHidden = true
-        table.register(NewConversationCell.self, forCellReuseIdentifier: NewConversationCell.identifier)
+        table.register(SearchUsersTableViewCell.self, forCellReuseIdentifier: SearchUsersTableViewCell.identifier)
         return table
     }()
     
@@ -122,13 +122,11 @@ extension NewConversationViewController: UISearchBarDelegate {
         guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String, hasFetched else {
             return
         }
-        
-        let safeEmail = DatabaseManager.safeEmail(emailAddress: currentUserEmail)
-        
+
         spinner.dismiss()
         
         let results: [SearchResult] = users.filter( {
-            guard let email = $0["email"], email != safeEmail else {
+            guard let email = $0["email"], email != currentUserEmail else {
                 return false
             }
             
@@ -136,7 +134,7 @@ extension NewConversationViewController: UISearchBarDelegate {
                 return false
             }
             
-            return name.hasPrefix(term.lowercased())
+            return name.contains(term.lowercased())
         }).compactMap({
             guard let email = $0["email"], let name = $0["name"] else {
                 return nil
@@ -169,8 +167,15 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = results[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: NewConversationCell.identifier, for: indexPath) as! NewConversationCell
-        cell.configure(with: model)
+        let cell = tableView.dequeueReusableCell(withIdentifier: SearchUsersTableViewCell.identifier, for: indexPath) as! SearchUsersTableViewCell
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.email, completion: {
+            user in
+            
+            guard let user = user else {
+                return
+            }
+            cell.configure(user: user)
+        })
         return cell
     }
     

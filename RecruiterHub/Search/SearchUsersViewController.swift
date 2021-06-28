@@ -200,9 +200,7 @@ extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
             guard let user = user else {
                 return
             }
-            
-            cell.nameLabel.text = user.name
-            cell.usernameLabel.text = user.username
+            cell.configure(user: user)
         })
         return cell
     }
@@ -225,7 +223,7 @@ extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+        return 75
         
     }
 }

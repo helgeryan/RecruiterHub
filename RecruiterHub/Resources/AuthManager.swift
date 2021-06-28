@@ -22,8 +22,8 @@ public class AuthManager {
          - Insert account to database
          */
         print("Creating New User")
-        DatabaseManager.shared.canCreateNewUser(with: email, username: username) { canCreate in
-            if canCreate {
+        DatabaseManager.shared.canCreateNewUser(with: email, username: username) { userExists in
+            if !userExists {
                 Auth.auth().createUser(withEmail: email, password: password) { result, error in
                     guard error == nil, result != nil else {
                         //Firebase auth could not create
@@ -32,9 +32,9 @@ public class AuthManager {
                         completion(false)
                         return
                     }
-                    print("Inserting New User")
                     
                     // Insert into database
+                    print("Inserting New User")
                     DatabaseManager.shared.insertNewUser(with: email, user: user) { inserted in
                         if inserted {
                             completion(true)
@@ -50,7 +50,7 @@ public class AuthManager {
             }
             else {
                 //Either username or email does not exist
-                print("Email or username doesn't exist")
+                print("Email Exists")
                 completion(false)
             }
         }
@@ -73,7 +73,6 @@ public class AuthManager {
         else if let username = username {
             //username log in
             print(username)
-       
         }
     }
     

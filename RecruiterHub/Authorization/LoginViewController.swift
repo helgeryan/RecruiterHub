@@ -212,16 +212,15 @@ class LoginViewController: UIViewController {
             
             let user = result.user
             
-            DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: { result in
-                guard let result = result else {
+            DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: { user in
+                guard let user = user else {
                     print("Failed to cast user result")
                     return
                 }
                 
-                UserDefaults.standard.set(result.safeEmail, forKey: "email")
-                UserDefaults.standard.setValue(result.username, forKey: "username")
-                UserDefaults.standard.setValue("\(result.firstName) \(result.lastName)", forKey: "name")
-                UserDefaults.standard.setValue("Yes", forKey: "isLoggedIn")
+                UserDefaults.standard.set(user.safeEmail, forKey: "email")
+                UserDefaults.standard.setValue(user.username, forKey: "username")
+                UserDefaults.standard.setValue("\(user.firstName) \(user.lastName)", forKey: "name")
             })
             
             print("Logged In \(user)")
@@ -241,7 +240,7 @@ class LoginViewController: UIViewController {
         
     }
     
-    func alertUserLoginError(message: String) {
+    private func alertUserLoginError(message: String) {
         let alert = UIAlertController(title: "Failed to Login", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         present(alert, animated: true)
@@ -262,7 +261,6 @@ extension LoginViewController: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.text = nil
         textField.textColor = .label
     }
 }

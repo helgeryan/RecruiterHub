@@ -15,6 +15,7 @@ import CoreLocation
 
 class ChatViewController: MessagesViewController {
     
+    // Date Format Used for entire App
     public static var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -36,9 +37,9 @@ class ChatViewController: MessagesViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return nil
         }
-        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        let safeEmail = email.safeDatabaseKey()
         
-        return Sender(photoURL: "", senderId: safeEmail, displayName: "Joe Smith")
+        return Sender(photoURL: "", senderId: safeEmail, displayName: "")
     }
     
     private func listenForMessages(id: String, shouldScrollToBottom: Bool) {
@@ -409,7 +410,7 @@ extension ChatViewController: UIDocumentPickerDelegate {
                     }
 
                     let media = Media(url: url, image: nil, placeholderImage: placeholder, size: .zero)
-                    
+                
                     let message = Message(sender: selfSender, messageId: messageID, sentDate: Date(), kind: .custom(media))
 
                     DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: strongSelf.otherUserEmail, name: name, newMessage: message, completion: { success in

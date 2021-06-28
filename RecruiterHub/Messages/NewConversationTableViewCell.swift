@@ -30,7 +30,8 @@ class NewConversationCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         contentView.addSubview(userImageView)
-        contentView.addSubview(usernameLabel)    }
+        contentView.addSubview(usernameLabel)
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -48,7 +49,7 @@ class NewConversationCell: UITableViewCell {
     public func configure( with model: SearchResult) {
         usernameLabel.text = model.name
         print(model)
-        let path = "images/\(model.email)"
+        let path = "\(model.email)/profile_pic"
         StorageManager.shared.downloadURL(for: path) { [weak self] result in
             switch result {
             case .success(let url):

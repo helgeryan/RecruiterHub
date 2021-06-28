@@ -66,8 +66,7 @@ extension ListsViewController: UITableViewDelegate, UITableViewDataSource {
                 return
             }
             
-            cell.nameLabel.text = user.name
-            cell.usernameLabel.text = user.username
+            cell.configure(user: user)
         })
         return cell
     }

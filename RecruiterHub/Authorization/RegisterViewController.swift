@@ -123,6 +123,8 @@ class RegisterViewController: UIViewController {
     
     private let profileType: UIPickerView = {
         let spinner = UIPickerView(frame: .zero)
+        spinner.backgroundColor = .lightGray
+        spinner.layer.cornerRadius = Constants.cornerRadius
         return spinner
     }()
     
@@ -135,20 +137,31 @@ class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Add Left Bar Button Item
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.left"), style: .done, target: self, action: #selector(didTapBack))
         
+        // Add Keyboard Observers
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
+        // Add Register Buttons
         registerButton.addTarget(self, action: #selector(didTapRegisterButton), for: .touchUpInside)
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         view.addGestureRecognizer(tapGesture)
+        
+        // Add Image Views
+        imageView.isUserInteractionEnabled = true
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapChangeProfilePic))
+        imageView.addGestureRecognizer(gesture)
+        
+        // Add Delegates and Data Sources
         usernameField.delegate = self
         emailField.delegate = self
         passwordField.delegate = self
         profileType.delegate = self
         profileType.dataSource = self
         
+        // Add Subviews
         view.addSubview(imageBackgroundView)
         view.addSubview(imageView)
         view.addSubview(usernameField)
@@ -158,11 +171,6 @@ class RegisterViewController: UIViewController {
         view.addSubview(lastNameField)
         view.addSubview(firstNameField)
         view.addSubview(profileType)
-        
-        imageView.isUserInteractionEnabled = true
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapChangeProfilePic))
-        
-        imageView.addGestureRecognizer(gesture)
     }
     
     override func viewDidLayoutSubviews() {
@@ -258,15 +266,20 @@ class RegisterViewController: UIViewController {
     }
     
     @objc func didTapRegisterButton() {
+        
+        // Resign First Responders
         passwordField.resignFirstResponder()
         emailField.resignFirstResponder()
         usernameField.resignFirstResponder()
         
+        // Check to make sure the fields are not empty or invalid
         guard let email = emailField.text, !email.isEmpty,
               let firstname = firstNameField.text, !firstname.isEmpty,
               let lastname = lastNameField.text, !lastname.isEmpty,
               let password = passwordField.text, !password.isEmpty, password.count >= 8,
-              let username = usernameField.text, !username.isEmpty else {
+              let username = usernameField.text, !username.isEmpty, !username.contains(" ")
+              else {
+            alertUserRegisterError(message: "Make sure fields aren't empty and/or username contains no spaces. Passwords must be 8 or more characters in length.")
             return
         }
         
@@ -308,6 +321,7 @@ class RegisterViewController: UIViewController {
             }
             else {
                 // Failed
+                self?.alertUserRegisterError(message: "Email or username already in use or connection lost.")
             }
         }
     }
@@ -316,6 +330,11 @@ class RegisterViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
+    private func alertUserRegisterError(message: String) {
+        let alert = UIAlertController(title: "Failed to Register", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
 }
 
 extension RegisterViewController: UITextFieldDelegate {
