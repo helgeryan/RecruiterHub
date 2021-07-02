@@ -7,15 +7,15 @@
 import SDWebImage
 import UIKit
 
-protocol NotificationLikeEventTableViewCellDelegate: AnyObject {
+protocol NotificationCommentEventTableViewCellDelegate: AnyObject {
     func didTapRelatedPostButton(model: UserNotification)
     func didTapProfilePic(model: UserNotification)
 }
 
-class NotificationLikeEventTableViewCell: UITableViewCell {
-    static let identifier = "NotificationLikeEventTableViewCell"
+class NotificationCommentEventTableViewCell: UITableViewCell {
+    static let identifier = "NotificationCommentEventTableViewCell"
     
-    weak var delegate: NotificationLikeEventTableViewCellDelegate?
+    weak var delegate: NotificationCommentEventTableViewCellDelegate?
     
     private var model: UserNotification?
     
@@ -32,7 +32,7 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .label
         label.numberOfLines = 0
-        label.text = "@joe liked your photo"
+        label.text = ""
         return label
     }()
     
@@ -78,8 +78,18 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
     public func configure(with model: UserNotification) {
         self.model = model
         switch model.type {
+        case .comment(post: let post):
+            DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
+                guard let post = post else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self?.postButton.sd_setImage(with: post.thumbnailImage, completed: nil)
+                }
+            })
+            break
         case .like(post: let post):
-    
             DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
                 guard let post = post else {
                     return
@@ -93,8 +103,7 @@ class NotificationLikeEventTableViewCell: UITableViewCell {
             
         case .follow:
             break
-        case .comment(_):
-            break
+
         }
         
         label.text = model.text

@@ -11,6 +11,7 @@ import NotificationBannerSwift
 enum UserNotificationType {
     case like(post: UserPost)
     case follow(state: FollowState)
+    case comment(post: UserPost)
 }
 
 public struct UserNotification {
@@ -38,6 +39,7 @@ class NotificationViewController: UIViewController {
         tableView.isHidden = true
         tableView.register(NotificationLikeEventTableViewCell.self, forCellReuseIdentifier: NotificationLikeEventTableViewCell.identifier)
         tableView.register(NotificationFollowEventTableViewCell.self, forCellReuseIdentifier: NotificationFollowEventTableViewCell.identifier)
+        tableView.register(NotificationCommentEventTableViewCell.self, forCellReuseIdentifier: NotificationCommentEventTableViewCell.identifier)
         return tableView
     }()
 
@@ -150,6 +152,11 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
             cell.configure(with: model)
             cell.delegate = self
             return cell
+        case .comment(_):
+            let cell = tableView.dequeueReusableCell(withIdentifier: NotificationCommentEventTableViewCell.identifier, for: indexPath) as! NotificationCommentEventTableViewCell
+            cell.configure(with: model)
+            cell.delegate = self
+            return cell
         }
     }
     
@@ -160,7 +167,7 @@ extension NotificationViewController: UITableViewDelegate, UITableViewDataSource
 
     // MARK: - Like Notification Cell Delegate
 
-extension NotificationViewController: NotificationLikeEventTableViewCellDelegate {
+extension NotificationViewController: NotificationLikeEventTableViewCellDelegate, NotificationCommentEventTableViewCellDelegate {
     func didTapRelatedPostButton(model: UserNotification) {
         
         switch model.type {
@@ -177,6 +184,18 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
             break
         case .follow(_):
             fatalError("Dev Issue: Should never get called")
+            break
+        case .comment(let post):
+            DatabaseManager.shared.getUserPost(with: post.owner.safeEmail, url: post.postURL.absoluteString, completion: { [weak self] post in
+                
+                guard let post = post else {
+                    print("Post is bad")
+                    return
+                }
+                let vc = ViewPostViewController(post: post, user: post.owner, postNumber: post.identifier)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            })
+            break
         }
     }
     
@@ -190,6 +209,11 @@ extension NotificationViewController: NotificationLikeEventTableViewCellDelegate
             let vc = OtherUserViewController(user: model.user)
             navigationController?.pushViewController(vc, animated: true)
             break
+        case .comment(_):
+            let vc = OtherUserViewController(user: model.user)
+            navigationController?.pushViewController(vc, animated: true)
+            break
+            
         }
     }
 }
@@ -204,7 +228,4 @@ extension NotificationViewController: NotificationFollowEventTableViewCellDelega
         
         DatabaseManager.shared.follow(email: model.user.safeEmail, followerEmail: email.safeDatabaseKey(), completion: {})
     }
-    
-   
 }
-

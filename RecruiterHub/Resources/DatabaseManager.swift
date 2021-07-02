@@ -2036,7 +2036,7 @@ public class DatabaseManager {
         completion(nil)
     }
     
-    public func newComment( email: String, postComment: PostComment, index: Int) {
+    public func newComment( email: String, postComment: PostComment, post: UserPost, index: Int) {
         database.child("\(email)/Posts/\(index)/comments").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
             let newElement = [
@@ -2047,9 +2047,7 @@ public class DatabaseManager {
             
             // Comments exist append the comment
             if var comments = snapshot.value as? [[String:String]] {
-                
                 comments.append(newElement)
-                
                 self?.database.child("\(email)/Posts/\(index)/comments").setValue(comments)
             }
             else {
@@ -2057,6 +2055,8 @@ public class DatabaseManager {
                 
                 self?.database.child("\(email)/Posts/\(index)/comments").setValue(newCommentsCollection)
             }
+            
+            self?.newCommentNotification(commenterEmail: postComment.email, notifiedEmail: email, post: post, comment: postComment.text, completion: {})
         })
     }
     
@@ -2169,6 +2169,47 @@ public class DatabaseManager {
         })
     }
     
+    public func newCommentNotification( commenterEmail: String, notifiedEmail: String, post: UserPost, comment: String, completion: @escaping (() -> Void)) {
+        let ref = database.child("\(notifiedEmail)/Notifications")
+        ref.observeSingleEvent( of: .value, with: { snapshot in
+            
+            self.getDataForUserSingleEvent(user: commenterEmail, completion: {
+                user in
+                guard let user = user else {
+                    return
+                    
+                }
+                let element = [
+                    "email": commenterEmail,
+                    "type": "comment",
+                    "text": "\(user.username) commented \"\(comment)\"",
+                    "postID": post.postURL.absoluteString,
+                    "date": ChatViewController.dateFormatter.string(from: Date())
+                ]
+                
+                guard var notifications = snapshot.value as? [[String:String]] else {
+                    print("Notifications don't exist")
+                    ref.setValue([element])
+                    completion()
+                    return
+                }
+                
+                // Person already liked, delete their like
+                if notifications.contains(where: { ($0["email"] == commenterEmail) && ($0["type"] == "comment") && ($0["text"] == "\(user.username) commented \"\(comment)\"") && ( $0["postID"] == post.postURL.absoluteString) } ) {
+                    
+                    completion()
+                    return
+                }
+                
+                // Add new notifications
+                let newElement = element
+                notifications.append(newElement)
+                ref.setValue(notifications)
+                completion()
+            })
+        })
+    }
+    
     public func getUserNotifications( user: String, completion: @escaping (([UserNotification]?) -> Void))  {
         database.child("\(user)/Notifications").observe( .value, with: { [weak self] snapshot in
             guard let notifications = snapshot.value as? [[String:String]] else {
@@ -2203,6 +2244,39 @@ public class DatabaseManager {
                         return
                     }
                     notificationType = UserNotificationType.like(post: UserPost( identifier: 0,
+                                                                                 postType: .video,
+                                                                                thumbnailImage: url,
+                                                                                postURL: url,
+                                                                                caption: "Caption",
+                                                                                likeCount: [],
+                                                                                comments: [],
+                                                                                createdDate: Date(),
+                                                                                taggedUsers: [], owner: RHuser))
+                    
+                    self?.getDataForUserSingleEvent(user: email, completion: { user in
+                        guard let user = user else {
+                            group.leave()
+                            print("Failed to get User")
+                            return
+                        }
+                        
+                        let temp = UserNotification(type: notificationType, text: text, user: user, date: date)
+                        array.append(temp)
+                        // If the array is complete leave the function
+                        if array.count == notifications.count {
+                            group.leave()
+                        }
+                    })
+                }
+                else if type == "comment" {
+                    var RHuser = RHUser()
+                    RHuser.emailAddress = user
+                    guard let urlString = notification["postID"],
+                          let url = URL(string: urlString) else {
+                        group.leave()
+                        return
+                    }
+                    notificationType = UserNotificationType.comment(post: UserPost( identifier: 0,
                                                                                  postType: .video,
                                                                                 thumbnailImage: url,
                                                                                 postURL: url,

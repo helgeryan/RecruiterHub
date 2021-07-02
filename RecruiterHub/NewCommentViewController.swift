@@ -169,7 +169,7 @@ class NewCommentViewController: UIViewController {
         textView.text = "New Comment..."
         textView.textColor = .lightGray
 
-        DatabaseManager.shared.newComment(email: post.owner.safeEmail, postComment: newElement, index: post.identifier)
+        DatabaseManager.shared.newComment(email: post.owner.safeEmail, postComment: newElement, post: post, index: post.identifier)
     }
     
     private func alertCommentError(message: String) {

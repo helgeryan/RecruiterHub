@@ -23,6 +23,7 @@
 		E63660FF25C7C259007A4EFD /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63660FE25C7C259007A4EFD /* ListsViewController.swift */; };
 		E636610325C8DD74007A4EFD /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636610225C8DD74007A4EFD /* EditProfileViewController.swift */; };
 		E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */; };
+		E63E089A268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63E0899268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift */; };
 		E65802E8261BF47100903F4B /* GameLogHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65802E7261BF47100903F4B /* GameLogHeaderView.swift */; };
 		E665688125DB537300F04EFA /* ContactInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E665688025DB537300F04EFA /* ContactInfoCell.swift */; };
 		E66BB15026856F08004C65E0 /* ManageUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */; };
@@ -117,6 +118,7 @@
 		E63660FE25C7C259007A4EFD /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsViewController.swift; sourceTree = "<group>"; };
 		E636610225C8DD74007A4EFD /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
 		E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormTableViewCell.swift; sourceTree = "<group>"; };
+		E63E0899268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCommentEventTableViewCell.swift; sourceTree = "<group>"; };
 		E65802E7261BF47100903F4B /* GameLogHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLogHeaderView.swift; sourceTree = "<group>"; };
 		E665688025DB537300F04EFA /* ContactInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactInfoCell.swift; sourceTree = "<group>"; };
 		E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageUsersViewController.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				E688521E2651A3BA00C177C9 /* NotificationFollowEventTableViewCell.swift */,
 				E68852232651A4CF00C177C9 /* NoNotificationsView.swift */,
 				E68852152651A27700C177C9 /* NotificationViewController.swift */,
+				E63E0899268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift */,
 			);
 			path = Notifications;
 			sourceTree = "<group>";
@@ -751,6 +754,7 @@
 				E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */,
 				E688521A2651A38B00C177C9 /* Models.swift in Sources */,
 				E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */,
+				E63E089A268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift in Sources */,
 				E69AF4D925F6D8A400D366A8 /* ConversationsTableViewCell.swift in Sources */,
 				E69AF4BA25F5DBD200D366A8 /* AddCaptionViewController.swift in Sources */,
 			);
@@ -931,7 +935,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY9FRH555S;
 				INFOPLIST_FILE = RecruiterHub/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -939,6 +943,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = ryan.RecruiterHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -955,7 +960,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VY9FRH555S;
 				INFOPLIST_FILE = RecruiterHub/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
@@ -963,6 +968,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = ryan.RecruiterHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

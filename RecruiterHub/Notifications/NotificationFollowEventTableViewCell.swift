@@ -91,6 +91,8 @@ class NotificationFollowEventTableViewCell: UITableViewCell {
         switch model.type {
         case .like(_):
             break
+        case .comment(_):
+            break
         case .follow(_):
             
             guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
