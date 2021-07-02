@@ -85,7 +85,7 @@ final class EditProfileViewController: UIViewController {
         models.append(model)
         model = EditProfileFormModel(label: "Phone", placeholder: "\(user.phone)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "School", placeholder: "\(user.highSchool)", value: nil)
+        model = EditProfileFormModel(label: "School", placeholder: "\(user.school)", value: nil)
         models.append(model)
         model = EditProfileFormModel(label: "State", placeholder: "\(user.state)", value: nil)
         models.append(model)
@@ -95,6 +95,8 @@ final class EditProfileViewController: UIViewController {
             models.append(model)
         }
         else {
+            model = EditProfileFormModel(label: "Grad Year", placeholder: "\(user.gradYear)", value: nil)
+            models.append(model)
             model = EditProfileFormModel(label: "Height Feet", placeholder: "\(user.heightFeet)", value: nil)
             models.append(model)
             model = EditProfileFormModel(label: "Height Inches", placeholder: "\(user.heightInches)", value: nil)
@@ -293,10 +295,13 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             user.phone = value
             break
         case "High School":
-            user.highSchool = value
+            user.school = value
             break
         case "State":
             user.state = value
+            break
+        case "Grad Year":
+            user.gradYear = Int(value) ?? 0
             break
         case "Height Feet":
             user.heightFeet = Int(value) ?? 0

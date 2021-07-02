@@ -91,7 +91,7 @@ class SearchUsersTableViewCell: UITableViewCell {
             nameLabel.text = "\(user.name) - \(user.title)"
         }
         usernameLabel.text = user.username
-        schoolLabel.text = user.highSchool
+        schoolLabel.text = user.school
         
         guard let profilePicUrl = URL(string: user.profilePicUrl) else {
             return
@@ -99,5 +99,11 @@ class SearchUsersTableViewCell: UITableViewCell {
         
         profileImageView.sd_setImage(with: profilePicUrl, completed: nil)
     }
-    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        nameLabel.text = ""
+        schoolLabel.text = ""
+        usernameLabel.text = ""
+        profileImageView.sd_setImage(with: nil, completed: nil)
+    }
 }

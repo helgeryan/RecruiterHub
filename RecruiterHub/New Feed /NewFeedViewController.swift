@@ -101,6 +101,12 @@ class NewFeedViewController: UIViewController {
             }
         })
         group.notify(queue: DispatchQueue.main, execute: {
+            
+            if feedPosts.count == 0 {
+                self.noVideosLabel.isHidden = false
+                self.tableView.isHidden = true
+            }
+            
             var sortedFeedPosts = feedPosts.sorted(by: {  $0.post.createdDate.compare($1.post.createdDate) == .orderedDescending })
             
             if sortedFeedPosts.count < 10 {
@@ -160,14 +166,6 @@ extension NewFeedViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return (view.height * 3 / 4)
-    }
-    
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return ""
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 6
     }
 }
 

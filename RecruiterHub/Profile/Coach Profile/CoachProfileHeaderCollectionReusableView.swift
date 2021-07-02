@@ -120,7 +120,7 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         
         nameLabel.text = user.firstName + " " + user.lastName
         titleLabel.text = user.title
-        organizationLabel.text = user.highSchool
+        organizationLabel.text = user.school
         
         if let url = URL(string: user.profilePicUrl) {
             profilePhotoImageView.sd_setImage(with: url, completed: nil)

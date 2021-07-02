@@ -170,6 +170,16 @@ class ViewPostViewController: UIViewController {
 //        tableView.frame = CGRect(x: 0, y: likesLabel.bottom + 10, width: view.width , height: view.height - likesLabel.bottom - 10)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        player?.play()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player?.pause()
+    }
+    
     /// ViewPostViewController initializer, sets the post, user, and postnumber
     init(post: UserPost, user: RHUser, postNumber: Int) {
         self.post = post

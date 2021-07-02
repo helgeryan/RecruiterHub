@@ -37,14 +37,14 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         return label
     }()
     
-    private let positionLabel: UILabel = {
+    private let yearPositionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.numberOfLines = 1
         return label
     }()
     
-    private let gradLabel: UILabel = {
+    private let schoolLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.numberOfLines = 1
@@ -117,8 +117,8 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
     private func addSubviews() {
         addSubview(profilePhotoImageView)
         addSubview(nameLabel)
-        addSubview(positionLabel)
-        addSubview(gradLabel)
+        addSubview(yearPositionLabel)
+        addSubview(schoolLabel)
         addSubview(bodyLabel)
         addSubview(handLabel)
         addSubview(followButton)
@@ -133,8 +133,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         }
         
         nameLabel.text = user.firstName + " " + user.lastName
-        let gradYear = user.gradYear
-        gradLabel.text = "Year: " + String(gradYear)
+        schoolLabel.text = "School: \(user.school)"
         
         let heightFeet = user.heightFeet
         let heightInches = user.heightInches
@@ -144,7 +143,7 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
         bodyLabel.text = String(heightFeet) + "'" + String(heightInches) + "  "  + String(weight) + " lbs"
         handLabel.text = "Throws: " + String(arm) + "   Bats: " + String(bats)
 
-        positionLabel.text = "Pos: \(user.positions)"
+        yearPositionLabel.text = "Year: \(user.gradYear)   Pos: \(user.positions)"
         if let url = URL(string: user.profilePicUrl) {
             profilePhotoImageView.sd_setImage(with: url, completed: nil)
         }
@@ -210,24 +209,24 @@ final class ProfileHeader: UICollectionReusableView, UINavigationControllerDeleg
                                  width: width - 20 ,
                                  height: 28)
         nameLabel.textAlignment = .center
-        positionLabel.frame = CGRect(x: 10,
+        yearPositionLabel.frame = CGRect(x: 10,
                                      y: nameLabel.bottom + 5,
                                      width: width - 20,
                                      height: 20)
-        positionLabel.textAlignment = .center
+        yearPositionLabel.textAlignment = .center
         bodyLabel.frame = CGRect(x: 10,
-                                 y: positionLabel.bottom + 5,
+                                 y: yearPositionLabel.bottom + 5,
                                  width: width - 20,
                                  height: 20)
         bodyLabel.textAlignment = .center
-        gradLabel.frame = CGRect(x: 10,
+        schoolLabel.frame = CGRect(x: 10,
                                  y: bodyLabel.bottom + 5,
                                  width: width - 20,
                                  height: 20)
-        gradLabel.textAlignment = .center
+        schoolLabel.textAlignment = .center
         
         handLabel.frame = CGRect(x: 10,
-                                 y: gradLabel.bottom + 5,
+                                 y: schoolLabel.bottom + 5,
                                  width: width - 20,
                                  height: 20)
         handLabel.textAlignment = .center

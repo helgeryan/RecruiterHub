@@ -118,7 +118,7 @@ public class DatabaseManager {
         database.child(email.safeDatabaseKey()).child("positions").setValue(user.positions)
         database.child(email.safeDatabaseKey()).child("heightFeet").setValue(user.heightFeet)
         database.child(email.safeDatabaseKey()).child("heightInches").setValue(user.heightInches)
-        database.child(email.safeDatabaseKey()).child("highschool").setValue(user.highSchool)
+        database.child(email.safeDatabaseKey()).child("highschool").setValue(user.school)
         database.child(email.safeDatabaseKey()).child("state").setValue(user.state)
         database.child(email.safeDatabaseKey()).child("weight").setValue(user.weight)
         database.child(email.safeDatabaseKey()).child("arm").setValue(user.arm)
@@ -572,7 +572,7 @@ public class DatabaseManager {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        let safeEmail = email.safeDatabaseKey()
         
         // Get all conversations for current User
         //Delete convesation with target id
@@ -649,7 +649,7 @@ public class DatabaseManager {
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions
-            userData.highSchool = highSchool
+            userData.school = highSchool
             userData.state = state
             userData.gradYear = gradYear
             userData.heightFeet = heightFeet
@@ -717,7 +717,7 @@ public class DatabaseManager {
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions
-            userData.highSchool = highSchool
+            userData.school = highSchool
             userData.state = state
             userData.gradYear = gradYear
             userData.heightFeet = heightFeet
@@ -755,7 +755,7 @@ public class DatabaseManager {
         database.child(email).child("positions").setValue(user.positions)
         database.child(email).child("heightFeet").setValue(user.heightFeet)
         database.child(email).child("heightInches").setValue(user.heightInches)
-        database.child(email).child("highschool").setValue(user.highSchool)
+        database.child(email).child("highschool").setValue(user.school)
         database.child(email).child("state").setValue(user.state)
         database.child(email).child("weight").setValue(user.weight)
         database.child(email).child("arm").setValue(user.arm)

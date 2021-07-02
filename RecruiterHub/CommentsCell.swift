@@ -37,7 +37,7 @@ class CommentsCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        commentLabel.frame = CGRect(x: 10 , y: 10, width: contentView.width - 20 , height: 20)
+        commentLabel.frame = CGRect(x: 10, y: 5, width: contentView.width - 20 , height: 20)
         
     }
     

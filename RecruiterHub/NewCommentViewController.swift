@@ -30,6 +30,7 @@ class NewCommentViewController: UIViewController {
         let table = UITableView()
         table.separatorStyle = .none
         table.register(CommentsCell.self, forCellReuseIdentifier: CommentsCell.identifier)
+        table.allowsSelection = true
         return table
     }()
     
@@ -56,7 +57,8 @@ class NewCommentViewController: UIViewController {
 
         let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didTapDone))
-        uiToolBar.items = [flexibleSpace, doneButton]
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(didTap))
+        uiToolBar.items = [cancelButton, flexibleSpace, doneButton]
         uiToolBar.sizeToFit()
         textView.inputAccessoryView = uiToolBar
         
@@ -66,8 +68,8 @@ class NewCommentViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
             
         self.tabBarController?.tabBar.isHidden = true
-        let tapgesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
-        view.addGestureRecognizer(tapgesture)
+//        let tapgesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+//        view.addGestureRecognizer(tapgesture)
         view.addSubview(tableView)
         view.addSubview(textView)
         tableView.delegate = self
@@ -114,29 +116,18 @@ class NewCommentViewController: UIViewController {
     /// - Reload table data
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     private func fetchComments() {
-//
-//        guard let email = email as String? else {
-//            return
-//        }
-//
-//        DatabaseManager.shared.getUserPost(with: email, url: url, completion: { [weak self]
-//            post in
-//            guard let post = post else {
-//                return
-//            }
-//            self?.post = post
-//
-//            DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
-//                guard let comments = comments else {
-//                    return
-//                }
-//
-//                self?.comments = comments
-//                DispatchQueue.main.async {
-//                    self?.tableView.reloadData()
-//                }
-//            })
-//        })
+        
+        DatabaseManager.shared.getComments(with: post.owner.safeEmail, index: post.identifier, completion: { [weak self] comments in
+            guard let comments = comments else {
+                return
+            }
+            
+            self?.post.comments = comments
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        })
+
     }
     
     //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -164,7 +155,8 @@ class NewCommentViewController: UIViewController {
     @objc private func didTapDone() {
         textView.resignFirstResponder()
         print("Tapped Done")
-        guard let newComment = textView.text else {
+        guard let newComment = textView.text, newComment != "" else {
+            alertCommentError(message: "Comment is empty")
             return
         }
   
@@ -176,8 +168,14 @@ class NewCommentViewController: UIViewController {
 
         textView.text = "New Comment..."
         textView.textColor = .lightGray
-        
+
         DatabaseManager.shared.newComment(email: post.owner.safeEmail, postComment: newElement, index: post.identifier)
+    }
+    
+    private func alertCommentError(message: String) {
+        let alert = UIAlertController(title: "Failed to Comment", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        present(alert, animated: true)
     }
 }
 
@@ -195,7 +193,6 @@ extension NewCommentViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
         let model = post.comments[indexPath.row]
         let label = UILabel(frame: CGRect(x: 10, y: 10, width: view.width - 20 , height: 10))
         label.text = model.text
@@ -204,6 +201,21 @@ extension NewCommentViewController: UITableViewDelegate, UITableViewDataSource {
         label.lineBreakMode = .byWordWrapping
         label.sizeToFit()
         return label.height + 10
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("selected row")
+        tableView.deselectRow(at: indexPath, animated: true)
+        let model = post.comments[indexPath.row]
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.email, completion: {
+            [weak self] user in
+            guard let user = user else {
+                return
+            }
+            
+            let vc = OtherUserViewController(user: user)
+            vc.modalPresentationStyle = .popover
+            self?.navigationController?.pushViewController(vc, animated: true)
+        })
     }
 }
 
@@ -218,7 +230,6 @@ extension NewCommentViewController: UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
-            textView.text = "New Comment..."
             textView.textColor = UIColor.lightGray
         }
         textView.resignFirstResponder()

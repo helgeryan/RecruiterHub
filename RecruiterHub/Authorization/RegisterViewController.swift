@@ -273,7 +273,7 @@ class RegisterViewController: UIViewController {
         usernameField.resignFirstResponder()
         
         // Check to make sure the fields are not empty or invalid
-        guard let email = emailField.text, !email.isEmpty,
+        guard let email = emailField.text?.lowercased(), !email.isEmpty,
               let firstname = firstNameField.text, !firstname.isEmpty,
               let lastname = lastNameField.text, !lastname.isEmpty,
               let password = passwordField.text, !password.isEmpty, password.count >= 8,
@@ -287,9 +287,9 @@ class RegisterViewController: UIViewController {
         user.username = username
         user.firstName = firstname
         user.lastName = lastname
-        user.emailAddress = email.lowercased()
+        user.emailAddress = email
         user.positions = ""
-        user.highSchool = "High School"
+        user.school = "School"
         user.state = "State"
         user.arm = "R"
         user.bats = "R"
@@ -302,7 +302,7 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 
-                let fileName = DatabaseManager.safeEmail(emailAddress: email)
+                let fileName = email.safeDatabaseKey()
                     
                 StorageManager.shared.uploadProfilePic(with: data, email: fileName, completion: { [weak self] result in
                     switch result {

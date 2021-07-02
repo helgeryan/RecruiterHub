@@ -55,7 +55,7 @@ class ContactInformationViewController: UIViewController {
         models.append(model)
         model = ContactInfoModel(label: "Phone", value: "\(user.phone)")
         models.append(model)
-        model = ContactInfoModel(label: "School", value: "\(user.highSchool)")
+        model = ContactInfoModel(label: "School", value: "\(user.school)")
         models.append(model)
         
         if user.profileType == "coach" {

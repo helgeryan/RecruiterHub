@@ -15,7 +15,7 @@ public struct RHUser {
     var phone: String
     var gpa: Double
     var positions: String
-    var highSchool: String
+    var school: String
     var state: String
     var gradYear: Int
     var heightFeet: Int
@@ -51,7 +51,7 @@ public struct RHUser {
         phone = ""
         gpa = 0.0
         positions = ""
-        highSchool = ""
+        school = ""
         state = ""
         gradYear = 0
         heightFeet = 0

@@ -298,7 +298,7 @@ class FeedPostTableViewCell: UITableViewCell {
         
         var feedLabel: String
         if post.post.owner.profileType == "coach" {
-            feedLabel = "\(post.post.owner.username) - \(post.post.owner.highSchool)"
+            feedLabel = "\(post.post.owner.username) - \(post.post.owner.school)"
         }
         else {
             feedLabel = "\(post.post.owner.username) - \(post.post.owner.gradYear) - \(post.post.owner.positions)"
@@ -353,6 +353,10 @@ class FeedPostTableViewCell: UITableViewCell {
     
     public func play() {
         post?.player?.play()
+    }
+    
+    public func sound(_ isMuted: Bool) {
+        post?.player?.isMuted = isMuted
     }
     
     public func pause() {
