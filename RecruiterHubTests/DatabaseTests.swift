@@ -74,7 +74,7 @@ class DatabaseTests: XCTestCase {
             XCTAssertEqual("R", user.arm)
             XCTAssertEqual(2014, user.gradYear)
             XCTAssertEqual("helgeryan", user.username)
-            XCTAssertEqual("Minnetonka", user.highSchool)
+            XCTAssertEqual("Minnetonka", user.school)
             XCTAssertEqual("MN", user.state)
             XCTAssertEqual(240, user.weight)
             expect.fulfill()

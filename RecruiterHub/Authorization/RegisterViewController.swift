@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 
 class RegisterViewController: UIViewController {
 
@@ -14,6 +15,12 @@ class RegisterViewController: UIViewController {
     }
     
     private let profileTypes = ["player", "coach"]
+    
+    private let spinner: JGProgressHUD = {
+        let spinner = JGProgressHUD(automaticStyle: ())
+        
+        return spinner
+    }()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
@@ -131,6 +138,7 @@ class RegisterViewController: UIViewController {
     private let imageBackgroundView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "LaunchScreen")
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -171,6 +179,12 @@ class RegisterViewController: UIViewController {
         view.addSubview(lastNameField)
         view.addSubview(firstNameField)
         view.addSubview(profileType)
+        view.addSubview(spinner)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        spinner.dismiss()
     }
     
     override func viewDidLayoutSubviews() {
@@ -272,6 +286,8 @@ class RegisterViewController: UIViewController {
         emailField.resignFirstResponder()
         usernameField.resignFirstResponder()
         
+        spinner.show(in: view)
+        
         // Check to make sure the fields are not empty or invalid
         guard let email = emailField.text?.lowercased(), !email.isEmpty,
               let firstname = firstNameField.text, !firstname.isEmpty,
@@ -279,6 +295,7 @@ class RegisterViewController: UIViewController {
               let password = passwordField.text, !password.isEmpty, password.count >= 8,
               let username = usernameField.text, !username.isEmpty, !username.contains(" ")
               else {
+            spinner.dismiss()
             alertUserRegisterError(message: "Make sure fields aren't empty and/or username contains no spaces. Passwords must be 8 or more characters in length.")
             return
         }
@@ -299,6 +316,7 @@ class RegisterViewController: UIViewController {
             if registered {
                 // Good to go
                 guard let data = self?.imageView.image?.pngData() else {
+                    self?.spinner.dismiss()
                     return
                 }
                 
@@ -312,6 +330,7 @@ class RegisterViewController: UIViewController {
                         print(error)
                     }
                     
+                    self?.spinner.dismiss()
                     self?.dismiss(animated: true, completion: nil)
                     
                     UserDefaults.standard.setValue(email.safeDatabaseKey(), forKey: "email")
@@ -321,6 +340,7 @@ class RegisterViewController: UIViewController {
             }
             else {
                 // Failed
+                self?.spinner.dismiss()
                 self?.alertUserRegisterError(message: "Email or username already in use or connection lost.")
             }
         }

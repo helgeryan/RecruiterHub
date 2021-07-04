@@ -31,6 +31,7 @@ class ConversationTableViewCell: UITableViewCell {
     private let userMessageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 21, weight: .semibold)
+        label.numberOfLines = 3
         label.textColor = .secondaryLabel
         return label
     }()
@@ -60,9 +61,9 @@ class ConversationTableViewCell: UITableViewCell {
         
         userImageView.frame = CGRect(x: 10, y: 10, width: 100, height: 100)
         
-        usernameLabel.frame = CGRect(x: userImageView.right, y: 10, width: contentView.width - 20 - userImageView.width, height: (contentView.height - 20) / 2)
+        usernameLabel.frame = CGRect(x: userImageView.right + 10, y: 10, width: contentView.width - 20 - userImageView.width, height: 20)
         
-        userMessageLabel.frame = CGRect(x: userImageView.right + 10, y: usernameLabel.bottom + 10, width: contentView.width - 20 - userImageView.width, height: (contentView.height - 20) / 2)
+        userMessageLabel.frame = CGRect(x: userImageView.right + 10, y: usernameLabel.bottom + 10, width: contentView.width - 20 - userImageView.width, height: (contentView.height - 30))
     }
     
     public func configure( with model: Conversation) {

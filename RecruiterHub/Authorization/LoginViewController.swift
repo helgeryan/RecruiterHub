@@ -90,6 +90,7 @@ class LoginViewController: UIViewController {
     private let imageBackgroundView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "LaunchScreen")
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     

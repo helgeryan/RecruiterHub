@@ -29,9 +29,7 @@ final class EditProfileViewController: UIViewController {
         let button = UIButton(frame: .zero)
         button.layer.masksToBounds = true
         button.tintColor = .label
-        button.addTarget(self,
-                                     action: #selector(didTapChangeProfilePicture),
-                                     for: .touchUpInside)
+        button.addTarget(self,action: #selector(didTapChangeProfilePicture), for: .touchUpInside)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.secondarySystemBackground.cgColor
         return button
@@ -75,7 +73,6 @@ final class EditProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        tableView.tableHeaderView = createTableHeaderView()
     }
     
     private func configureModels() {
@@ -294,7 +291,7 @@ extension EditProfileViewController: FormTableViewCellDelegate {
         case "Phone":
             user.phone = value
             break
-        case "High School":
+        case "School":
             user.school = value
             break
         case "State":
@@ -323,6 +320,9 @@ extension EditProfileViewController: FormTableViewCellDelegate {
             break
         case "Title":
             user.title = value
+            break
+        case "GPA":
+            user.gpa = Double(value) ?? 0
             break
         default:
             print("Field doesn't exist")

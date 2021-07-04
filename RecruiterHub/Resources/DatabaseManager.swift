@@ -765,8 +765,61 @@ public class DatabaseManager {
         database.child(email).child("phone").setValue(user.phone)
     }
     
-    public func getScoutInfoForUser(user: String, completion: @escaping ((ScoutInfo?) -> Void)) {
+    public func getScoutInfoForUserSingleEvent(user: String, completion: @escaping ((ScoutInfo?) -> Void)) {
         database.child("\(user)/scoutInfo").observeSingleEvent(of: .value, with:  { snapshot in
+            
+            guard let info = snapshot.value as? [String: Any] else {
+                completion(nil)
+                return
+            }
+            
+            guard let fastball = info["fastball"] as? Double,
+                  let curveball =  info["curveball"] as? Double,
+                  let slider = info["slider"] as? Double,
+                  let changeup =  info["changeup"] as? Double,
+                  let sixty =  info["sixty"] as? Double,
+                  let infield = info["infield"] as? Double,
+                  let outfield = info["outfield"] as? Double,
+                  let exitVelo = info["exitVelo"] as? Double else {
+               print("Failed to get user data")
+                completion(nil)
+                return
+            }
+            
+            var scoutInfo = ScoutInfo()
+            scoutInfo.fastball = fastball
+            scoutInfo.curveball = curveball
+            scoutInfo.slider = slider
+            scoutInfo.changeup = changeup
+            scoutInfo.sixty = sixty
+            scoutInfo.infield = infield
+            scoutInfo.outfield = outfield
+            scoutInfo.exitVelo = exitVelo
+            
+            if let verifiedFastball = info["verifiedFastball"] as? Double,
+                  let verifiedCurveball =  info["verifiedCurveball"] as? Double,
+                  let verifiedSlider = info["verifiedSlider"] as? Double,
+                  let verifiedChangeup =  info["verifiedChangeup"] as? Double,
+                  let verifiedSixty =  info["verifiedSixty"] as? Double,
+                  let verifiedInfield = info["verifiedInfield"] as? Double,
+                  let verifiedOutfield = info["verifiedOutfield"] as? Double,
+                  let verifiedExitVelo = info["verifiedExitVelo"] as? Double {
+                scoutInfo.verifiedfastball =    verifiedFastball
+                scoutInfo.verifiedcurveball =   verifiedCurveball
+                scoutInfo.verifiedslider =      verifiedSlider
+                scoutInfo.verifiedchangeup =    verifiedChangeup
+                scoutInfo.verifiedsixty =       verifiedSixty
+                scoutInfo.verifiedinfield =     verifiedInfield
+                scoutInfo.verifiedoutfield =    verifiedOutfield
+                scoutInfo.verifiedexitVelo =    verifiedExitVelo
+            }
+    
+            completion(scoutInfo)
+        })
+    }
+    
+    public func getScoutInfoForUser(user: String, completion: @escaping ((ScoutInfo?) -> Void)) {
+        database.child("\(user)/scoutInfo").observe( .value, with:  { snapshot in
             
             guard let info = snapshot.value as? [String: Any] else {
                 completion(nil)

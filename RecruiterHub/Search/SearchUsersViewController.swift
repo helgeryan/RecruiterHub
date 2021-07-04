@@ -54,6 +54,9 @@ class SearchUserViewController: UIViewController {
         // Add search bar to the navigation bar
         navigationController?.navigationBar.topItem?.titleView = searchBar
         
+        //
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Adv.", style: .plain, target: self, action: #selector(didTapAdvanced))
+        
         view.addSubview(tableView)
         view.addSubview(noResultsLabel)
         
@@ -73,6 +76,11 @@ class SearchUserViewController: UIViewController {
                                  width: view.width,
                                  height: view.height - searchBar.height)
         noResultsLabel.frame = CGRect(x: view.width / 4, y: (view.height-200) / 2, width: view.width / 2, height: 200)
+    }
+    
+    @objc private func didTapAdvanced() {
+        let vc = AdvSearchUserViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
 }
@@ -179,6 +187,12 @@ extension SearchUserViewController: UISearchBarDelegate {
 struct SearchResult {
     let name: String
     let email: String
+}
+
+struct AdvSearchResult {
+    let name: String
+    let email: String
+    let value: Double
 }
 
 extension SearchUserViewController: UITableViewDelegate, UITableViewDataSource {
