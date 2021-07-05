@@ -167,7 +167,6 @@ class ViewPostViewController: UIViewController {
         captionLabel.frame = CGRect(x: 10, y: likesLabel.bottom + 10, width: view.width - 10, height: 50)
         captionLabel.sizeToFit()
         scrollView.contentSize = CGSize(width: view.width, height: captionLabel.bottom - view.top + 10)
-//        tableView.frame = CGRect(x: 0, y: likesLabel.bottom + 10, width: view.width , height: view.height - likesLabel.bottom - 10)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -248,9 +247,9 @@ class ViewPostViewController: UIViewController {
             }
             
             self?.comments = comments
-//            DispatchQueue.main.async {
-//                self?.tableView.reloadData()
-//            }
+            DispatchQueue.main.async {
+                self?.commentLabel.text = "\(comments.count) comments"
+            }
         })
     }
     

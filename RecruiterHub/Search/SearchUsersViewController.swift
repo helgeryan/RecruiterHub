@@ -150,15 +150,13 @@ extension SearchUserViewController: UISearchBarDelegate {
         let safeEmail = DatabaseManager.safeEmail(emailAddress: currentUserEmail)
         
         let results: [SearchResult] = users.filter( {
-            guard let email = $0["email"], email != safeEmail else {
+            guard let email = $0["email"], email != safeEmail,
+                  let name = $0["name"]?.lowercased(),
+                  let username = $0["username"]?.lowercased()  else {
                 return false
             }
             
-            guard let name = $0["name"]?.lowercased() else {
-                return false
-            }
-            
-            return name.contains(term.lowercased())
+            return name.contains(term.lowercased()) || username.contains(term.lowercased())
         }).compactMap({
             guard let email = $0["email"], let name = $0["name"] else {
                 return nil

@@ -99,14 +99,7 @@ class AdvSearchUserViewController: UIViewController {
         label.font = .systemFont(ofSize: 21, weight: .medium)
         return label
     }()
-    
-    private let searchButton: UIButton = {
-        let button = UIButton(frame: .zero)
-        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
-        button.addTarget(self, action: #selector(didTapSearch), for: .touchUpInside)
-        return button
-    }()
-    
+
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -123,12 +116,11 @@ class AdvSearchUserViewController: UIViewController {
         view.addSubview(searchType)
         view.addSubview(minField)
         view.addSubview(maxField)
-        view.addSubview(searchButton)
         view.addSubview(yearField)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(didTapSearch))
         
-        
+        // Add delegates and data sources
         tableView.delegate = self
         tableView.dataSource = self
         searchType.delegate = self
@@ -136,6 +128,7 @@ class AdvSearchUserViewController: UIViewController {
         
         minField.delegate = self
         maxField.delegate = self
+        yearField.delegate = self
         
         DatabaseManager.shared.getAllUsers(completion: { [weak self] result in
             switch result {
@@ -353,5 +346,8 @@ extension AdvSearchUserViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
     }
 }

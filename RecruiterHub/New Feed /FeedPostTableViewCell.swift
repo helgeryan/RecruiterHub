@@ -294,7 +294,7 @@ class FeedPostTableViewCell: UITableViewCell {
         self.post = post
         
         likesLabel.text = "\(post.post.likeCount.count) likes"
-        commentsLabel.text = "\(post.post.comments.count) comments"
+        fetchComments()
         
         var feedLabel: String
         if post.post.owner.profileType == "coach" {
@@ -324,6 +324,8 @@ class FeedPostTableViewCell: UITableViewCell {
             [weak self] likes in
             guard let likes = likes else {
                 self?.defaultButton()
+                self?.likesLabel.text = "0 likes"
+                
                 return
             }
             guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String else {
@@ -336,11 +338,34 @@ class FeedPostTableViewCell: UITableViewCell {
                     let image = UIImage(systemName: "heart.fill", withConfiguration: config)
                     self?.likeButton.setImage(image, for: .normal)
                     self?.likeButton.tintColor = .red
+                    self?.likesLabel.text = "\(likes.count) likes"
                     return
                 }
             }
             
+            self?.likesLabel.text = "\(likes.count) likes"
+          
             self?.defaultButton()
+        })
+    }
+    
+    private func fetchComments() {
+        
+        guard let email = post?.post.owner.safeEmail as String?,
+              let post = post else {
+            return
+        }
+ 
+        DatabaseManager.shared.getComments(with: email, index: post.post.identifier, completion: { [weak self] comments in
+            
+            guard let comments = comments else {
+                self?.commentsLabel.text = "0 comments"
+                return
+            }
+        
+            DispatchQueue.main.async {
+                self?.commentsLabel.text = "\(comments.count) comments"
+            }
         })
     }
     
