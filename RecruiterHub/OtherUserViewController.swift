@@ -334,33 +334,69 @@ extension OtherUserViewController: ProfileConnectionsDelegate {
     
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {
         DatabaseManager.shared.getUserFollowingSingleEvent(email: user.safeEmail, completion: { [weak self] followers in
-            var data:[[String:String]] = []
+            var data:[SearchResult] = []
             if let followers = followers {
-                for follower in followers {
-                    let newElement = ["email": follower.email]
-                    data.append(newElement)
+                let group = DispatchGroup()
+                group.enter()
+                for (index, follower) in followers.enumerated() {
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: follower.email, completion: {
+                        user in
+                        guard let user = user else {
+                            if index == followers.count - 1 {
+                                group.leave()
+                            }
+                            return
+                        }
+                        
+                        let newElement = SearchResult(name: user.name, email: user.safeEmail)
+                        data.append(newElement)
+                        
+                        if index == followers.count - 1 {
+                            group.leave()
+                        }
+                    })
                 }
+                group.notify(queue: .main, execute: {
+                    let vc = ListsViewController(data: data)
+                    vc.title = "Following"
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    return
+                })
             }
-            let vc = ListsViewController(data: data)
-            vc.title = "Following"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
         })
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
-        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.safeEmail, completion: { [weak self] followers in
-            var data:[[String:String]] = []
+        DatabaseManager.shared.getUserFollowersSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
+            var data:[SearchResult] = []
             if let followers = followers {
-                for follower in followers {
-                    let newElement = ["email": follower.email]
-                    data.append(newElement)
+                let group = DispatchGroup()
+                group.enter()
+                for (index, follower) in followers.enumerated() {
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: follower.email, completion: {
+                        user in
+                        guard let user = user else {
+                            if index == followers.count - 1 {
+                                group.leave()
+                            }
+                            return
+                        }
+                        
+                        let newElement = SearchResult(name: user.name, email: user.safeEmail)
+                        data.append(newElement)
+                        
+                        if index == followers.count - 1 {
+                            group.leave()
+                        }
+                    })
                 }
+                group.notify(queue: .main, execute: {
+                    let vc = ListsViewController(data: data)
+                    vc.title = "Followers"
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    return
+                })
             }
-            let vc = ListsViewController(data: data)
-            vc.title = "Followers"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
         })
     }
 }

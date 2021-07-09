@@ -127,6 +127,7 @@ public class DatabaseManager {
         database.child(email.safeDatabaseKey()).child("phone").setValue(user.phone)
         database.child(email.safeDatabaseKey()).child("profileType").setValue(user.profileType)
         database.child(email.safeDatabaseKey()).child("title").setValue(user.title)
+        database.child(email.safeDatabaseKey()).child("emailAddress").setValue(user.emailAddress)
 
         // Grab the database users reference
         database.child("users").observeSingleEvent(of: .value, with: { [weak self] snapshot in
@@ -602,6 +603,7 @@ public class DatabaseManager {
         database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
             
             guard let info = snapshot.value as? [String: Any] else {
+                print(snapshot)
                 print("\(user)")
                 completion(nil)
                 return
@@ -646,7 +648,7 @@ public class DatabaseManager {
             userData.username = username
             userData.firstName = firstname
             userData.lastName = lastname
-            userData.emailAddress = user.nonSafeDatabaseKey()
+            userData.emailAddress = user
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions
@@ -714,7 +716,7 @@ public class DatabaseManager {
             userData.username = username
             userData.firstName = firstname
             userData.lastName = lastname
-            userData.emailAddress = user.nonSafeDatabaseKey()
+            userData.emailAddress = user
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions

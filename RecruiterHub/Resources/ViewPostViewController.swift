@@ -336,9 +336,9 @@ class ViewPostViewController: UIViewController {
     
     // Callback for like label interaction
     @objc private func didTapLikesLabel() {
-        var likes: [[String:String]] = []
+        var likes: [SearchResult] = []
         for like in post.likeCount {
-            let newElement = ["email": like.email]
+            let newElement = SearchResult(name: like.name, email: like.email)
             likes.append(newElement)
         }
         let vc = ListsViewController(data: likes)

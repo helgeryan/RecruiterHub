@@ -176,9 +176,9 @@ extension NewFeedViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension NewFeedViewController: FeedPostTableViewCellDelegate {
     func didTapLikesLabel(_ feedHeaderCell: FeedPostTableViewCell, post: NewFeedPost) {
-        var data: [[String: String]] = []
+        var data: [SearchResult] = []
         for like in post.post.likeCount {
-            let newElement = ["email": like.email]
+            let newElement = SearchResult(name: like.name, email: like.email)
             data.append(newElement)
         }
         

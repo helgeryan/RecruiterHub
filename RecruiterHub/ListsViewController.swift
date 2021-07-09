@@ -9,7 +9,7 @@ import UIKit
 
 class ListsViewController: UIViewController {
 
-    private let data: [[String:String]]
+    private let data: [SearchResult]
     
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -19,7 +19,7 @@ class ListsViewController: UIViewController {
     
     // MARK: - Init
     
-    init(data: [[String:String]]) {
+    init(data: [SearchResult]) {
         self.data = data
         super.init(nibName: nil, bundle: nil)
     }
@@ -53,14 +53,10 @@ extension ListsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        let model = data[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: SearchUsersTableViewCell.identifier, for: indexPath) as! SearchUsersTableViewCell
         
-        guard let email = data[indexPath.row]["email"] else {
-            return cell
-        }
-        
-        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.email.safeDatabaseKey(), completion: {
             user in
             guard let user = user else {
                 return
@@ -73,10 +69,9 @@ extension ListsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let email = data[indexPath.row]["email"] else {
-            return
-        }
-        DatabaseManager.shared.getDataForUserSingleEvent(user: email.safeDatabaseKey(), completion: {
+        
+        let model = data[indexPath.row]
+        DatabaseManager.shared.getDataForUserSingleEvent(user: model.email.safeDatabaseKey(), completion: {
             [weak self] user in
             guard let user = user else {
                 return

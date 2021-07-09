@@ -37,6 +37,7 @@
 		E66C7B9A26113592007420D9 /* BatterGameLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */; };
 		E67AED5425F5615100BE5114 /* EditScoutInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */; };
 		E684A28026981B0000EB5B26 /* VerifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A27F26981B0000EB5B26 /* VerifyViewController.swift */; };
+		E684A28226988C0C00EB5B26 /* CoachScoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */; };
 		E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852152651A27700C177C9 /* NotificationViewController.swift */; };
 		E688521A2651A38B00C177C9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852192651A38B00C177C9 /* Models.swift */; };
 		E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */; };
@@ -135,6 +136,7 @@
 		E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatterGameLogTableViewCell.swift; sourceTree = "<group>"; };
 		E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScoutInfoViewController.swift; sourceTree = "<group>"; };
 		E684A27F26981B0000EB5B26 /* VerifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyViewController.swift; sourceTree = "<group>"; };
+		E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachScoutViewController.swift; sourceTree = "<group>"; };
 		E68852152651A27700C177C9 /* NotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E68852192651A38B00C177C9 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationLikeEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				E6001F79267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift */,
+				E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */,
 			);
 			path = "Coach Profile";
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				E612737825EC1579008F24AB /* CommentsCell.swift in Sources */,
 				E67AED5425F5615100BE5114 /* EditScoutInfoViewController.swift in Sources */,
 				E68B746B25C0E6F500D15230 /* SettingsViewController.swift in Sources */,
+				E684A28226988C0C00EB5B26 /* CoachScoutViewController.swift in Sources */,
 				E68B745E25BF8D2200D15230 /* SearchUsersViewController.swift in Sources */,
 				E68B73E625B11CB600D15230 /* SceneDelegate.swift in Sources */,
 				E636610D25C8EA27007A4EFD /* FormTableViewCell.swift in Sources */,

@@ -300,6 +300,15 @@ extension ProfileViewController: ProfileTabsDelegate {
     
     func didTapScoutButtonTab() {
         print("Tapped scout")
+        
+        if user.profileType == "coach" {
+            let vc = CoachScoutViewController()
+            vc.title = "Scout"
+            vc.modalTransitionStyle = .flipHorizontal
+            navigationController?.pushViewController(vc, animated: true)
+            return
+        }
+        
         let vc = ScoutViewController(user: user)
         vc.title = "Scout Info"
         vc.modalTransitionStyle = .flipHorizontal
@@ -315,35 +324,70 @@ extension ProfileViewController: ProfileConnectionsDelegate {
     }
 
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {
-        print("Did tap following")
-        DatabaseManager.shared.getUserFollowingSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
-            var data:[[String:String]] = []
+        DatabaseManager.shared.getUserFollowingSingleEvent(email: user.safeEmail, completion: { [weak self] followers in
+            var data:[SearchResult] = []
             if let followers = followers {
-                for follower in followers {
-                    let newElement = ["email": follower.email]
-                    data.append(newElement)
+                let group = DispatchGroup()
+                group.enter()
+                for (index, follower) in followers.enumerated() {
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: follower.email, completion: {
+                        user in
+                        guard let user = user else {
+                            if index == followers.count - 1 {
+                                group.leave()
+                            }
+                            return
+                        }
+                        
+                        let newElement = SearchResult(name: user.name, email: user.safeEmail)
+                        data.append(newElement)
+                        
+                        if index == followers.count - 1 {
+                            group.leave()
+                        }
+                    })
                 }
+                group.notify(queue: .main, execute: {
+                    let vc = ListsViewController(data: data)
+                    vc.title = "Following"
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    return
+                })
             }
-            let vc = ListsViewController(data: data)
-            vc.title = "Following"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
         })
     }
     
     func didTapFollowersButton(_ profileConnections: ProfileConnections) {
         DatabaseManager.shared.getUserFollowersSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] followers in
-            var data:[[String:String]] = []
+            var data:[SearchResult] = []
             if let followers = followers {
-                for follower in followers {
-                    let newElement = ["email": follower.email]
-                    data.append(newElement)
+                let group = DispatchGroup()
+                group.enter()
+                for (index, follower) in followers.enumerated() {
+                    DatabaseManager.shared.getDataForUserSingleEvent(user: follower.email, completion: {
+                        user in
+                        guard let user = user else {
+                            if index == followers.count - 1 {
+                                group.leave()
+                            }
+                            return
+                        }
+                        
+                        let newElement = SearchResult(name: user.name, email: user.safeEmail)
+                        data.append(newElement)
+                        
+                        if index == followers.count - 1 {
+                            group.leave()
+                        }
+                    })
                 }
+                group.notify(queue: .main, execute: {
+                    let vc = ListsViewController(data: data)
+                    vc.title = "Followers"
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                    return
+                })
             }
-            let vc = ListsViewController(data: data)
-            vc.title = "Followers"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
         })
     }
 }
