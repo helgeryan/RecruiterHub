@@ -62,14 +62,14 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         return button
     }()
     
-    private let endorseButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = .link
-        button.isHidden = true
-        button.setTitleColor( .label, for: .normal)
-        button.setTitle("Endorse", for: .normal)
-        return button
-    }()
+//    private let endorseButton: UIButton = {
+//        let button = UIButton()
+//        button.backgroundColor = .link
+//        button.isHidden = true
+//        button.setTitleColor( .label, for: .normal)
+//        button.setTitle("Endorse", for: .normal)
+//        return button
+//    }()
     
     // MARK: - Init
     
@@ -79,7 +79,7 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         clipsToBounds = true
         backgroundColor = .systemBackground
         followButton.addTarget(self, action: #selector(didTapFollowButton), for: .touchUpInside)
-        endorseButton.addTarget(self, action: #selector(didTapEndorseButton), for: .touchUpInside)
+//        endorseButton.addTarget(self, action: #selector(didTapEndorseButton), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -108,14 +108,14 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         addSubview(titleLabel)
         addSubview(organizationLabel)
         addSubview(followButton)
-        addSubview(endorseButton)
+//        addSubview(endorseButton)
     }
     
     public func configure(user: RHUser, hideFollowButton: Bool) {
         self.user = user
         if !hideFollowButton {
             followButton.isHidden = false
-            endorseButton.isHidden = false
+//            endorseButton.isHidden = false
         }
         
         nameLabel.text = user.firstName + " " + user.lastName
@@ -147,24 +147,24 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
             }
         })
         
-        DatabaseManager.shared.getUserEndorsements(email: user.safeEmail, completion: { [weak self]
-            result in
-            
-            guard let result = result else {
-                self?.endorseButton.setTitle("Endorse", for: .normal)
-                self?.endorseButton.backgroundColor = .link
-                return
-            }
-            if result.contains(Following(email: email.safeDatabaseKey())) {
-                self?.endorseButton.setTitle("Endorsing..", for: .normal)
-                self?.endorseButton.backgroundColor = .lightGray
-            }
-            else {
-                self?.endorseButton.setTitle("Endorse", for: .normal)
-                self?.endorseButton.backgroundColor = .link
-            }
-
-        })
+//        DatabaseManager.shared.getUserEndorsements(email: user.safeEmail, completion: { [weak self]
+//            result in
+//
+//            guard let result = result else {
+//                self?.endorseButton.setTitle("Endorse", for: .normal)
+//                self?.endorseButton.backgroundColor = .link
+//                return
+//            }
+//            if result.contains(Following(email: email.safeDatabaseKey())) {
+//                self?.endorseButton.setTitle("Endorsing..", for: .normal)
+//                self?.endorseButton.backgroundColor = .lightGray
+//            }
+//            else {
+//                self?.endorseButton.setTitle("Endorse", for: .normal)
+//                self?.endorseButton.backgroundColor = .link
+//            }
+//
+//        })
     }
     
     override func layoutSubviews() {
@@ -178,36 +178,33 @@ final class CoachProfileHeader: UICollectionReusableView, UINavigationController
         profilePhotoImageView.layer.cornerRadius = profilePhotoImageView.width / 4.0
         
         nameLabel.frame = CGRect(x: 10,
-                                 y: profilePhotoImageView.bottom + 10,
+                                 y: profilePhotoImageView.bottom + 5,
                                  width: width - 20 ,
-                                 height: 28)
+                                 height: 20)
         organizationLabel.frame = CGRect(x: 10,
                                              y: nameLabel.bottom + 5,
                                              width: width - 20,
-                                             height: 28)
+                                             height: 20)
         titleLabel.frame = CGRect(x: 10,
                                              y: organizationLabel.bottom + 5,
                                              width: width - 20,
-                                             height: 28)
+                                             height: 20)
         
-        followButton.frame = CGRect(x: 10,
-                                             y: titleLabel.bottom + 5,
-                                             width: width / 2 - 20,
-                                             height: 50)
+        followButton.frame = CGRect(origin: CGPoint(x: width / 3, y: titleLabel.bottom + 5), size: CGSize(width: width / 3 , height: 30))
         followButton.layer.cornerRadius = 3.0
         
-        endorseButton.frame = CGRect(x: (width / 2) + 10,
-                                             y: titleLabel.bottom + 5,
-                                             width: width / 2 - 20,
-                                             height: 50)
-        endorseButton.layer.cornerRadius = 3.0
+//        endorseButton.frame = CGRect(x: (width / 2) + 10,
+//                                             y: titleLabel.bottom + 5,
+//                                             width: width / 2 - 20,
+//                                             height: 50)
+//        endorseButton.layer.cornerRadius = 3.0
     }
     
     public static func getHeight(isYourProfile: Bool) -> CGFloat {
         let screenSize = UIScreen.main.bounds
         if isYourProfile {
-            return screenSize.width / 3 + 115
+            return screenSize.width / 3 + 85
         }
-        return screenSize.width / 3 + 170
+        return screenSize.width / 3 + 115
     }
 }

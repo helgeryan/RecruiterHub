@@ -56,7 +56,7 @@ class ContactInfoCell: UITableViewCell {
         super.layoutSubviews()
         
         // Assign Frames
-        label.frame = CGRect(x: 5, y: 0, width: contentView.width/3, height: contentView.height)
+        label.frame = CGRect(x: 5, y: 0, width: contentView.width/4, height: contentView.height)
         attributeLabel.frame =   CGRect(x: label.right + 5,
                                y: 0,
                                width: contentView.width-10-label.width,

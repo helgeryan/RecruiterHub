@@ -84,8 +84,14 @@ final class EditProfileViewController: UIViewController {
         models.append(model)
         model = EditProfileFormModel(label: "School", placeholder: "\(user.school)", value: nil)
         models.append(model)
-        model = EditProfileFormModel(label: "State", placeholder: "\(user.state)", value: nil)
-        models.append(model)
+        if user.state == "State" {
+            model = EditProfileFormModel(label: "State", placeholder: "Ex: MN", value: nil)
+            models.append(model)
+        }
+        else {
+            model = EditProfileFormModel(label: "State", placeholder: "\(user.state)", value: nil)
+                models.append(model)
+        }
         
         if user.profileType == "coach" {
             model = EditProfileFormModel(label: "Title", placeholder: "\(user.title)", value: nil)
@@ -106,7 +112,7 @@ final class EditProfileViewController: UIViewController {
             models.append(model)
             model = EditProfileFormModel(label: "GPA", placeholder: "\(user.gpa)", value: nil)
             models.append(model)
-            model = EditProfileFormModel(label: "Positions", placeholder: "ex. RHP, CF, 1B", value: nil)
+            model = EditProfileFormModel(label: "Positions", placeholder: "Ex. RHP, CF, 1B", value: nil)
             models.append(model)
         }
     }

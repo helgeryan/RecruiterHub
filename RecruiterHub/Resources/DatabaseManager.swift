@@ -602,6 +602,7 @@ public class DatabaseManager {
         database.child(user).observeSingleEvent(of: .value, with:  { snapshot in
             
             guard let info = snapshot.value as? [String: Any] else {
+                print("\(user)")
                 completion(nil)
                 return
             }
@@ -645,7 +646,7 @@ public class DatabaseManager {
             userData.username = username
             userData.firstName = firstname
             userData.lastName = lastname
-            userData.emailAddress = user
+            userData.emailAddress = user.nonSafeDatabaseKey()
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions
@@ -713,7 +714,7 @@ public class DatabaseManager {
             userData.username = username
             userData.firstName = firstname
             userData.lastName = lastname
-            userData.emailAddress = user
+            userData.emailAddress = user.nonSafeDatabaseKey()
             userData.phone = phone
             userData.gpa = 0
             userData.positions = positions
@@ -880,6 +881,20 @@ public class DatabaseManager {
         database.child("\(email)/scoutInfo").child("infield").setValue(scoutInfo.infield)
         database.child("\(email)/scoutInfo").child("outfield").setValue(scoutInfo.outfield)
         database.child("\(email)/scoutInfo").child("exitVelo").setValue(scoutInfo.exitVelo)
+    }
+    
+    public func updateVerifiedScoutInfoForUser(playerEmail: String, verifierEmail: String, scoutInfo: ScoutInfo) {
+        database.child("\(playerEmail)/scoutInfo").child("verifiedFastball").setValue(scoutInfo.fastball)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedCurveball").setValue(scoutInfo.curveball)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedSlider").setValue(scoutInfo.slider)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedChangeup").setValue(scoutInfo.changeup)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedSixty").setValue(scoutInfo.sixty)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedInfield").setValue(scoutInfo.infield)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedOutfield").setValue(scoutInfo.outfield)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedExitVelo").setValue(scoutInfo.exitVelo)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedBy").setValue(verifierEmail)
+        database.child("\(playerEmail)/scoutInfo").child("verifiedDate").setValue(ChatViewController.dateFormatter.string(from:Date()))
+        
     }
     
     public func getPitcherGameLogsForUser(user: String, completion: @escaping (([PitcherGameLog]?) -> Void)) {
@@ -2125,6 +2140,9 @@ public class DatabaseManager {
             break
         case .endorsers:
             attribute = "endorsers"
+            break
+        case .references:
+            attribute = "References"
             break
         }
         database.child("\(email)/\(attribute)").observe( .value, with: {

@@ -34,6 +34,7 @@ class NewFeedViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Under The Radar"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.2.circlepath"), style: .plain, target: self, action: #selector(didTapReset))
         
         tableView.register(FeedPostTableViewCell.self, forCellReuseIdentifier: FeedPostTableViewCell.identifier)
         
@@ -59,6 +60,10 @@ class NewFeedViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
         noVideosLabel.frame = view.bounds
+    }
+    
+    @objc private func didTapReset() {
+        fetchPosts()
     }
     
     private func fetchPosts() {

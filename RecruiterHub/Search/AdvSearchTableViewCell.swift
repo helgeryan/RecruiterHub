@@ -66,24 +66,20 @@ class AdvSearchTableViewCell: UITableViewCell {
         let padding: CGFloat = 2
         let leftPadding: CGFloat = 5
         let labelHeight: CGFloat = 20
-        valueLabel.frame = CGRect(x: leftPadding,
+        nameLabel.frame = CGRect(x: leftPadding,
                                  y: 5,
                                  width: width * 2 / 3,
                                  height: labelHeight)
-        nameLabel.frame = CGRect(x: leftPadding,
-                                     y: valueLabel.bottom + padding,
-                                     width: width * 2 / 3, height:
-                                        labelHeight)
         usernameLabel.frame = CGRect(x: leftPadding,
                                      y: nameLabel.bottom + padding,
-                                     width: width/2, height:
+                                     width: width * 2 / 3, height:
                                         labelHeight)
         schoolLabel.frame = CGRect(x: leftPadding,
-                                   y: usernameLabel.bottom + padding,
-                                   width: width/2,
-                                   height: labelHeight)
-        schoolLabel.frame = CGRect(x: leftPadding,
-                                   y: usernameLabel.bottom + padding,
+                                     y: usernameLabel.bottom + padding,
+                                     width: width * 2 / 3, height:
+                                        labelHeight)
+        valueLabel.frame = CGRect(x: leftPadding,
+                                   y: schoolLabel.bottom + padding,
                                    width: width * 2 / 3,
                                    height: labelHeight)
         
@@ -96,7 +92,12 @@ class AdvSearchTableViewCell: UITableViewCell {
     }
     
     public func configure(user: RHUser, value: Double) {
-        valueLabel.text = "\(value)"
+        if value == 0 {
+            valueLabel.text = ""
+        }
+        else {
+            valueLabel.text = "\(value)"
+        }
         if user.profileType == "player" {
             nameLabel.text = "\(user.name) - \(user.gradYear) - \(user.positions)"
         }

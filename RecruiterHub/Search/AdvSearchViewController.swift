@@ -37,7 +37,7 @@ class AdvSearchUserViewController: UIViewController {
         return table
     }()
     
-    private let searchTypes = ["FB", "CH", "CB", "SL", "OF", "IF", "Exit Velo", "60",
+    private let searchTypes = ["--", "FB", "CH", "CB", "SL", "OF", "IF", "Exit Velo", "60",
                                "Ve. FB", "Ve. CH", "Ve. CB", "Ve. SL", "Ve. OF", "Ve. IF", "Ve. Exit Velo", "Ve. 60"]
     
     private let searchType: UIPickerView = {
@@ -89,6 +89,48 @@ class AdvSearchUserViewController: UIViewController {
         return textField
     }()
     
+    private let stateField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "State"
+        textField.returnKeyType = .done
+        textField.layer.masksToBounds = true
+        textField.backgroundColor = .secondarySystemBackground
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0) )
+        textField.leftViewMode = .always
+        textField.layer.cornerRadius = 8
+        textField.layer.borderWidth = 1.0
+        textField.layer.borderColor = UIColor.secondaryLabel.cgColor
+        return textField
+    }()
+    
+    private let schoolField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "School"
+        textField.returnKeyType = .done
+        textField.layer.masksToBounds = true
+        textField.backgroundColor = .secondarySystemBackground
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0) )
+        textField.leftViewMode = .always
+        textField.layer.cornerRadius = 8
+        textField.layer.borderWidth = 1.0
+        textField.layer.borderColor = UIColor.secondaryLabel.cgColor
+        return textField
+    }()
+    
+    private let posField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Pos."
+        textField.returnKeyType = .done
+        textField.layer.masksToBounds = true
+        textField.backgroundColor = .secondarySystemBackground
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0) )
+        textField.leftViewMode = .always
+        textField.layer.cornerRadius = 8
+        textField.layer.borderWidth = 1.0
+        textField.layer.borderColor = UIColor.secondaryLabel.cgColor
+        return textField
+    }()
+    
     // Initialize the no results label
     private let noResultsLabel: UILabel = {
         let label = UILabel()
@@ -117,8 +159,13 @@ class AdvSearchUserViewController: UIViewController {
         view.addSubview(minField)
         view.addSubview(maxField)
         view.addSubview(yearField)
+        view.addSubview(schoolField)
+        view.addSubview(stateField)
+        view.addSubview(posField)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(didTapSearch))
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(image: UIImage(systemName:                                                        "magnifyingglass"), style: .plain, target: self,                                              action: #selector(didTapSearch)),
+                                              UIBarButtonItem(image: UIImage(systemName: "arrow.2.circlepath"), style: .plain, target: self, action: #selector(didTapReset))
+        ]
         
         // Add delegates and data sources
         tableView.delegate = self
@@ -129,6 +176,9 @@ class AdvSearchUserViewController: UIViewController {
         minField.delegate = self
         maxField.delegate = self
         yearField.delegate = self
+        stateField.delegate = self
+        schoolField.delegate = self
+        posField.delegate = self
         
         DatabaseManager.shared.getAllUsers(completion: { [weak self] result in
             switch result {
@@ -150,29 +200,41 @@ class AdvSearchUserViewController: UIViewController {
         minField.frame = CGRect(x: searchType.right + padding, y: view.safeAreaInsets.top + 10, width: (view.width / 9 * 2) - padding * 2, height: 50)
         maxField.frame = CGRect(x: minField.right + padding, y: view.safeAreaInsets.top + 10, width: (view.width / 9 * 2) - padding * 2, height: 50)
         yearField.frame = CGRect(x: maxField.right + padding, y: view.safeAreaInsets.top + 10, width: (view.width / 9 * 2) - padding * 2, height: 50)
+        schoolField.frame = CGRect(x: 5, y: searchType.bottom + 5, width: (view.width / 9 * 4) - padding * 2, height: 50)
+        stateField.frame = CGRect(x: schoolField.right + 5, y: searchType.bottom + 5, width: (view.width / 9 * 2) - padding * 2, height: 50)
+        posField.frame = CGRect(x: stateField.right + 5, y: searchType.bottom + 5, width: (view.width / 9 * 2) - padding * 2, height: 50)
         
         tableView.frame = CGRect(x: 0,
-                                 y: searchType.bottom + 10,
+                                 y: stateField.bottom + 5,
                                  width: view.width,
-                                 height: view.height - searchType.bottom - 10)
+                                 height: view.height - stateField.bottom - 20)
         noResultsLabel.frame = CGRect(x: view.width / 4, y: (view.height-200) / 2, width: view.width / 2, height: 200)
+    }
+    
+    
+    @objc private func didTapReset() {
+        searchType.selectRow(0, inComponent: 0, animated: true)
+        minField.text = ""
+        maxField.text = ""
+        yearField.text = ""
+        stateField.text = ""
+        schoolField.text = ""
+        posField.text = ""
+        results.removeAll()
+        tableView.reloadData()
     }
     
     @objc private func didTapSearch() {
         print("Tapped Search")
-        
+        navigationItem.rightBarButtonItems?[0].isEnabled = false
         minField.resignFirstResponder()
         maxField.resignFirstResponder()
         yearField.resignFirstResponder()
-        
+        stateField.resignFirstResponder()
+        schoolField.resignFirstResponder()
+        posField.resignFirstResponder()
         results.removeAll()
-        guard let maxText = maxField.text,
-            let max = Double(maxText),
-            let minText = minField.text,
-            let min = Double(minText) else {
-                print("TextFields Empty")
-            return
-        }
+        tableView.reloadData()
         
         let type = searchTypes[searchType.selectedRow(inComponent: 0)]
         
@@ -186,17 +248,23 @@ class AdvSearchUserViewController: UIViewController {
             DatabaseManager.shared.getDataForUserSingleEvent(user: email, completion: {
                 userData in
                 guard let userData = userData else {
+                    print(email)
                     return
                 }
                 
                 DatabaseManager.shared.getScoutInfoForUserSingleEvent(user: email, completion: { [weak self]
                     scoutInfo in
                     
+                    guard let strongSelf = self else {
+                        return
+                    }
+                    
                     guard let scoutInfo = scoutInfo else {
-                        guard let numUsers = self?.users.count else {
-                            return
+                        let newElement = AdvSearchResult(name: name, email: email, value: 0)
+                        if strongSelf.filter(element: newElement, data: userData) {
+                                self?.results.append(newElement)
                         }
-                        if index == numUsers - 1 {
+                        if index == strongSelf.users.count - 1 {
                             group.leave()
                         }
                         return
@@ -255,17 +323,13 @@ class AdvSearchUserViewController: UIViewController {
                     default:
                         break
                     }
-                    if (value >= min) && (value <= max) {
-                        if let gradYear = self?.yearField.text, (gradYear == "") || (Int(gradYear) == userData.gradYear) {
-                            let newElement = AdvSearchResult(name: name, email: email, value: value)
+                    
+                    let newElement = AdvSearchResult(name: name, email: email, value: value)
+                    if strongSelf.filter(element: newElement, data: userData) {
                             self?.results.append(newElement)
-                        }
                     }
                     
-                    guard let numUsers = self?.users.count else {
-                        return
-                    }
-                    if index == numUsers - 1 {
+                    if index == strongSelf.users.count - 1 {
                         group.leave()
                     }
                 })
@@ -273,7 +337,49 @@ class AdvSearchUserViewController: UIViewController {
         }
         group.notify(queue: .main, execute: {
             self.tableView.reloadData()
+            self.navigationItem.rightBarButtonItems?[0].isEnabled = true
         })
+    }
+    
+    private func filter(element: AdvSearchResult, data: RHUser) -> Bool {
+
+        if let minText = minField.text, minText != "" {
+            if let min = Double(minText), min > element.value {
+                return false
+            }
+        }
+        
+        if let maxText = maxField.text, maxText != "" {
+            if let max = Double(maxText), max < element.value {
+                return false
+            }
+        }
+        
+        if let gradYearText = yearField.text, gradYearText != "" {
+            if let year = Int(gradYearText), year != data.gradYear {
+                return false
+            }
+        }
+        
+        if let stateText = stateField.text, stateText != "" {
+            if !data.state.lowercased().contains(stateText.lowercased()) {
+                return false
+            }
+        }
+        
+        if let schoolText = schoolField.text, schoolText != "" {
+            if !data.school.lowercased().contains(schoolText.lowercased()) {
+                return false
+            }
+        }
+        
+        if let posText = posField.text, posText != "" {
+            if !data.positions.lowercased().contains(posText.lowercased()) {
+                return false
+            }
+        }
+        
+        return true
     }
 }
 
@@ -339,6 +445,9 @@ extension AdvSearchUserViewController: UIPickerViewDelegate, UIPickerViewDataSou
 
 extension AdvSearchUserViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == stateField || textField == posField || textField == schoolField {
+            return true
+        }
         let charSet = CharacterSet.decimalDigits
         let input = CharacterSet(charactersIn: string)
         return charSet.isSuperset(of: input)

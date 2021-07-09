@@ -12,7 +12,16 @@ import FirebaseAuth
 class ProfileViewController: UIViewController {
 
     private var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
+        let size = (UIScreen.main.bounds.width - 4)/3
+        layout.itemSize = CGSize(width: size, height: size)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.isHidden = true
+        collectionView.backgroundColor = .systemBackground
         return collectionView
     }()
     
@@ -54,14 +63,6 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Your Profile"
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 1
-        layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 0)
-        let size = (view.width - 4)/3
-        layout.itemSize = CGSize(width: size, height: size)
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditButton))
         
@@ -75,7 +76,6 @@ class ProfileViewController: UIViewController {
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .systemBackground
         
        configureCoachCollectionView()
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -310,21 +310,9 @@ extension ProfileViewController: ProfileTabsDelegate {
 extension ProfileViewController: ProfileConnectionsDelegate {
     func didTapEndorsementsButton(_ profileConnections: ProfileConnections) {
         // TODO
-        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.emailAddress.safeDatabaseKey(), completion: { [weak self] endorsers in
-            var data:[[String:String]] = []
-            if let endorsers = endorsers {
-                for endorser in endorsers {
-                    let newElement = ["email": endorser.email]
-                    data.append(newElement)
-                }
-            }
-            let vc = ListsViewController(data: data)
-            vc.title = "Endorsers"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
-        })
+        let vc = ReferencesViewController(user: user)
+        navigationController?.pushViewController(vc, animated: true)
     }
-    
 
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {
         print("Did tap following")

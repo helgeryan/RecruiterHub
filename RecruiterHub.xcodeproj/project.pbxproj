@@ -36,6 +36,7 @@
 		E66C7AC4260FDB77007420D9 /* AddGameLogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7AC3260FDB77007420D9 /* AddGameLogViewController.swift */; };
 		E66C7B9A26113592007420D9 /* BatterGameLogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */; };
 		E67AED5425F5615100BE5114 /* EditScoutInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */; };
+		E684A28026981B0000EB5B26 /* VerifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A27F26981B0000EB5B26 /* VerifyViewController.swift */; };
 		E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852152651A27700C177C9 /* NotificationViewController.swift */; };
 		E688521A2651A38B00C177C9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852192651A38B00C177C9 /* Models.swift */; };
 		E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */; };
@@ -133,6 +134,7 @@
 		E66C7AC3260FDB77007420D9 /* AddGameLogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddGameLogViewController.swift; sourceTree = "<group>"; };
 		E66C7B9926113592007420D9 /* BatterGameLogTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatterGameLogTableViewCell.swift; sourceTree = "<group>"; };
 		E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScoutInfoViewController.swift; sourceTree = "<group>"; };
+		E684A27F26981B0000EB5B26 /* VerifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyViewController.swift; sourceTree = "<group>"; };
 		E68852152651A27700C177C9 /* NotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E68852192651A38B00C177C9 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationLikeEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -263,6 +265,16 @@
 			path = "Game Logs";
 			sourceTree = "<group>";
 		};
+		E684A27E26981AD400EB5B26 /* Manage */ = {
+			isa = PBXGroup;
+			children = (
+				E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */,
+				E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */,
+				E684A27F26981B0000EB5B26 /* VerifyViewController.swift */,
+			);
+			path = Manage;
+			sourceTree = "<group>";
+		};
 		E688522B26521FB200C177C9 /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
@@ -324,6 +336,7 @@
 		E68B740225B123AE00D15230 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				E684A27E26981AD400EB5B26 /* Manage */,
 				E6001F78267D410F00BB1EAB /* Coach Profile */,
 				E636610C25C8EA27007A4EFD /* FormTableViewCell.swift */,
 				E665688025DB537300F04EFA /* ContactInfoCell.swift */,
@@ -336,8 +349,6 @@
 				E63660E425C73C61007A4EFD /* ProfileTabs.swift */,
 				E63660FB25C7906C007A4EFD /* ProfileConnections.swift */,
 				E6BED11125F4355300A03720 /* Scout */,
-				E6001F762676A16300BB1EAB /* ManagePostsViewController.swift */,
-				E66BB14F26856F08004C65E0 /* ManageUsersViewController.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -730,6 +741,7 @@
 				E66C7ABA260F9182007420D9 /* PitcherGameLogTableViewCell.swift in Sources */,
 				E6001F772676A16300BB1EAB /* ManagePostsViewController.swift in Sources */,
 				E66C79CD260C398F007420D9 /* ScoutInfoCollectionReusableView.swift in Sources */,
+				E684A28026981B0000EB5B26 /* VerifyViewController.swift in Sources */,
 				E63660FF25C7C259007A4EFD /* ListsViewController.swift in Sources */,
 				E69AF4E525F6DCAE00D366A8 /* ChatModels.swift in Sources */,
 				E63E089E268F75200033E2A8 /* AdvSearchTableViewCell.swift in Sources */,
@@ -951,7 +963,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = ryan.RecruiterHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -976,7 +988,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = ryan.RecruiterHub;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

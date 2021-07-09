@@ -37,4 +37,8 @@ extension String {
     func safeDatabaseKey() -> String {
         return self.replacingOccurrences(of: ".", with: "-").replacingOccurrences(of: "@", with: "-")
     }
+    func nonSafeDatabaseKey() -> String {
+        let array = self.components(separatedBy: "-")
+        return array[0] + "@" + array[1] + "." + array[2]
+    }
 }

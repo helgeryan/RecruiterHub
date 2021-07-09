@@ -200,19 +200,26 @@ class ViewPostViewController: UIViewController {
         }
         DatabaseManager.shared.getLikes(with: post.owner.safeEmail, index: post.identifier, completion: {
             [weak self] likes in
+            
+            guard let strongSelf = self else {
+                return
+            }
+            
             guard let likes = likes else {
                 DispatchQueue.main.async {
-                    self?.likesLabel.text = "0 likes"
+                    strongSelf.likesLabel.text = "0 likes"
                     let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
                     let image = UIImage(systemName: "heart", withConfiguration: config)
-                    self?.likeButton.setImage(image, for: .normal)
-                    self?.likeButton.tintColor = .label
+                    strongSelf.likeButton.setImage(image, for: .normal)
+                    strongSelf.likeButton.tintColor = .label
                 }
                 return
             }
 
             DispatchQueue.main.async {
-                self?.likesLabel.text = "\(likes.count) likes"
+                strongSelf.likesLabel.text = "\(likes.count) likes"
+                strongSelf.likesLabel.sizeToFit()
+                strongSelf.commentLabel.frame = CGRect(x: strongSelf.likesLabel.right + 10, y: strongSelf.likeButton.bottom + 10, width: strongSelf.view.width / 2, height: 20)
             }
 
             for like in likes {
@@ -220,8 +227,8 @@ class ViewPostViewController: UIViewController {
                     DispatchQueue.main.async {
                         let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
                         let image = UIImage(systemName: "heart.fill", withConfiguration: config)
-                        self?.likeButton.setImage(image, for: .normal)
-                        self?.likeButton.tintColor = .red
+                        strongSelf.likeButton.setImage(image, for: .normal)
+                        strongSelf.likeButton.tintColor = .red
                         return
                     }
                 } // end if
@@ -229,8 +236,8 @@ class ViewPostViewController: UIViewController {
 
             let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .thin)
             let image = UIImage(systemName: "heart", withConfiguration: config)
-            self?.likeButton.setImage(image, for: .normal)
-            self?.likeButton.tintColor = .label
+            strongSelf.likeButton.setImage(image, for: .normal)
+            strongSelf.likeButton.tintColor = .label
         })
     }
     
@@ -243,12 +250,15 @@ class ViewPostViewController: UIViewController {
         DatabaseManager.shared.getComments(with: email, index: post.identifier, completion: { [weak self] comments in
             
             guard let comments = comments else {
+                self?.commentLabel.text = "0 comments"
+                self?.commentLabel.sizeToFit()
                 return
             }
             
             self?.comments = comments
             DispatchQueue.main.async {
                 self?.commentLabel.text = "\(comments.count) comments"
+                self?.commentLabel.sizeToFit()
             }
         })
     }

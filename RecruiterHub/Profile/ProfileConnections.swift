@@ -28,9 +28,9 @@ class ProfileConnections: UICollectionReusableView {
         label.font = .systemFont(ofSize: 12)
         label.text = "Followers\n"
         label.textAlignment = .center
-        label.textColor = .systemBlue
-        label.layer.borderColor = UIColor.systemBlue.cgColor
-        label.layer.borderWidth = 2
+        label.layer.masksToBounds = true
+        label.textColor = .white
+        label.backgroundColor = .systemBlue
         label.layer.cornerRadius = 5
         return label
     }()
@@ -41,9 +41,9 @@ class ProfileConnections: UICollectionReusableView {
         label.font = .systemFont(ofSize: 12)
         label.text = "Following\n"
         label.textAlignment = .center
-        label.textColor = .systemBlue
-        label.layer.borderColor = UIColor.systemBlue.cgColor
-        label.layer.borderWidth = 2
+        label.layer.masksToBounds = true
+        label.backgroundColor = .systemBlue
+        label.textColor = .white
         label.layer.cornerRadius = 5
         return label
     }()
@@ -52,11 +52,11 @@ class ProfileConnections: UICollectionReusableView {
         let label = UILabel()
         label.numberOfLines = 2
         label.font = .systemFont(ofSize: 12)
-        label.text = "Endorsers\n"
+        label.textColor = .white
+        label.text = "References\n"
         label.textAlignment = .center
-        label.textColor = .systemBlue
-        label.layer.borderColor = UIColor.systemBlue.cgColor
-        label.layer.borderWidth = 2
+        label.layer.masksToBounds = true
+        label.backgroundColor = .systemBlue
         label.layer.cornerRadius = 5
         return label
     }()
@@ -126,8 +126,8 @@ class ProfileConnections: UICollectionReusableView {
         DatabaseManager.shared.getNumberOf(email: email, connection: .following, completion: { [weak self] count in
             self?.followingLabel.text = "Following\n\(count)"
         })
-        DatabaseManager.shared.getNumberOf(email: email, connection: .endorsers, completion: { [weak self] count in
-            self?.connectionsLabel.text = "Endorsers\n\(count)"
+        DatabaseManager.shared.getNumberOf(email: email, connection: .references, completion: { [weak self] count in
+            self?.connectionsLabel.text = "References\n\(count)"
         })
     }
 }

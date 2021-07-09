@@ -328,19 +328,8 @@ extension OtherUserViewController: ProfileTabsDelegate {
 extension OtherUserViewController: ProfileConnectionsDelegate {
     func didTapEndorsementsButton(_ profileConnections: ProfileConnections) {
         //TODO
-        DatabaseManager.shared.getUserEndorsementsSingleEvent(email: user.safeEmail, completion: { [weak self] endorsers in
-            var data:[[String:String]] = []
-            if let endorsers = endorsers {
-                for endorser in endorsers {
-                    let newElement = ["email": endorser.email]
-                    data.append(newElement)
-                }
-            }
-            let vc = ListsViewController(data: data)
-            vc.title = "Endorsers"
-            self?.navigationController?.pushViewController(vc, animated: true)
-            return
-        })
+        let vc = ReferencesViewController(user: user)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func didTapFollowingButton(_ profileConnections: ProfileConnections) {

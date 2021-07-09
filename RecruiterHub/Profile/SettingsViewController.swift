@@ -88,6 +88,9 @@ class SettingsViewController: UIViewController {
             data.append([
                 SettingCellModel(title: "Manage Users") { [weak self] in
                     self?.didTapManageUsers()
+                },
+                SettingCellModel(title: "Verify") { [weak self] in
+                    self?.didTapVerify()
                 }
             ])
             return
@@ -120,6 +123,12 @@ class SettingsViewController: UIViewController {
     private func didTapManagePosts() {
         let vc = ManagePostsViewController(user: user)
         vc.title = "Manage Posts"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func didTapVerify() {
+        let vc = VerifyViewController(scoutInfo: ScoutInfo())
+        vc.title = "Verify"
         navigationController?.pushViewController(vc, animated: true)
     }
     

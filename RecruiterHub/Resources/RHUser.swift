@@ -70,4 +70,5 @@ public enum Connections {
     case follower
     case following
     case endorsers
+    case references
 }
