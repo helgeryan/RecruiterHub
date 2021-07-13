@@ -312,7 +312,7 @@ class RegisterViewController: UIViewController {
         user.bats = "R"
         user.profileType = profileTypes[profileType.selectedRow(inComponent: 0)]
         
-        AuthManager.shared.registerNewUser(username: username, email: email.safeDatabaseKey(), password: password, user: user) { [weak self] registered in
+        AuthManager.shared.registerNewUser(username: username, email: email, password: password, user: user) { [weak self] registered in
             if registered {
                 // Good to go
                 guard let data = self?.imageView.image?.pngData() else {

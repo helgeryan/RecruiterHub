@@ -163,8 +163,8 @@ class AdvSearchUserViewController: UIViewController {
         view.addSubview(stateField)
         view.addSubview(posField)
         
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(image: UIImage(systemName:                                                        "magnifyingglass"), style: .plain, target: self,                                              action: #selector(didTapSearch)),
-                                              UIBarButtonItem(image: UIImage(systemName: "arrow.2.circlepath"), style: .plain, target: self, action: #selector(didTapReset))
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Enter", style: .plain, target: self,                                              action: #selector(didTapSearch)),
+                                              UIBarButtonItem(title: "Reset", style: .plain, target: self, action: #selector(didTapReset))
         ]
         
         // Add delegates and data sources

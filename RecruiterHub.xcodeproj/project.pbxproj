@@ -38,6 +38,8 @@
 		E67AED5425F5615100BE5114 /* EditScoutInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */; };
 		E684A28026981B0000EB5B26 /* VerifyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A27F26981B0000EB5B26 /* VerifyViewController.swift */; };
 		E684A28226988C0C00EB5B26 /* CoachScoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */; };
+		E684A284269D018200EB5B26 /* CoachProspectsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A283269D018200EB5B26 /* CoachProspectsViewController.swift */; };
+		E684A286269D0B6C00EB5B26 /* ProspectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E684A285269D0B6C00EB5B26 /* ProspectViewController.swift */; };
 		E68852162651A27800C177C9 /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852152651A27700C177C9 /* NotificationViewController.swift */; };
 		E688521A2651A38B00C177C9 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68852192651A38B00C177C9 /* Models.swift */; };
 		E688521F2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */; };
@@ -137,6 +139,8 @@
 		E67AED5325F5615100BE5114 /* EditScoutInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScoutInfoViewController.swift; sourceTree = "<group>"; };
 		E684A27F26981B0000EB5B26 /* VerifyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyViewController.swift; sourceTree = "<group>"; };
 		E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachScoutViewController.swift; sourceTree = "<group>"; };
+		E684A283269D018200EB5B26 /* CoachProspectsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachProspectsViewController.swift; sourceTree = "<group>"; };
+		E684A285269D0B6C00EB5B26 /* ProspectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProspectViewController.swift; sourceTree = "<group>"; };
 		E68852152651A27700C177C9 /* NotificationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
 		E68852192651A38B00C177C9 /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		E688521D2651A3BA00C177C9 /* NotificationLikeEventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationLikeEventTableViewCell.swift; sourceTree = "<group>"; };
@@ -221,6 +225,8 @@
 			children = (
 				E6001F79267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift */,
 				E684A28126988C0C00EB5B26 /* CoachScoutViewController.swift */,
+				E684A283269D018200EB5B26 /* CoachProspectsViewController.swift */,
+				E684A285269D0B6C00EB5B26 /* ProspectViewController.swift */,
 			);
 			path = "Coach Profile";
 			sourceTree = "<group>";
@@ -763,6 +769,7 @@
 				E69AF4BE25F6D56000D366A8 /* ConversationsViewController.swift in Sources */,
 				E68B740025B120C100D15230 /* ViewExtension.swift in Sources */,
 				E63E089C268EE2B60033E2A8 /* AdvSearchViewController.swift in Sources */,
+				E684A286269D0B6C00EB5B26 /* ProspectViewController.swift in Sources */,
 				E66C7ABE260FD5DC007420D9 /* GameLog.swift in Sources */,
 				E68B744025BA90F100D15230 /* LoginViewController.swift in Sources */,
 				E63660E525C73C62007A4EFD /* ProfileTabs.swift in Sources */,
@@ -776,6 +783,7 @@
 				E68B743A25B7E1D400D15230 /* NewPostViewController.swift in Sources */,
 				E6001F7A267D413400BB1EAB /* CoachProfileHeaderCollectionReusableView.swift in Sources */,
 				E66C7AB4260E9A77007420D9 /* GameLogViewController.swift in Sources */,
+				E684A284269D018200EB5B26 /* CoachProspectsViewController.swift in Sources */,
 				E688521A2651A38B00C177C9 /* Models.swift in Sources */,
 				E6001F752673F3BE00BB1EAB /* AddReferenceViewController.swift in Sources */,
 				E63E089A268ED4920033E2A8 /* NotificationCommentEventTableViewCell.swift in Sources */,

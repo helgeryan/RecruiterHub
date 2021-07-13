@@ -302,9 +302,8 @@ extension ProfileViewController: ProfileTabsDelegate {
         print("Tapped scout")
         
         if user.profileType == "coach" {
-            let vc = CoachScoutViewController()
+            let vc = CoachScoutViewController(user: user)
             vc.title = "Scout"
-            vc.modalTransitionStyle = .flipHorizontal
             navigationController?.pushViewController(vc, animated: true)
             return
         }

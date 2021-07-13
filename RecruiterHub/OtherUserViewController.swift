@@ -319,6 +319,14 @@ extension OtherUserViewController: ProfileTabsDelegate {
     }
     
     func didTapScoutButtonTab() {
+        
+        if user.profileType == "coach" {
+            let vc = CoachScoutViewController(user: user)
+            vc.title = "Scout"
+            navigationController?.pushViewController(vc, animated: true)
+            return
+        }
+        
         let vc = ScoutViewController(user: user)
         vc.title = "Scout Info"
         navigationController?.pushViewController(vc, animated: true)
