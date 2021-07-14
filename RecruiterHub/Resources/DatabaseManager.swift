@@ -1101,6 +1101,47 @@ public class DatabaseManager {
         }
     }
     
+    public func deleteProspectNote(prospectNote: ProspectNote, index: Int, completion: @escaping (Bool) -> Void) {
+        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+            return
+        }
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+        
+        // Get all conversations for current User
+        //Delete convesation with target id
+        // Reset those conversations for use in database
+        let ref = database.child("\(safeEmail)/Prospects/Private/\(index)/notes")
+        
+        let removedElement = [
+            "date": ChatViewController.dateFormatter.string(from: prospectNote.date),
+            "note": prospectNote.note
+        ]
+        
+        ref.observeSingleEvent(of: .value) { snapshot in
+            if var prospects = snapshot.value as? [[String: String]] {
+                var positionToRemove = 0
+                for prospect in prospects {
+                    if removedElement == prospect {
+                        print("Found reference to delete")
+                        break
+                    }
+                    positionToRemove += 1
+                }
+                
+                prospects.remove(at: positionToRemove)
+                ref.setValue(prospects, withCompletionBlock: { error,_ in
+                    guard error == nil else {
+                        completion(false)
+                        print("Failed to write new reference array")
+                        return
+                    }
+                    print("Deleted Reference")
+                    completion(true)
+                })
+            }
+        }
+    }
+    
     public func addGameLogForUser( email: String, gameLog: PitcherGameLog) {
         database.child("\(email)/PitcherGameLogs").observeSingleEvent(of: .value, with: { [weak self] snapshot in
             
@@ -1909,6 +1950,33 @@ public class DatabaseManager {
         })
     }
     
+    public func getProspectInfo( email: String, index: Int, completion: @escaping ((Prospect?) -> Void))  {
+        database.child("\(email)/Prospects/Private/\(index)").observe( .value, with: { snapshot in
+            guard let prospect = snapshot.value as? [String:Any] else {
+                completion(nil)
+                return
+            }
+            guard let email = prospect["email"] as? String,
+                  let name = prospect["name"] as? String else {
+                return
+            }
+            var notes: [ProspectNote] = []
+            if let databaseNotes = prospect["notes"] as? [[String: String]] {
+                for note in databaseNotes {
+                    guard let dateString = note["date"],
+                          let date = ChatViewController.dateFormatter.date(from: dateString),
+                          let prospectNote = note["note"] else {
+                        return
+                    }
+                    let newElement = ProspectNote(date: date, note: prospectNote)
+                    notes.append(newElement)
+                }
+            }
+            
+            completion(Prospect(email: email, name: name, notes: notes))
+        })
+    }
+    
     public func getUserFollowingSingleEvent( email: String, completion: @escaping (([Following]?) -> Void))  {
         database.child("\(email)/following").observeSingleEvent( of: .value, with: { snapshot in
             guard let following = snapshot.value as? [[String:String]] else {
@@ -2242,6 +2310,28 @@ public class DatabaseManager {
         })
     }
     
+    public func newProspectNote( email: String, prospectNote: String, index: Int) {
+        let ref = database.child("\(email)/Prospects/Private/\(index)/notes")
+        
+        ref.observeSingleEvent(of: .value, with: { snapshot in
+            
+            let newElement = [
+                "note": prospectNote,
+                "date": ChatViewController.dateFormatter.string(from: Date())
+            ]
+            
+            // Comments exist append the comment
+            if var prospectNotes = snapshot.value as? [[String:String]] {
+                prospectNotes.append(newElement)
+                ref.setValue(prospectNotes)
+            }
+            else {
+                let newCommentsCollection = [newElement]
+                
+                ref.setValue(newCommentsCollection)
+            }
+        })
+    }
     
     public func getNumberOf( email: String, connection: Connections, completion: @escaping (Int) -> Void) {
         var attribute = ""

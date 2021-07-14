@@ -10,7 +10,7 @@ import UIKit
 public struct Prospect {
     let email: String
     let name: String
-    let notes: [ProspectNote]
+    var notes: [ProspectNote]
 }
 
 public struct ProspectNote {
@@ -68,7 +68,7 @@ class CoachProspectsViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.frame = CGRect(x: 0, y: view.safeAreaInsets.top + 100, width: view.width, height: view.height - view.safeAreaInsets.top - 100)
+        tableView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: view.height - view.safeAreaInsets.top)
     }
     
     @objc private func didTapAdd() {
@@ -111,7 +111,7 @@ extension CoachProspectsViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let model = data[indexPath.row]
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = ProspectViewController(prospect: model)
+        let vc = ProspectViewController(prospect: model, index: indexPath.row)
         present(vc, animated: true, completion: nil)
     }
     
